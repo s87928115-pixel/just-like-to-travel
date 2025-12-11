@@ -9,14 +9,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="滑雪不跌倒">
     
+    <!-- 圖示設定 (預設雪花，JS 會動態修改) -->
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>">
+    <link rel="apple-touch-icon" id="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>">
+    
     <title>滑雪不跌倒 2025</title>
     
-    <!-- 載入 React 和 Babel (讓瀏覽器能跑 React) -->
+    <!-- 載入 React 和 Babel -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- 載入樣式與圖示 -->
+    <!-- 載入樣式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -51,11 +55,19 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* 動畫效果 */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "react": "https://esm.sh/react@^19.2.1",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/"
+  }
+}
+</script>
 </head>
 <body>
     <div id="root"></div>
@@ -226,31 +238,26 @@
                 return null;
             } catch (e) { return null; }
         };
+        const linkifyText = (text) => {
+           return text.split(/(https?:\/\/[^\s]+)/g);
+        };
 
         // --- COMPONENTS (介面元件) ---
 
         // PLAN VIEW
-        const PlanView = () => {
-          const [coverImg, setCoverImg] = useState(null);
+        const PlanView = ({ coverImg, onUpdateCover }) => {
           
-          useEffect(() => {
-              const saved = localStorage.getItem('planCoverImg');
-              if (saved) setCoverImg(saved);
-          }, []);
-
           const handleCoverUpload = (e) => {
               const file = e.target.files?.[0];
               if(file) processImage(file, (base64) => {
-                  setCoverImg(base64);
-                  localStorage.setItem('planCoverImg', base64);
+                  onUpdateCover(base64);
               });
           };
 
           const removeCover = (e) => {
               e.stopPropagation();
               if(confirm('確定移除封面?')) {
-                  setCoverImg(null);
-                  localStorage.removeItem('planCoverImg');
+                  onUpdateCover(null);
               }
           }
 
@@ -610,7 +617,13 @@
                                     <div key={item.id} className="bg-white rounded-2xl p-4 flex gap-4 items-start shadow-sm border border-gray-100">
                                         <div className="pt-2"><input type="checkbox" checked={item.done} onChange={()=>toggleShop(item.id)} className="w-6 h-6 accent-muji-primary" /></div>
                                         {item.img && <img src={item.img} className="w-20 h-20 object-cover rounded-lg border border-gray-100" onClick={()=>setFullImg(item.img)} />}
-                                        <div className={`flex-1 pt-1 text-xl font-medium ${item.done ? 'line-through text-gray-300' : 'text-gray-800'}`}>{item.text}</div>
+                                        <div className={`flex-1 pt-1 text-xl font-medium ${item.done ? 'line-through text-gray-300' : 'text-gray-800'}`}>
+                                           {linkifyText(item.text).map((part, i) => 
+                                             part.match(/^https?:\/\//) ? (
+                                               <a key={i} href={part} target="_blank" className="text-blue-500 underline text-base ml-1"><i className="fa-solid fa-link"></i>連結</a>
+                                             ) : part
+                                           )}
+                                        </div>
                                         <button onClick={()=>deleteShop(item.id)} className="text-gray-300 p-2"><i className="fa-solid fa-xmark text-xl"></i></button>
                                     </div>
                                 ))}
@@ -683,25 +696,31 @@
                 setDate(new Date().toLocaleDateString());
                 const saved = localStorage.getItem('planCoverImg');
                 if(saved) setCoverImg(saved);
-                
-                // Hack to update global icon when localstorage changes in child components
-                const interval = setInterval(() => {
-                    const current = localStorage.getItem('planCoverImg');
-                    if(current !== coverImg) setCoverImg(current);
-                }, 1000);
-                return () => clearInterval(interval);
-            }, [coverImg]);
+            }, []);
 
-            // Dynamic Favicon & Title Icon
+            // Dynamic Icon Logic
             useEffect(() => {
-                const headerIcon = document.getElementById('header-icon');
-                if(coverImg && headerIcon) {
-                    headerIcon.innerHTML = `<img src="${coverImg}" class="w-8 h-8 rounded-md object-cover border border-white" />`;
+                const favicon = document.getElementById('favicon');
+                const appleIcon = document.getElementById('apple-touch-icon');
+                
+                if (coverImg) {
+                    if(favicon) favicon.href = coverImg;
+                    if(appleIcon) appleIcon.href = coverImg;
+                } else {
+                    const defaultIcon = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>";
+                    if(favicon) favicon.href = defaultIcon;
+                    if(appleIcon) appleIcon.href = defaultIcon;
                 }
             }, [coverImg]);
 
+            const handleCoverUpdate = (img) => {
+                setCoverImg(img);
+                if(img) localStorage.setItem('planCoverImg', img);
+                else localStorage.removeItem('planCoverImg');
+            };
+
             const renderContent = () => {
-                if(tab === 'plan') return <PlanView />;
+                if(tab === 'plan') return <PlanView coverImg={coverImg} onUpdateCover={handleCoverUpdate} />;
                 if(tab === 'food') return <FoodView />;
                 if(tab === 'wallet') return <WalletView />;
                 if(tab === 'lists') return <ListsView />;
@@ -719,7 +738,8 @@
                 <div className="min-h-screen font-sans text-muji-text bg-[#F9F8F6]">
                     <header className="fixed top-0 w-full bg-[#F9F8F6]/95 backdrop-blur-sm z-50 border-b border-muji-border px-4 h-[70px] flex justify-between items-center shadow-sm">
                         <h1 className="text-2xl font-bold tracking-widest text-muji-primary flex items-center gap-2">
-                            <span id="header-icon"><i className="fa-solid fa-person-skiing"></i></span> 滑雪不跌倒
+                            {coverImg ? <img src={coverImg} className="w-8 h-8 rounded-md object-cover border border-white shadow-sm"/> : <span><i className="fa-solid fa-person-skiing"></i></span>}
+                            滑雪不跌倒
                         </h1>
                         <div className="text-sm text-gray-500 font-medium">{date}</div>
                     </header>
