@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -9,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="滑雪不跌倒">
     
-    <!-- 圖示設定 (預設雪花，JS 會動態修改) -->
+    <!-- 圖示設定 -->
     <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>">
     <link rel="apple-touch-icon" id="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>">
     
@@ -61,10 +62,10 @@
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.1/",
     "react": "https://esm.sh/react@^19.2.1",
-    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.1/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0"
   }
 }
 </script>
@@ -75,7 +76,7 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- CONSTANTS (資料) ---
+        // --- CONSTANTS ---
         const ITINERARY_DATA = [
           { day: 1, date: "2/24 (一)", loc: "東京/輕井澤", items: [
               { time: "06:40", title: "酷航 TR898 出發", desc: "第一航廈報到", type: "transport" },
@@ -120,8 +121,13 @@
               { time: "住宿", title: "The OneFive Sendai", map: "4 Chome-6-28 Tsutsujigaoka, Miyagino Ward, Sendai, Miyagi", type: "hotel" }
           ]},
           { day: 7, date: "3/2 (日)", loc: "仙台/山寺", items: [
-              { time: "Plan A", title: "山寺行", desc: "08:18 或 09:12 出發。午餐：焰藏蕎麥麵", type: "activity" },
-              { time: "Plan B", title: "自駕採果", desc: "08:30 仙台朝市 -> 09:30 租車 -> 10:00 採草莓 -> 超市 -> Costco", type: "activity" },
+              { time: "Plan A", title: "08:00 出門", desc: "搭乘 08:18 或 09:12 仙山線前往山寺", type: "transport" },
+              { time: "Plan A", title: "13:00 午餐", desc: "焰藏 / 山形蕎麦の焔藏 山寺店", type: "meal" },
+              { time: "Plan A", title: "14:09 回程", desc: "或搭 15:28 列車回仙台", type: "transport" },
+              { time: "Plan B", title: "08:30 仙台朝市", desc: "逛完後 09:30 租車", type: "activity" },
+              { time: "Plan B", title: "10:00 採草莓", desc: "一苺一笑 松森農場", map: "Shiromae-157-1 Matsumori, Izumi Ward, Sendai, Miyagi 981-3111", type: "activity" },
+              { time: "Plan B", title: "11:30 UJIE 超市", desc: "吉岡店", map: "1-chome-5-8 Yoshiokamahoroba, Taiwa, Kurokawa District, Miyagi 981-3632", type: "activity" },
+              { time: "Plan B", title: "13:00 Costco", desc: "好市多 富谷倉庫店", map: "26 Takayashiki, Tomiya, Miyagi 981-3313", type: "activity" },
               { time: "16:00", title: "仙台車站", desc: "會合", type: "info" }
           ]},
           { day: 8, date: "3/3 (一)", loc: "仙台", items: [
@@ -190,12 +196,13 @@
           ]},
           { day: "Day 7 (山寺/仙台)", items: [
               { name: "焰藏 / 山形蕎麦の焔藏", addr: "山寺店", desc: "★名物：山寺站旁。必吃「板蕎麥麵」與「鴨肉鍋」，100%使用當地蕎麥粉，香氣十足。" },
-              { name: "一苺一笑 松森農場", addr: "Shiromae-157-1 Matsumori, Izumi Ward, Sendai", desc: "★體驗：仙台採草莓名所。溫室種植，草莓又大又甜，還有煉乳無限加。" },
-              { name: "UJIE 超市 吉岡店", addr: "981-3632 Miyagi, Kurokawa District, Taiwa", desc: "★補給：在地大型超市，適合買水果、飲料和伴手禮。" }
+              { name: "一苺一笑 松森農場", addr: "Shiromae-157-1 Matsumori, Izumi Ward, Sendai, Miyagi 981-3111", desc: "★體驗：仙台採草莓名所。溫室種植，草莓又大又甜，還有煉乳無限加。" },
+              { name: "UJIE 超市 吉岡店", addr: "1-chome-5-8 Yoshiokamahoroba, Taiwa, Kurokawa District, Miyagi 981-3632", desc: "★補給：在地大型超市，適合買水果、飲料和伴手禮。" },
+              { name: "好市多 富谷倉庫店", addr: "26 Takayashiki, Tomiya, Miyagi 981-3313", desc: "★採買：Costco Wholesale Tomiya Warehouse。" }
           ]},
           { day: "Day 8 (晚餐)", items: [
               { name: "肉十八", addr: "仙台", desc: "★吃到飽：仙台牛燒肉吃到飽！必攻「厚切牛舌」與「A5和牛」，大口吃肉超滿足。" }
-          ]},
+  ]},
           { day: "Day 9 (山形晚餐)", items: [
               { name: "Nanbara Tasuke Sushi (南原 太助寿司)", addr: "Yamagata, Minamiharamachi, 2 Chome−9−12 南原プラザ", desc: "在地壽司店。" },
               { name: "ISLAND PEAK", addr: "1 Chome-7-24 Honcho, Yamagata, 990-0043", desc: "International Café & Bar。營業時間：11:30–14:30, 18:30–00:00" }
@@ -203,13 +210,29 @@
         ];
 
         const PACKING_LIST = [
-          "護照", "信用卡", "身分證", "現金", "身分證影本", "護照影本", "駕照", "國際駕照", "駕照譯本",
-          "衣物", "帽子", "太陽眼鏡", "隱眼", "梳子", "保養品", "感冒藥", "暈車藥", "過敏藥", "腸胃藥",
-          "充電器", "充電線", "行動電源", "萬國插座", "GoPro/相機", "電池/記憶卡", "網卡", "SIM卡針",
-          "雪鏡", "排汗衣", "保暖長袖", "手套", "長襪", "防滑鞋", "屁墊", "暖暖包", "護膝", "護手", "冰爪"
+          {
+            title: "個人物品",
+            items: ["護照", "信用卡", "身分證", "現金", "身分證影本", "護照影本", "駕照", "國際駕照", "駕照譯本"]
+          },
+          {
+            title: "雜物",
+            items: ["衣物", "帽子", "太陽眼鏡", "隱眼", "梳子", "保養品(乳液、護手霜、洗臉的)", "藥品(感冒、暈車、過敏、腸胃)"]
+          },
+          {
+            title: "電子產品",
+            items: ["充電器", "充電線", "行動電源", "萬國插座", "GoPro/相機", "GoPro/相機充電器", "電池", "記憶卡", "網卡", "SIM卡針"]
+          },
+          {
+            title: "滑雪行前準備",
+            items: ["雪鏡", "排汗衣", "保暖長袖", "手套", "長襪", "不會滑倒的鞋子", "屁墊", "暖暖包", "護膝", "護手", "冰爪"]
+          },
+          {
+            title: "滑雪租借",
+            items: ["滑雪衣", "滑雪褲", "安全帽", "雪板", "雪鏡 (租借)"]
+          }
         ];
 
-        // --- UTILS (工具函式) ---
+        // --- UTILS ---
         const formatMoney = (num) => new Intl.NumberFormat('en-US').format(num);
         const getMapLink = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
         const processImage = (file, callback) => {
@@ -242,11 +265,10 @@
            return text.split(/(https?:\/\/[^\s]+)/g);
         };
 
-        // --- COMPONENTS (介面元件) ---
+        // --- COMPONENTS ---
 
         // PLAN VIEW
         const PlanView = ({ coverImg, onUpdateCover }) => {
-          
           const handleCoverUpload = (e) => {
               const file = e.target.files?.[0];
               if(file) processImage(file, (base64) => {
@@ -585,13 +607,24 @@
                     </div>
 
                     {tab === 'pack' && (
-                        <div className="grid grid-cols-1 gap-4">
-                            {PACKING_LIST.map(item => (
-                                <label key={item} className={`cursor-pointer border-2 rounded-xl p-4 flex items-center gap-4 transition-all shadow-sm active:scale-98 ${checks[item] ? 'bg-muji-primary text-white border-muji-primary' : 'bg-white text-gray-700 border-gray-200'}`}>
-                                    <input type="checkbox" className="hidden" checked={!!checks[item]} onChange={()=>toggleCheck(item)} />
-                                    <i className={`fa-regular ${checks[item] ? 'fa-square-check' : 'fa-square'} text-2xl`}></i>
-                                    <span className="text-xl font-medium">{item}</span>
-                                </label>
+                        <div className="space-y-6 animate-fade-in">
+                            {PACKING_LIST.map((category) => (
+                              <div key={category.title} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                <h3 className="font-bold text-lg text-muji-primary mb-4 flex items-center gap-2 border-b border-gray-100 pb-2">
+                                  {category.title}
+                                </h3>
+                                <div className="grid grid-cols-1 gap-3">
+                                  {category.items.map((item) => (
+                                    <label key={item} className={`cursor-pointer rounded-lg p-3 flex items-center gap-3 transition-all duration-200 active:scale-98 ${checks[item] ? 'bg-muji-primary/10 text-muji-primary' : 'hover:bg-gray-50 text-gray-700'}`}>
+                                      <div className="relative flex items-center justify-center">
+                                        <input type="checkbox" className="peer appearance-none w-6 h-6 border-2 border-gray-300 rounded-md checked:bg-muji-primary checked:border-muji-primary transition-colors" checked={!!checks[item]} onChange={()=>toggleCheck(item)} />
+                                        <i className="fa-solid fa-check absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity text-sm"></i>
+                                      </div>
+                                      <span className={`text-lg font-medium ${checks[item] ? 'line-through opacity-70' : ''}`}>{item}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
                             ))}
                         </div>
                     )}
@@ -599,6 +632,12 @@
                     {tab === 'memo' && (
                         <div className="space-y-4">
                             <textarea value={memo} onChange={e=>{setMemo(e.target.value); localStorage.setItem('memoText', e.target.value)}} className="w-full h-80 p-5 rounded-xl border-2 border-gray-200 text-lg resize-none" placeholder="隨手記點什麼..." />
+                            <div className="p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+                                <h4 className="text-sm font-bold text-gray-400 mb-3 flex items-center gap-2">預覽 (網址可點擊)</h4>
+                                <div className="text-lg break-all text-gray-800 space-y-2 whitespace-pre-wrap">
+                                  {linkifyText(memo).map((part, i) => part.match(/https?:\/\/[^\s]+/) ? <a key={i} href={part} target="_blank" className="text-blue-500 underline"><i className="fa-solid fa-link"></i>連結</a> : part)}
+                                </div>
+                            </div>
                         </div>
                     )}
 
