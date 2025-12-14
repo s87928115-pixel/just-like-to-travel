@@ -77,7 +77,7 @@
 
         // --- CONSTANTS ---
         const ITINERARY_DATA = [
-          { day: 1, date: "2/24 (一)", loc: "東京/輕井澤", items: [
+          { day: 1, date: "2/24 (一)", loc: "東京/輕井澤", weather: ["輕井澤"], items: [
               { time: "06:40", title: "酷航 TR898 出發", desc: "第一航廈報到", type: "transport" },
               { time: "10:45", title: "抵達成田機場", desc: "入境、拿行李", type: "transport" },
               { time: "11:13+", title: "搭車至上野", desc: "車程約50分。班次：11:13, 11:39, 11:59...", type: "transport" },
@@ -87,14 +87,14 @@
               { time: "晚餐", title: "輕井澤晚餐", desc: "愛宕 / Access / 村民食堂 / 燒肉 (詳見美食頁)", type: "meal" },
               { time: "住宿", title: "輕井澤王子飯店西館", map: "389-0193 長野縣北佐久郡輕井澤町輕井澤1016-85", type: "hotel" }
           ]},
-          { day: 2, date: "2/25 (二)", loc: "輕井澤", items: [
+          { day: 2, date: "2/25 (二)", loc: "輕井澤", weather: ["輕井澤"], items: [
               { time: "全日", title: "滑雪 Day 1", desc: "小心安全，滑雪不跌倒！", type: "activity" }
           ]},
-          { day: 3, date: "2/26 (三)", loc: "輕井澤", items: [
+          { day: 3, date: "2/26 (三)", loc: "輕井澤", weather: ["輕井澤"], items: [
               { time: "09:00", title: "滑雪 Day 2", desc: "滑到 16:00 結束", type: "activity" },
               { time: "17:00", title: "租車", desc: "準備自駕行程", type: "transport" }
           ]},
-          { day: 4, date: "2/27 (四)", loc: "輕井澤/東京", items: [
+          { day: 4, date: "2/27 (四)", loc: "輕井澤/東京", weather: ["輕井澤", "東京"], items: [
               { time: "09:30", title: "榆樹街小鎮", desc: "逛街、買伴手禮", type: "activity" },
               { time: "11:00", title: "雲場池", desc: "散步拍照", type: "activity" },
               { time: "11:30", title: "舊輕井澤銀座通", desc: "老街逛逛", type: "activity" },
@@ -102,7 +102,7 @@
               { time: "晚餐", title: "上野晚餐", desc: "迴轉壽司 / 豬排 (詳見美食頁)", type: "meal" },
               { time: "住宿", title: "LANDABOUT TOKYO", map: "東京都, 東京, Taito-ku Negishi 3-4-5", type: "hotel" }
           ]},
-          { day: 5, date: "2/28 (五)", loc: "東京/山形", items: [
+          { day: 5, date: "2/28 (五)", loc: "東京/山形", weather: ["東京", "山形新庄"], items: [
               { time: "09:30", title: "妙義神社", map: "3 Chome-16-16 Komagome, Toshima City, Tokyo", type: "activity" },
               { time: "10:30", title: "池袋太陽城", map: "3 Chome-1 Higashiikebukuro, Toshima City, Tokyo", type: "activity" },
               { time: "13:30", title: "抵達上野車站", desc: "準備移動", type: "transport" },
@@ -110,7 +110,7 @@
               { time: "14:20", title: "阿王阿真去機場", desc: "搭 SKYLINER 回家", type: "transport" },
               { time: "住宿", title: "Route Inn 新莊站前", map: "山形県新庄市金沢沖1109-6", type: "hotel" }
           ]},
-          { day: 6, date: "3/1 (六)", loc: "山形/仙台", items: [
+          { day: 6, date: "3/1 (六)", loc: "山形/仙台", weather: ["山形新庄", "仙台"], items: [
               { time: "07:50", title: "出門", desc: "早起出發", type: "info" },
               { time: "08:10", title: "陸羽西線 -> 古口", desc: "前往最上川", type: "transport" },
               { time: "09:00", title: "最上川遊船", desc: "欣賞雪景，結束時間約12點", type: "activity" },
@@ -119,7 +119,7 @@
               { time: "19:30", title: "抵達仙台車站", desc: "集合時間", type: "info" },
               { time: "住宿", title: "The OneFive Sendai", map: "4 Chome-6-28 Tsutsujigaoka, Miyagino Ward, Sendai, Miyagi", type: "hotel" }
   ]},
-          { day: 7, date: "3/2 (日)", loc: "仙台/山寺", items: [
+          { day: 7, date: "3/2 (日)", loc: "仙台/山寺", weather: ["仙台"], items: [
               { time: "Plan A", title: "08:00 出門", desc: "搭乘 08:18 或 09:12 仙山線前往山寺", type: "transport" },
               { time: "Plan A", title: "13:00 午餐", desc: "焰藏 / 山形蕎麦の焔藏 山寺店", type: "meal" },
               { time: "Plan A", title: "14:09 回程", desc: "或搭 15:28 列車回仙台", type: "transport" },
@@ -129,7 +129,7 @@
               { time: "Plan B", title: "13:00 Costco", desc: "好市多 富谷倉庫店", map: "26 Takayashiki, Tomiya, Miyagi 981-3313", type: "activity" },
               { time: "16:00", title: "仙台車站", desc: "會合", type: "info" }
           ]},
-          { day: 8, date: "3/3 (一)", loc: "仙台", items: [
+          { day: 8, date: "3/3 (一)", loc: "仙台", weather: ["仙台"], items: [
               { time: "08:30", title: "出門", desc: "", type: "info" },
               { time: "09:30", title: "瑞鳳殿", desc: "伊達政宗陵墓", type: "activity" },
               { time: "11:00", title: "大崎八幡宮", desc: "國寶神社", type: "activity" },
@@ -137,14 +137,14 @@
               { time: "17:30", title: "仙台車站接人", desc: "", type: "info" },
               { time: "18:30", title: "肉十八", desc: "晚餐：燒肉吃到飽", type: "meal" }
           ]},
-          { day: 9, date: "3/4 (二)", loc: "宮城/山形", items: [
+          { day: 9, date: "3/4 (二)", loc: "宮城/山形", weather: ["山形市"], items: [
               { time: "09:00", title: "金神水神社", map: "Miyagi, Iwanuma, Miiroyoshi, Suijin−７", type: "activity" },
               { time: "10:30", title: "狐狸村", map: "Miyagi, Shiroishi, 福岡八宮川原子１１−３", desc: "抱狐狸體驗，停留1小時", type: "activity" },
               { time: "12:40", title: "遠刈田溫泉", map: "Togattaonsen Motomachi", type: "activity" },
               { time: "15:15", title: "藏王樹冰", map: "229-3 Zaoonsen, Yamagata", type: "activity" },
               { time: "住宿", title: "Route Inn Yamagataminami", map: "1 Chome-1-11 Iidanishi, Yamagata", type: "hotel" }
           ]},
-          { day: 10, date: "3/5 (三)", loc: "山形/宮城", items: [
+          { day: 10, date: "3/5 (三)", loc: "山形/宮城", weather: ["尾花澤銀山溫泉", "仙台"], items: [
               { time: "08:30", title: "出門", desc: "早起出發", type: "info" },
               { time: "10:00", title: "大正浪漫館", map: "日本〒999-4332 Yamagata, Obanazawa, Kamiyanagiwatarido, 364 字十分一364-3", type: "activity" },
               { time: "10:30", title: "銀山溫泉", desc: "散步拍照", type: "activity" },
@@ -154,7 +154,7 @@
               { time: "17:30", title: "三井OUTLET 仙台港", map: "日本〒983-0013 Miyagi, Sendai, Miyagino Ward, Nakano, 3 Chome−７−2", type: "activity" },
               { time: "住宿", title: "The OneFive Sendai", map: "4 Chome-6-28 Tsutsujigaoka, Miyagino Ward, Sendai, Miyagi", type: "hotel" }
           ]},
-          { day: 11, date: "3/6 (四)", loc: "仙台/返台", items: [
+          { day: 11, date: "3/6 (四)", loc: "仙台/返台", weather: ["仙台"], items: [
               { time: "09:00", title: "出發", desc: "最後一天", type: "info" },
               { time: "11:30", title: "AEON MALL", desc: "最後採買", type: "activity" },
               { time: "14:47", title: "前往仙台機場", desc: "準備登機", type: "transport" },
@@ -206,7 +206,7 @@
           { day: "Day 9 (山形晚餐)", items: [
               { name: "Nanbara Tasuke Sushi (南原 太助寿司)", addr: "Yamagata, Minamiharamachi, 2 Chome−9−12 南原プラザ", desc: "在地壽司店。" },
               { name: "ISLAND PEAK", addr: "1 Chome-7-24 Honcho, Yamagata, 990-0043", desc: "International Café & Bar。營業時間：11:30–14:30, 18:30–00:00" }
-          ]},
+  ]},
           { day: "Day 10 (銀山溫泉)", items: [
               { name: "蕎麥麵 滝見館", addr: "522 Ginzanshinhata, Obanazawa, Yamagata 999-4333日本", desc: "銀山溫泉美食" },
               { name: "伊豆之華", addr: "440 Ginzanshinhata, Obanazawa, Yamagata 999-4333日本", desc: "銀山溫泉美食" }
@@ -233,6 +233,34 @@
           {
             title: "滑雪租借",
             items: ["滑雪衣", "滑雪褲", "安全帽", "雪板", "雪鏡 (租借)"]
+          }
+        ];
+
+        const HOTEL_LIST = [
+          {
+            name: "輕井澤王子飯店西館",
+            address: "389-0193 長野縣北佐久郡輕井澤町輕井澤1016-85",
+            note: "Day 1-3 住宿"
+          },
+          {
+            name: "LANDABOUT TOKYO",
+            address: "東京都, 東京, Taito-ku Negishi 3-4-5",
+            note: "Day 4 住宿"
+          },
+          {
+            name: "Route Inn 新莊站前",
+            address: "山形県新庄市金沢沖1109-6",
+            note: "Day 5 住宿"
+          },
+          {
+            name: "The OneFive Sendai",
+            address: "4 Chome-6-28 Tsutsujigaoka, Miyagino Ward, Sendai, Miyagi",
+            note: "Day 6-8, Day 10 住宿"
+          },
+          {
+            name: "Route Inn Yamagataminami",
+            address: "1 Chome-1-11 Iidanishi, Yamagata",
+            note: "Day 9 住宿"
           }
         ];
 
@@ -296,6 +324,7 @@
 
           const selectedDayData = ITINERARY_DATA.find(d => d.day === currentDay);
           const showFlightCard = currentDay === 1 || currentDay === 11;
+          const getWeatherLink = (query) => `https://www.google.com/search?q=weather+${query}`;
 
           return (
             <div className="pt-[130px] pb-24 px-4 animate-fade-in">
@@ -359,10 +388,25 @@
               {/* Selected Day Content */}
               {selectedDayData && (
                 <div className="animate-fade-in min-h-[50vh]">
-                  <div className="flex items-baseline mb-4 py-2 border-b-2 border-gray-200">
-                    <span className="text-3xl font-bold text-muji-primary mr-3">DAY {selectedDayData.day}</span>
-                    <span className="text-lg text-gray-500">{selectedDayData.date}</span>
-                    <span className="ml-auto text-xs bg-muji-accent text-white px-3 py-1 rounded-full">{selectedDayData.loc}</span>
+                  <div className="flex flex-col gap-2 mb-4 py-2 border-b-2 border-gray-200">
+                    <div className="flex items-baseline">
+                        <span className="text-3xl font-bold text-muji-primary mr-3">DAY {selectedDayData.day}</span>
+                        <span className="text-lg text-gray-500">{selectedDayData.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mt-1">
+                        <span className="text-xs bg-muji-accent text-white px-3 py-1 rounded-full whitespace-nowrap">{selectedDayData.loc}</span>
+                        {selectedDayData.weather.map((loc, idx) => (
+                            <a 
+                                key={idx}
+                                href={getWeatherLink(loc)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-xs bg-blue-50 text-blue-600 border border-blue-100 px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-1 hover:bg-blue-100 transition-colors"
+                            >
+                                <i className="fa-solid fa-cloud-sun text-xs"></i> {loc}天氣
+                            </a>
+                        ))}
+                    </div>
                   </div>
                   <div className="border-l-4 border-muji-border ml-3 space-y-6 pb-2">
                     {selectedDayData.items.map((item, idx) => (
@@ -456,6 +500,7 @@
           const [calcResult, setCalcResult] = useState('');
           const [records, setRecords] = useState([]);
           const [form, setForm] = useState({item: '', amount: '', img: null});
+          const [editingId, setEditingId] = useState(null);
           const [previewImg, setPreviewImg] = useState(null);
 
           useEffect(() => {
@@ -476,21 +521,48 @@
               else setCalcResult('格式錯誤');
           };
 
-          const addExpense = () => {
+          const handleSave = () => {
               if(!form.item || !form.amount) return alert('請輸入完整資訊');
-              const newRec = { ...form, amount: parseFloat(form.amount), date: new Date().toISOString() };
-              const updated = [...records, newRec];
-              setRecords(updated);
-              localStorage.setItem('walletRecords', JSON.stringify(updated));
+              
+              if (editingId) {
+                  const updated = records.map(r => 
+                      r.id === editingId ? {...r, item: form.item, amount: parseFloat(form.amount), img: form.img} : r
+                  );
+                  setRecords(updated);
+                  localStorage.setItem('walletRecords', JSON.stringify(updated));
+                  setEditingId(null);
+              } else {
+                  const newRec = { 
+                      id: Date.now().toString(), 
+                      item: form.item, 
+                      amount: parseFloat(form.amount), 
+                      date: new Date().toISOString(),
+                      img: form.img
+                  };
+                  const updated = [...records, newRec];
+                  setRecords(updated);
+                  localStorage.setItem('walletRecords', JSON.stringify(updated));
+              }
               setForm({item:'', amount:'', img: null});
           };
 
-          const deleteRecord = (idx) => {
+          const startEdit = (rec) => {
+              setForm({item: rec.item, amount: rec.amount, img: rec.img});
+              setEditingId(rec.id);
+              window.scrollTo({top:0, behavior:'smooth'});
+          };
+
+          const cancelEdit = () => {
+              setForm({item:'', amount:'', img: null});
+              setEditingId(null);
+          };
+
+          const deleteRecord = (id) => {
               if(!confirm('確定刪除?')) return;
-              const updated = [...records];
-              updated.splice(idx, 1);
+              const updated = records.filter(r => r.id !== id);
               setRecords(updated);
               localStorage.setItem('walletRecords', JSON.stringify(updated));
+              if(editingId === id) cancelEdit();
           };
 
           const totalYen = records.reduce((acc, cur) => acc + cur.amount, 0);
@@ -515,13 +587,15 @@
                     <div className="text-right h-8 text-xl text-muji-accent font-bold">{calcResult}</div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 className="font-bold text-xl text-muji-primary mb-5"><i className="fa-solid fa-pen-to-square mr-2"></i>新增記帳</h3>
+                <div className={`bg-white rounded-2xl p-6 shadow-sm border transition-colors ${editingId ? 'border-muji-accent border-2' : 'border-gray-100'}`}>
+                    <h3 className={`font-bold text-xl mb-5 ${editingId ? 'text-muji-accent' : 'text-muji-primary'}`}>
+                        {editingId ? <><i className="fa-solid fa-pen mr-2"></i>修改記帳</> : <><i className="fa-solid fa-pen-to-square mr-2"></i>新增記帳</>}
+                    </h3>
                     <input value={form.item} onChange={e=>setForm({...form, item:e.target.value})} placeholder="品項名稱" className="w-full border-2 border-gray-200 rounded-lg p-3 mb-3 text-lg" />
                     <input type="number" value={form.amount} onChange={e=>setForm({...form, amount:e.target.value})} placeholder="日幣金額" className="w-full border-2 border-gray-200 rounded-lg p-3 mb-4 text-lg" />
                     <div className="flex gap-3 mb-5">
                         <label className="flex-1 cursor-pointer bg-gray-50 text-gray-600 py-3 rounded-lg text-center border-2 border-dashed border-gray-300 hover:bg-gray-100 flex items-center justify-center gap-2">
-                            <i className="fa-solid fa-camera"></i> 拍照
+                            <i className="fa-solid fa-camera"></i> {form.img ? '更換照片' : '拍照存證'}
                             <input type="file" accept="image/*" className="hidden" onChange={e => {
                                 if(e.target.files[0]) processImage(e.target.files[0], b64 => setForm({...form, img: b64}));
                             }} />
@@ -533,27 +607,39 @@
                             <button onClick={()=>setForm({...form, img:null})} className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md"><i className="fa-solid fa-xmark"></i></button>
                         </div>
                     )}
-                    <button onClick={addExpense} className="w-full bg-muji-primary text-white rounded-xl py-3 text-lg font-bold shadow-md">記一筆</button>
+                    <div className="flex gap-3">
+                        {editingId && (
+                            <button onClick={cancelEdit} className="flex-1 bg-gray-200 text-gray-600 rounded-xl py-3 text-lg font-bold shadow-sm">取消</button>
+                        )}
+                        <button onClick={handleSave} className={`flex-[2] text-white rounded-xl py-3 text-lg font-bold shadow-md ${editingId ? 'bg-muji-accent' : 'bg-muji-primary'}`}>{editingId ? '儲存修改' : '記一筆'}</button>
+                    </div>
                 </div>
 
                 <div>
                     <h3 className="font-bold text-2xl mb-4 pl-3 border-l-4 border-muji-primary">消費紀錄</h3>
-                    <div className="space-y-4">
-                        {[...records].reverse().map((rec, idx) => (
-                            <div key={idx} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-4">
-                                {rec.img ? <img src={rec.img} className="w-16 h-16 rounded-lg object-cover border bg-gray-50 shrink-0" onClick={()=>setPreviewImg(rec.img)}/> : <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-300 shrink-0"><i className="fa-solid fa-bag-shopping fa-xl"></i></div>}
-                                <div className="flex-1 min-w-0">
-                                    <div className="font-bold text-lg truncate text-gray-800">{rec.item}</div>
-                                    <div className="text-sm text-gray-500 mt-1">{new Date(rec.date).toLocaleDateString()}</div>
+                    {records.length === 0 ? (
+                        <div className="text-center text-gray-400 py-10 text-lg">目前還沒有亂花錢喔！</div>
+                    ) : (
+                        <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                            {[...records].reverse().map((rec, idx) => (
+                                <div key={rec.id} className={`p-4 flex items-center gap-3 border-b border-gray-100 last:border-0 ${editingId === rec.id ? 'bg-blue-50' : (idx % 2 === 0 ? 'bg-white' : 'bg-[#FAF9F6]')}`}>
+                                    {rec.img ? <img src={rec.img} className="w-14 h-14 rounded-lg object-cover border border-gray-200 bg-white shrink-0" onClick={()=>setPreviewImg(rec.img)}/> : <div className="w-14 h-14 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-300 shrink-0"><i className="fa-solid fa-bag-shopping fa-lg"></i></div>}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-lg truncate text-gray-800">{rec.item}</div>
+                                        <div className="text-xs text-gray-400 mt-0.5">{new Date(rec.date).toLocaleDateString()}</div>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                        <div className="font-bold font-mono text-lg">¥{formatMoney(rec.amount)}</div>
+                                        <div className="text-xs text-muji-accent font-bold">≈ NT${formatMoney(Math.round(rec.amount * rate))}</div>
+                                    </div>
+                                    <div className="flex gap-1 ml-1">
+                                        <button onClick={()=>startEdit(rec)} className="text-gray-400 p-2 hover:text-muji-primary hover:bg-gray-100 rounded-lg transition-colors"><i className="fa-solid fa-pen"></i></button>
+                                        <button onClick={()=>deleteRecord(rec.id)} className="text-gray-400 p-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><i className="fa-solid fa-trash"></i></button>
+                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="font-bold font-mono text-xl">¥{formatMoney(rec.amount)}</div>
-                                    <div className="text-sm text-muji-accent font-bold">≈ NT${formatMoney(Math.round(rec.amount * rate))}</div>
-                                </div>
-                                <button onClick={()=>deleteRecord(records.length - 1 - idx)} className="text-gray-300 ml-2 p-2"><i className="fa-solid fa-trash"></i></button>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="bg-muji-primary text-white rounded-2xl p-5 flex justify-between items-center shadow-lg mt-8">
@@ -577,6 +663,13 @@
             const [shop, setShop] = useState([]);
             const [shopInput, setShopInput] = useState({text:'', img: null});
             const [fullImg, setFullImg] = useState(null);
+            
+            // Collapsible state
+            const [expandedSections, setExpandedSections] = useState(() => {
+                const initial = {};
+                PACKING_LIST.forEach(c => initial[c.title] = true);
+                return initial;
+            });
 
             useEffect(() => {
                 const c = localStorage.getItem('checkListState');
@@ -591,6 +684,10 @@
                 const n = {...checks, [item]: !checks[item]};
                 setChecks(n);
                 localStorage.setItem('checkListState', JSON.stringify(n));
+            };
+
+            const toggleSection = (title) => {
+                setExpandedSections(prev => ({ ...prev, [title]: !prev[title] }));
             };
 
             const addShop = () => {
@@ -608,10 +705,45 @@
             };
             
             const deleteShop = (id) => {
+                if(!confirm('確定刪除這個項目嗎？')) return;
                 const n = shop.filter(i => i.id !== id);
                 setShop(n);
                 localStorage.setItem('shopList', JSON.stringify(n));
             };
+
+            // Helpers for splitting lists
+            const pendingItems = shop.filter(i => !i.done).reverse();
+            const completedItems = shop.filter(i => i.done).reverse();
+
+            const renderShopItem = (item) => (
+                <div key={item.id} className={`bg-white rounded-2xl p-4 flex gap-4 items-start shadow-sm border transition-all ${item.done ? 'border-gray-100 bg-gray-50/50' : 'border-gray-100'}`}>
+                    <div className="pt-2">
+                        <button 
+                            onClick={()=>toggleShop(item.id)}
+                            className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${item.done ? 'bg-muji-accent border-muji-accent' : 'border-gray-300 bg-white'}`}
+                        >
+                            {item.done && <i className="fa-solid fa-check text-white text-xs"></i>}
+                        </button>
+                    </div>
+                    {item.img && (
+                        <img 
+                            src={item.img} 
+                            className={`w-20 h-20 object-cover rounded-lg shrink-0 border border-gray-100 cursor-pointer ${item.done ? 'opacity-50 grayscale' : ''}`}
+                            onClick={()=>setFullImg(item.img)} 
+                        />
+                    )}
+                    <div className="flex-1 min-w-0 pt-1">
+                        <div className={`text-xl font-medium break-all ${item.done ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                           {linkifyText(item.text).map((part, i) => 
+                             part.match(/^https?:\/\//) ? (
+                               <a key={i} href={part} target="_blank" className="text-blue-500 underline text-base ml-1"><i className="fa-solid fa-link"></i>連結</a>
+                             ) : part
+                           )}
+                        </div>
+                    </div>
+                    <button onClick={()=>deleteShop(item.id)} className="text-gray-300 p-2 hover:text-red-400"><i className="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+            );
 
             return (
                 <div className="pt-24 pb-24 px-4 animate-fade-in">
@@ -623,25 +755,45 @@
                     </div>
 
                     {tab === 'pack' && (
-                        <div className="space-y-6 animate-fade-in">
-                            {PACKING_LIST.map((category) => (
-                              <div key={category.title} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                                <h3 className="font-bold text-lg text-muji-primary mb-4 flex items-center gap-2 border-b border-gray-100 pb-2">
-                                  {category.title}
-                                </h3>
-                                <div className="grid grid-cols-1 gap-3">
-                                  {category.items.map((item) => (
-                                    <label key={item} className={`cursor-pointer rounded-lg p-3 flex items-center gap-3 transition-all duration-200 active:scale-98 ${checks[item] ? 'bg-muji-primary/10 text-muji-primary' : 'hover:bg-gray-50 text-gray-700'}`}>
-                                      <div className="relative flex items-center justify-center">
-                                        <input type="checkbox" className="peer appearance-none w-6 h-6 border-2 border-gray-300 rounded-md checked:bg-muji-primary checked:border-muji-primary transition-colors" checked={!!checks[item]} onChange={()=>toggleCheck(item)} />
-                                        <i className="fa-solid fa-check absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity text-sm"></i>
-                                      </div>
-                                      <span className={`text-lg font-medium ${checks[item] ? 'line-through opacity-70' : ''}`}>{item}</span>
-                                    </label>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
+                        <div className="space-y-4 animate-fade-in">
+                            {PACKING_LIST.map((category) => {
+                                const isExpanded = expandedSections[category.title];
+                                const completedCount = category.items.filter(i => checks[i]).length;
+                                return (
+                                  <div key={category.title} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 overflow-hidden transition-all">
+                                    <div 
+                                        className="flex items-center justify-between cursor-pointer"
+                                        onClick={() => toggleSection(category.title)}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <h3 className="font-bold text-lg text-muji-primary">
+                                              {category.title}
+                                            </h3>
+                                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full font-mono">
+                                                {completedCount}/{category.items.length}
+                                            </span>
+                                        </div>
+                                        <div className="text-gray-400 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-50">
+                                            <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+                                        </div>
+                                    </div>
+                                    
+                                    {isExpanded && (
+                                        <div className="grid grid-cols-1 gap-3 mt-3 border-t border-gray-100 pt-3 animate-fade-in">
+                                          {category.items.map((item) => (
+                                            <label key={item} className={`cursor-pointer rounded-lg p-3 flex items-center gap-3 transition-all duration-200 active:scale-98 ${checks[item] ? 'bg-muji-primary/10 text-muji-primary' : 'hover:bg-gray-50 text-gray-700'}`}>
+                                              <div className="relative flex items-center justify-center">
+                                                <input type="checkbox" className="peer appearance-none w-6 h-6 border-2 border-gray-300 rounded-md checked:bg-muji-primary checked:border-muji-primary transition-colors" checked={!!checks[item]} onChange={()=>toggleCheck(item)} />
+                                                <i className="fa-solid fa-check absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity text-sm"></i>
+                                              </div>
+                                              <span className={`text-lg font-medium ${checks[item] ? 'line-through opacity-70' : ''}`}>{item}</span>
+                                            </label>
+                                          ))}
+                                        </div>
+                                    )}
+                                  </div>
+                                );
+                            })}
                         </div>
                     )}
 
@@ -673,20 +825,27 @@
                                 <button onClick={addShop} className="w-full bg-muji-primary text-white rounded-xl py-3 text-lg font-bold shadow-md">加入清單</button>
                             </div>
                             <div className="space-y-4">
-                                {[...shop].reverse().map(item => (
-                                    <div key={item.id} className="bg-white rounded-2xl p-4 flex gap-4 items-start shadow-sm border border-gray-100">
-                                        <div className="pt-2"><input type="checkbox" checked={item.done} onChange={()=>toggleShop(item.id)} className="w-6 h-6 accent-muji-primary" /></div>
-                                        {item.img && <img src={item.img} className="w-20 h-20 object-cover rounded-lg border border-gray-100" onClick={()=>setFullImg(item.img)} />}
-                                        <div className={`flex-1 pt-1 text-xl font-medium ${item.done ? 'line-through text-gray-300' : 'text-gray-800'}`}>
-                                           {linkifyText(item.text).map((part, i) => 
-                                             part.match(/^https?:\/\//) ? (
-                                               <a key={i} href={part} target="_blank" className="text-blue-500 underline text-base ml-1"><i className="fa-solid fa-link"></i>連結</a>
-                                             ) : part
-                                           )}
-                                        </div>
-                                        <button onClick={()=>deleteShop(item.id)} className="text-gray-300 p-2"><i className="fa-solid fa-xmark text-xl"></i></button>
+                                {shop.length === 0 && (
+                                    <div className="text-center text-gray-400 text-lg py-10 flex flex-col items-center gap-2">
+                                        <i className="fa-solid fa-cart-shopping text-4xl text-gray-200"></i>
+                                        購物車空空的
                                     </div>
-                                ))}
+                                )}
+                                
+                                {pendingItems.map(renderShopItem)}
+
+                                {completedItems.length > 0 && (
+                                    <>
+                                        <div className="flex items-center gap-3 py-2 mt-6">
+                                            <div className="h-px bg-gray-200 flex-1"></div>
+                                            <span className="text-sm font-bold text-gray-400 flex items-center gap-1">
+                                                <i className="fa-solid fa-circle-check"></i> 已購買 ({completedItems.length})
+                                            </span>
+                                            <div className="h-px bg-gray-200 flex-1"></div>
+                                        </div>
+                                        {completedItems.map(renderShopItem)}
+                                    </>
+                                )}
                             </div>
                         </div>
                     )}
@@ -697,46 +856,108 @@
 
         // INFO VIEW
         const InfoView = () => {
-            const [qr, setQr] = useState(null);
-            const [full, setFull] = useState(null);
-            useEffect(() => {
-                const s = localStorage.getItem('entryQRCode');
-                if(s) setQr(s);
-            }, []);
+          const [qrCode, setQrCode] = useState(null);
+          const [fullImg, setFullImg] = useState(null);
 
-            return (
-                <div className="pt-24 pb-24 px-4 space-y-6 animate-fade-in">
-                    <div className="bg-white rounded-2xl p-5 border-l-4 border-muji-accent shadow-sm">
-                        <h3 className="font-bold text-2xl text-muji-primary mb-4 flex items-center gap-3"><i className="fa-solid fa-qrcode"></i> 入境 QR Code</h3>
-                        {qr ? (
-                            <div className="text-center relative">
-                                <img src={qr} className="max-w-full rounded-lg border-2 border-gray-200 mx-auto" onClick={()=>setFull(qr)} />
-                                <button onClick={()=>{if(confirm('刪除?')) {setQr(null); localStorage.removeItem('entryQRCode')}}} className="mt-4 text-red-500 border border-red-500 px-4 py-2 rounded-lg text-sm mx-auto flex gap-2 items-center justify-center"><i className="fa-solid fa-trash"></i> 刪除重傳</button>
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-                                <i className="fa-regular fa-image text-4xl text-gray-300 mb-3 block"></i>
-                                <label className="inline-flex items-center gap-2 bg-muji-primary text-white px-6 py-3 rounded-xl font-bold cursor-pointer shadow-md"><i className="fa-solid fa-upload"></i> 上傳 QR Code<input type="file" accept="image/*" className="hidden" onChange={e=>{if(e.target.files[0]) processImage(e.target.files[0], b=> {setQr(b); localStorage.setItem('entryQRCode', b)})}}/></label>
-                            </div>
-                        )}
+          useEffect(() => {
+            const saved = localStorage.getItem('entryQRCode');
+            if(saved) setQrCode(saved);
+          }, []);
+
+          const handleUpload = (e) => {
+            const file = e.target.files?.[0];
+            if(file) {
+                processImage(file, (base64) => {
+                    setQrCode(base64);
+                    localStorage.setItem('entryQRCode', base64);
+                });
+            }
+          };
+
+          const handleDelete = () => {
+              if(confirm('確定刪除 QR Code?')) {
+                  setQrCode(null);
+                  localStorage.removeItem('entryQRCode');
+              }
+          }
+
+          return (
+            <div className="pt-24 pb-24 px-4 space-y-6 animate-fade-in">
+              {/* QR Code */}
+              <div className="bg-white rounded-2xl p-5 border-l-4 border-muji-accent shadow-sm">
+                <h3 className="font-bold text-2xl text-muji-primary mb-4 flex items-center gap-3">
+                  <i className="fa-solid fa-qrcode"></i> 入境 QR Code
+                </h3>
+                {qrCode ? (
+                    <div className="text-center mb-4 relative">
+                        <img src={qrCode} className="max-w-full h-auto rounded-lg border-2 border-gray-200 mx-auto shadow-sm cursor-pointer" onClick={()=>setFullImg(qrCode)} />
+                        <button onClick={handleDelete} className="mt-4 text-red-500 border border-red-500 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 mx-auto hover:bg-red-50">
+                            <i className="fa-solid fa-trash"></i> 刪除重傳
+                        </button>
                     </div>
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                        <h3 className="font-bold text-xl text-muji-primary mb-4 flex items-center justify-between">天氣預報 <span className="text-xs text-gray-400 font-normal">tenki.jp</span></h3>
-                        <a href="https://tenki.jp" target="_blank" rel="noopener noreferrer" className="border-2 border-muji-primary text-muji-primary rounded-xl py-4 font-bold text-center flex items-center justify-center gap-2 hover:bg-muji-primary hover:text-white transition-colors w-full active:scale-95 block no-underline text-lg">
-                            <i className="fa-solid fa-cloud-sun text-2xl"></i>前往日本天氣預報
-                        </a>
+                ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+                        <i className="fa-regular fa-image text-gray-300 text-5xl mb-3"></i>
+                        <p className="text-gray-500 mb-4">還沒上傳截圖喔</p>
+                        <label className="inline-flex items-center gap-2 bg-muji-primary text-white px-6 py-3 rounded-xl font-bold cursor-pointer shadow-md">
+                            <i className="fa-solid fa-upload"></i> 上傳 QR Code
+                            <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+                        </label>
                     </div>
-                    <div className="bg-red-50/30 rounded-2xl p-6 border-l-4 border-red-400 shadow-sm">
-                        <h3 className="font-bold text-xl text-red-800 mb-4 flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i>緊急聯絡</h3>
-                        <div className="space-y-4 text-base">
-                             <div className="flex justify-between border-b border-red-100 pb-2"><span>警察局 (110)</span><span className="font-bold text-red-600 text-xl">110</span></div>
-                             <div className="flex justify-between border-b border-red-100 pb-2"><span>救護車 (119)</span><span className="font-bold text-red-600 text-xl">119</span></div>
-                             <div className="mt-4"><p><strong>台北駐日經濟文化代表處:</strong> <a href="tel:0332807111" className="text-blue-600">03-3280-7111</a></p></div>
+                )}
+              </div>
+
+              {/* Hotel */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 className="font-bold text-xl text-muji-primary mb-5 flex items-center gap-2"><i className="fa-solid fa-bed"></i> 住宿資訊</h3>
+                <div className="space-y-6">
+                    {HOTEL_LIST.map((hotel, idx) => (
+                        <div key={idx} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                            <div className="flex justify-between items-start">
+                                <h4 className="font-bold text-lg text-gray-800 mb-1">{hotel.name}</h4>
+                                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-md whitespace-nowrap">{hotel.note}</span>
+                            </div>
+                            <a href={getMapLink(hotel.address)} target="_blank" className="text-gray-500 text-sm flex items-start gap-1 hover:text-muji-primary mt-1">
+                                <i className="fa-solid fa-location-dot mt-1"></i> {hotel.address}
+                            </a>
                         </div>
-                    </div>
-                    {full && <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4" onClick={()=>setFull(null)}><img src={full} className="max-w-full max-h-full rounded-lg shadow-2xl"/></div>}
+                    ))}
                 </div>
-            );
+              </div>
+
+              {/* Weather */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                 <h3 className="font-bold text-xl text-muji-primary mb-4 flex items-center justify-between">
+                    天氣預報
+                    <span className="text-xs text-gray-400 font-normal flex items-center gap-1"><i className="fa-solid fa-up-right-from-square"></i> tenki.jp</span>
+                 </h3>
+                 <a href="https://tenki.jp" target="_blank" className="border-2 border-muji-primary text-muji-primary rounded-xl py-4 font-bold text-center flex items-center justify-center gap-3 hover:bg-muji-primary hover:text-white transition-colors w-full text-lg shadow-sm">
+                    <i className="fa-solid fa-cloud-sun"></i> 前往日本天氣預報
+                 </a>
+              </div>
+
+              {/* Emergency */}
+              <div className="bg-red-50/30 rounded-2xl p-6 border-l-4 border-red-400 shadow-sm">
+                 <h3 className="font-bold text-xl text-red-800 mb-4 flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i> 緊急聯絡</h3>
+                 <div className="space-y-4 text-base">
+                    <div className="flex justify-between items-center border-b border-red-100 pb-2">
+                        <span className="text-gray-700">警察局 (Police)</span>
+                        <a href="tel:110" className="font-bold font-mono text-2xl text-red-600">110</a>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-red-100 pb-2">
+                        <span className="text-gray-700">救護車 (Fire/Amb)</span>
+                        <a href="tel:119" className="font-bold font-mono text-2xl text-red-600">119</a>
+                    </div>
+                    <div className="mt-4 text-sm text-gray-600 space-y-2">
+                        <p><strong>台北駐日經濟文化代表處:</strong><br/><a href="tel:0332807111" className="text-blue-600 text-lg">03-3280-7111</a></p>
+                        <p><strong>緊急聯絡電話:</strong><br/><a href="tel:08010097179" className="text-blue-600 text-lg">080-1009-7179</a></p>
+                    </div>
+                 </div>
+              </div>
+
+              {fullImg && <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={()=>setFullImg(null)}><img src={fullImg} className="max-w-full max-h-full rounded-lg shadow-2xl"/></div>}
+            </div>
+          );
         };
 
         // MAIN APP
