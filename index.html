@@ -150,7 +150,7 @@
               { time: "10:30", title: "銀山溫泉", desc: "散步拍照", type: "activity" },
               { time: "12:30", title: "接駁車回程", desc: "準備離開", type: "transport" },
               { time: "14:00", title: "道の駅 おおさき", map: "2 Chome-5-50 Furukawasenjuujicho, Ōsaki, Miyagi 989-6174日本", type: "activity" },
-              { time: "15:30", title: "松島海岸", map: "日本〒981-0213 Miyagi, Miyagi District, Matsushima, Namiuchihama−１０ JR松島海岸駅構内", type: "activity" },
+              { time: "15:30", title: "松島海岸", map: "日本〒981-0213 Miyagi, Miyagi District, Matsushima, Namiuchihama−１０ JR松島海岸駅構內", type: "activity" },
               { time: "17:30", title: "三井OUTLET 仙台港", map: "日本〒983-0013 Miyagi, Sendai, Miyagino Ward, Nakano, 3 Chome−７−2", type: "activity" },
               { time: "住宿", title: "The OneFive Sendai", map: "4 Chome-6-28 Tsutsujigaoka, Miyagino Ward, Sendai, Miyagi", type: "hotel" }
           ]},
@@ -477,7 +477,7 @@
 
               {showModal && (
                 <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-                  <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl">
+                  <div className="bg-white rounded-2xl w-full max-sm p-6 shadow-2xl">
                     <h3 className="font-bold text-xl mb-4 text-center">新增餐廳</h3>
                     <input className="w-full border-2 border-gray-200 rounded-lg p-3 mb-3 text-lg" placeholder="餐廳名稱" value={newFood.name} onChange={e => setNewFood({...newFood, name: e.target.value})} />
                     <input className="w-full border-2 border-gray-200 rounded-lg p-3 mb-3 text-lg" placeholder="地址" value={newFood.addr} onChange={e => setNewFood({...newFood, addr: e.target.value})} />
@@ -664,12 +664,14 @@
             const [shopInput, setShopInput] = useState({text:'', img: null});
             const [fullImg, setFullImg] = useState(null);
             
-            // Collapsible state
             const [expandedSections, setExpandedSections] = useState(() => {
                 const initial = {};
                 PACKING_LIST.forEach(c => initial[c.title] = true);
                 return initial;
             });
+
+            // Tracking inline previews
+            const [expandedPreviews, setExpandedPreviews] = useState(new Set());
 
             useEffect(() => {
                 const c = localStorage.getItem('checkListState');
@@ -688,6 +690,13 @@
 
             const toggleSection = (title) => {
                 setExpandedSections(prev => ({ ...prev, [title]: !prev[title] }));
+            };
+
+            const toggleUrlPreview = (url) => {
+                const newSet = new Set(expandedPreviews);
+                if (newSet.has(url)) newSet.delete(url);
+                else newSet.add(url);
+                setExpandedPreviews(newSet);
             };
 
             const addShop = () => {
@@ -711,9 +720,41 @@
                 localStorage.setItem('shopList', JSON.stringify(n));
             };
 
-            // Helpers for splitting lists
-            const pendingItems = shop.filter(i => !i.done).reverse();
-            const completedItems = shop.filter(i => i.done).reverse();
+            const renderTextWithPreviews = (text, isDone = false) => {
+                const parts = linkifyText(text);
+                return (
+                    <div className="space-y-3">
+                        <div>
+                            {parts.map((part, i) => {
+                                if (part.match(/^https?:\/\//)) {
+                                    const isExp = expandedPreviews.has(part);
+                                    return (
+                                        <span key={i} className="inline-flex items-center gap-1 mx-1 align-middle">
+                                            <a href={part} target="_blank" rel="noreferrer" className={`text-blue-500 underline inline-flex items-center gap-1 ${isDone ? 'opacity-50' : ''}`}>
+                                                <i className="fa-solid fa-link"></i>連結
+                                            </a>
+                                            <button onClick={() => toggleUrlPreview(part)} className={`w-7 h-7 flex items-center justify-center rounded-md transition-all ${isExp ? 'bg-muji-primary text-white shadow-inner' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                                                <i className={`fa-solid ${isExp ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
+                                            </button>
+                                        </span>
+                                    );
+                                }
+                                return part;
+                            })}
+                        </div>
+                        {parts.filter(p => p.match(/^https?:\/\//) && expandedPreviews.has(p)).map((url, idx) => (
+                            <div key={idx} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md mt-2 animate-fade-in ring-4 ring-gray-100/50">
+                                <div className="bg-muji-bg px-3 py-1.5 flex justify-between items-center border-b border-gray-100">
+                                    <span className="text-[10px] text-gray-400 font-mono truncate max-w-[60%]">{url}</span>
+                                    <a href={url} target="_blank" rel="noreferrer" className="text-[10px] text-muji-primary font-bold flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-gray-200 active:scale-95"><i className="fa-solid fa-arrow-up-right-from-square"></i> 開啟頁面</a>
+                                </div>
+                                <iframe src={url} className="w-full h-56 border-0 bg-white" sandbox="allow-scripts allow-same-origin"></iframe>
+                                <div className="p-2 bg-gray-50 text-[10px] text-center text-gray-400 italic">若網頁無法載入（顯示拒絕連線），代表該網站安全設定禁止嵌入，請點選上方「開啟頁面」。</div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
 
             const renderShopItem = (item) => (
                 <div key={item.id} className={`bg-white rounded-2xl p-4 flex gap-4 items-start shadow-sm border transition-all ${item.done ? 'border-gray-100 bg-gray-50/50' : 'border-gray-100'}`}>
@@ -733,12 +774,8 @@
                         />
                     )}
                     <div className="flex-1 min-w-0 pt-1">
-                        <div className={`text-xl font-medium break-all ${item.done ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                           {linkifyText(item.text).map((part, i) => 
-                             part.match(/^https?:\/\//) ? (
-                               <a key={i} href={part} target="_blank" className="text-blue-500 underline text-base ml-1"><i className="fa-solid fa-link"></i>連結</a>
-                             ) : part
-                           )}
+                        <div className={`text-xl font-medium break-all ${item.done ? 'text-gray-400' : 'text-gray-800'}`}>
+                           {renderTextWithPreviews(item.text, item.done)}
                         </div>
                     </div>
                     <button onClick={()=>deleteShop(item.id)} className="text-gray-300 p-2 hover:text-red-400"><i className="fa-solid fa-xmark text-xl"></i></button>
@@ -777,7 +814,6 @@
                                             <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
                                         </div>
                                     </div>
-                                    
                                     {isExpanded && (
                                         <div className="grid grid-cols-1 gap-3 mt-3 border-t border-gray-100 pt-3 animate-fade-in">
                                           {category.items.map((item) => (
@@ -801,10 +837,8 @@
                         <div className="space-y-4">
                             <textarea value={memo} onChange={e=>{setMemo(e.target.value); localStorage.setItem('memoText', e.target.value)}} className="w-full h-80 p-5 rounded-xl border-2 border-gray-200 text-lg resize-none" placeholder="隨手記點什麼..." />
                             <div className="p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
-                                <h4 className="text-sm font-bold text-gray-400 mb-3 flex items-center gap-2">預覽 (網址可點擊)</h4>
-                                <div className="text-lg break-all text-gray-800 space-y-2 whitespace-pre-wrap">
-                                  {linkifyText(memo).map((part, i) => part.match(/https?:\/\/[^\s]+/) ? <a key={i} href={part} target="_blank" className="text-blue-500 underline"><i className="fa-solid fa-link"></i>連結</a> : part)}
-                                </div>
+                                <h4 className="text-sm font-bold text-gray-400 mb-3 flex items-center gap-2">內容預覽</h4>
+                                {renderTextWithPreviews(memo)}
                             </div>
                         </div>
                     )}
@@ -831,25 +865,23 @@
                                         購物車空空的
                                     </div>
                                 )}
-                                
-                                {pendingItems.map(renderShopItem)}
-
-                                {completedItems.length > 0 && (
+                                {shop.filter(i => !i.done).reverse().map(renderShopItem)}
+                                {shop.filter(i => i.done).length > 0 && (
                                     <>
                                         <div className="flex items-center gap-3 py-2 mt-6">
                                             <div className="h-px bg-gray-200 flex-1"></div>
                                             <span className="text-sm font-bold text-gray-400 flex items-center gap-1">
-                                                <i className="fa-solid fa-circle-check"></i> 已購買 ({completedItems.length})
+                                                <i className="fa-solid fa-circle-check"></i> 已購買 ({shop.filter(i => i.done).length})
                                             </span>
                                             <div className="h-px bg-gray-200 flex-1"></div>
                                         </div>
-                                        {completedItems.map(renderShopItem)}
+                                        {shop.filter(i => i.done).reverse().map(renderShopItem)}
                                     </>
                                 )}
                             </div>
                         </div>
                     )}
-                    {fullImg && <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={()=>setFullImg(null)}><img src={fullImg} className="max-w-full max-h-full rounded-lg shadow-2xl"/></div>}
+                    {fullImg && <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 animate-fade-in" onClick={()=>setFullImg(null)}><img src={fullImg} className="max-w-full max-h-full rounded-lg shadow-2xl"/></div>}
                 </div>
             );
         };
@@ -858,28 +890,46 @@
         const InfoView = () => {
           const [qrCode, setQrCode] = useState(null);
           const [fullImg, setFullImg] = useState(null);
+          
+          const [carRental, setCarRental] = useState({ img: null, address: '' });
+          const [isEditingCar, setIsEditingCar] = useState(false);
+          const [tempAddress, setTempAddress] = useState('');
 
           useEffect(() => {
             const saved = localStorage.getItem('entryQRCode');
             if(saved) setQrCode(saved);
+            
+            const savedCar = localStorage.getItem('carRentalInfo');
+            if(savedCar) {
+                const parsed = JSON.parse(savedCar);
+                setCarRental(parsed);
+                setTempAddress(parsed.address);
+            }
           }, []);
 
-          const handleUpload = (e) => {
+          const handleQRUpload = (e) => {
             const file = e.target.files?.[0];
-            if(file) {
-                processImage(file, (base64) => {
-                    setQrCode(base64);
-                    localStorage.setItem('entryQRCode', base64);
-                });
-            }
+            if(file) processImage(file, (b64) => {
+                setQrCode(b64);
+                localStorage.setItem('entryQRCode', b64);
+            });
           };
 
-          const handleDelete = () => {
-              if(confirm('確定刪除 QR Code?')) {
-                  setQrCode(null);
-                  localStorage.removeItem('entryQRCode');
-              }
-          }
+          const handleCarImgUpload = (e) => {
+            const file = e.target.files?.[0];
+            if(file) processImage(file, (b64) => {
+                const newData = { ...carRental, img: b64 };
+                setCarRental(newData);
+                localStorage.setItem('carRentalInfo', JSON.stringify(newData));
+            });
+          };
+
+          const saveCarAddress = () => {
+            const newData = { ...carRental, address: tempAddress };
+            setCarRental(newData);
+            localStorage.setItem('carRentalInfo', JSON.stringify(newData));
+            setIsEditingCar(false);
+          };
 
           return (
             <div className="pt-24 pb-24 px-4 space-y-6 animate-fade-in">
@@ -891,20 +941,72 @@
                 {qrCode ? (
                     <div className="text-center mb-4 relative">
                         <img src={qrCode} className="max-w-full h-auto rounded-lg border-2 border-gray-200 mx-auto shadow-sm cursor-pointer" onClick={()=>setFullImg(qrCode)} />
-                        <button onClick={handleDelete} className="mt-4 text-red-500 border border-red-500 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 mx-auto hover:bg-red-50">
-                            <i className="fa-solid fa-trash"></i> 刪除重傳
-                        </button>
+                        <button onClick={()=>{setQrCode(null); localStorage.removeItem('entryQRCode');}} className="mt-4 text-red-500 border border-red-500 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 mx-auto"><i className="fa-solid fa-trash"></i> 刪除重傳</button>
                     </div>
                 ) : (
                     <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
                         <i className="fa-regular fa-image text-gray-300 text-5xl mb-3"></i>
-                        <p className="text-gray-500 mb-4">還沒上傳截圖喔</p>
                         <label className="inline-flex items-center gap-2 bg-muji-primary text-white px-6 py-3 rounded-xl font-bold cursor-pointer shadow-md">
                             <i className="fa-solid fa-upload"></i> 上傳 QR Code
-                            <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+                            <input type="file" accept="image/*" className="hidden" onChange={handleQRUpload} />
                         </label>
                     </div>
                 )}
+              </div>
+
+              {/* Car Rental Management */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 border-t-4 border-t-orange-400">
+                <div className="flex justify-between items-center mb-5">
+                    <h3 className="font-bold text-xl text-muji-primary flex items-center gap-2">
+                        <i className="fa-solid fa-car"></i> 租車資訊
+                    </h3>
+                    <button onClick={() => setIsEditingCar(!isEditingCar)} className="p-2 text-muji-primary hover:bg-gray-50 rounded-full transition-all">
+                        <i className={`fa-solid ${isEditingCar ? 'fa-xmark' : 'fa-pen-to-square'}`}></i>
+                    </button>
+                </div>
+
+                <div className="space-y-5">
+                    {carRental.img ? (
+                        <div className="relative group">
+                            <img src={carRental.img} className="w-full h-48 object-cover rounded-xl border border-gray-100 shadow-sm cursor-pointer" onClick={()=>setFullImg(carRental.img)} />
+                            {isEditingCar && (
+                                <label className="absolute inset-0 bg-black/40 flex items-center justify-center text-white cursor-pointer rounded-xl">
+                                    <i className="fa-solid fa-camera text-2xl"></i>
+                                    <input type="file" accept="image/*" className="hidden" onChange={handleCarImgUpload} />
+                                </label>
+                            )}
+                        </div>
+                    ) : (
+                        <label className="w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-gray-400 cursor-pointer active:bg-gray-100 transition-colors">
+                            <i className="fa-solid fa-car text-3xl mb-2 opacity-20"></i>
+                            <span className="text-sm">上傳合約或車輛截圖</span>
+                            <input type="file" accept="image/*" className="hidden" onChange={handleCarImgUpload} />
+                        </label>
+                    )}
+
+                    <div className="pt-2">
+                        {isEditingCar ? (
+                            <div className="flex gap-2">
+                                <input value={tempAddress} onChange={e=>setTempAddress(e.target.value)} placeholder="輸入租車公司地址" className="flex-1 border-2 border-muji-primary/20 rounded-lg px-3 py-2 outline-none focus:border-muji-primary" />
+                                <button onClick={saveCarAddress} className="bg-muji-primary text-white w-10 h-10 rounded-lg flex items-center justify-center shadow-md"><i className="fa-solid fa-check"></i></button>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {carRental.address ? (
+                                    <>
+                                        <p className="text-gray-700 font-medium leading-relaxed">{carRental.address}</p>
+                                        <a href={getMapLink(carRental.address)} target="_blank" className="inline-flex items-center gap-2 bg-muji-accent/10 text-muji-accent px-4 py-2 rounded-lg font-bold text-sm border border-muji-accent/20 active:scale-95 transition-transform"><i className="fa-solid fa-location-dot"></i> 在地圖開啟</a>
+                                    </>
+                                ) : (
+                                    <p className="text-gray-400 text-sm italic text-center py-2">尚未設定地點</p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    {isEditingCar && carRental.address && (
+                        <button onClick={()=>{if(confirm('清除全部資訊?')){setCarRental({img:null, address:''}); setTempAddress(''); localStorage.removeItem('carRentalInfo'); setIsEditingCar(false);}}} className="w-full py-2 text-red-500 text-[10px] flex items-center justify-center gap-1 border border-red-100 rounded-lg"><i className="fa-solid fa-trash"></i> 清空資料</button>
+                    )}
+                </div>
               </div>
 
               {/* Hotel */}
@@ -917,9 +1019,7 @@
                                 <h4 className="font-bold text-lg text-gray-800 mb-1">{hotel.name}</h4>
                                 <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-md whitespace-nowrap">{hotel.note}</span>
                             </div>
-                            <a href={getMapLink(hotel.address)} target="_blank" className="text-gray-500 text-sm flex items-start gap-1 hover:text-muji-primary mt-1">
-                                <i className="fa-solid fa-location-dot mt-1"></i> {hotel.address}
-                            </a>
+                            <a href={getMapLink(hotel.address)} target="_blank" className="text-gray-500 text-sm flex items-start gap-1 hover:text-muji-primary mt-1"><i className="fa-solid fa-location-dot mt-1"></i> {hotel.address}</a>
                         </div>
                     ))}
                 </div>
@@ -927,35 +1027,21 @@
 
               {/* Weather */}
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                 <h3 className="font-bold text-xl text-muji-primary mb-4 flex items-center justify-between">
-                    天氣預報
-                    <span className="text-xs text-gray-400 font-normal flex items-center gap-1"><i className="fa-solid fa-up-right-from-square"></i> tenki.jp</span>
-                 </h3>
-                 <a href="https://tenki.jp" target="_blank" className="border-2 border-muji-primary text-muji-primary rounded-xl py-4 font-bold text-center flex items-center justify-center gap-3 hover:bg-muji-primary hover:text-white transition-colors w-full text-lg shadow-sm">
-                    <i className="fa-solid fa-cloud-sun"></i> 前往日本天氣預報
-                 </a>
+                 <h3 className="font-bold text-xl text-muji-primary mb-4 flex items-center justify-between">天氣預報 <span className="text-xs text-gray-400 font-normal"><i className="fa-solid fa-up-right-from-square"></i> tenki.jp</span></h3>
+                 <a href="https://tenki.jp" target="_blank" className="border-2 border-muji-primary text-muji-primary rounded-xl py-4 font-bold text-center flex items-center justify-center gap-3 hover:bg-muji-primary hover:text-white transition-colors w-full text-lg shadow-sm"><i className="fa-solid fa-cloud-sun"></i> 前往日本天氣預報</a>
               </div>
 
               {/* Emergency */}
               <div className="bg-red-50/30 rounded-2xl p-6 border-l-4 border-red-400 shadow-sm">
                  <h3 className="font-bold text-xl text-red-800 mb-4 flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i> 緊急聯絡</h3>
                  <div className="space-y-4 text-base">
-                    <div className="flex justify-between items-center border-b border-red-100 pb-2">
-                        <span className="text-gray-700">警察局 (Police)</span>
-                        <a href="tel:110" className="font-bold font-mono text-2xl text-red-600">110</a>
-                    </div>
-                    <div className="flex justify-between items-center border-b border-red-100 pb-2">
-                        <span className="text-gray-700">救護車 (Fire/Amb)</span>
-                        <a href="tel:119" className="font-bold font-mono text-2xl text-red-600">119</a>
-                    </div>
-                    <div className="mt-4 text-sm text-gray-600 space-y-2">
-                        <p><strong>台北駐日經濟文化代表處:</strong><br/><a href="tel:0332807111" className="text-blue-600 text-lg">03-3280-7111</a></p>
-                        <p><strong>緊急聯絡電話:</strong><br/><a href="tel:08010097179" className="text-blue-600 text-lg">080-1009-7179</a></p>
-                    </div>
+                    <div className="flex justify-between items-center border-b border-red-100 pb-2"><span className="text-gray-700">警察局 (Police)</span><a href="tel:110" className="font-bold font-mono text-2xl text-red-600">110</a></div>
+                    <div className="flex justify-between items-center border-b border-red-100 pb-2"><span className="text-gray-700">救護車 (Fire/Amb)</span><a href="tel:119" className="font-bold font-mono text-2xl text-red-600">119</a></div>
+                    <div className="mt-4 text-sm text-gray-600 space-y-2"><p><strong>台北駐日經濟文化代表處:</strong><br/><a href="tel:0332807111" className="text-blue-600 text-lg">03-3280-7111</a></p><p><strong>緊急聯絡電話:</strong><br/><a href="tel:08010097179" className="text-blue-600 text-lg">080-1009-7179</a></p></div>
                  </div>
               </div>
 
-              {fullImg && <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={()=>setFullImg(null)}><img src={fullImg} className="max-w-full max-h-full rounded-lg shadow-2xl"/></div>}
+              {fullImg && <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 animate-fade-in" onClick={()=>setFullImg(null)}><img src={fullImg} className="max-w-full max-h-full rounded-lg shadow-2xl"/></div>}
             </div>
           );
         };
@@ -972,11 +1058,9 @@
                 if(saved) setCoverImg(saved);
             }, []);
 
-            // Dynamic Icon Logic
             useEffect(() => {
                 const favicon = document.getElementById('favicon');
                 const appleIcon = document.getElementById('apple-touch-icon');
-                
                 if (coverImg) {
                     if(favicon) favicon.href = coverImg;
                     if(appleIcon) appleIcon.href = coverImg;
