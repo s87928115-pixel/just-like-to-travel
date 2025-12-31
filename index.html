@@ -4,27 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>滑雪不跌倒 2025</title>
-    <link id="app-favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>">
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-
+    <!-- Babel for browser-side JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         muji: {
-                            bg: '#F9F8F6', // 米白背景
+                            bg: '#F9F8F6',
                             card: '#FFFFFF',
                             text: '#333333',
-                            primary: '#7F6B5D', // 咖啡色
-                            accent: '#6B8E23', // 橄欖綠
+                            primary: '#7F6B5D',
+                            accent: '#6B8E23',
                             border: '#E0E0D8'
                         }
                     },
@@ -35,162 +31,57 @@
             }
         }
     </script>
-
     <style>
-        html { font-size: 18px; }
         body {
             background-color: #F9F8F6;
-            color: #333333;
             -webkit-tap-highlight-color: transparent;
-            padding-bottom: 90px;
-            padding-top: 70px;
-            line-height: 1.6;
+            font-family: 'Noto Sans TC', sans-serif;
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #EAEAEA;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .btn-muji {
-            background-color: #7F6B5D;
-            color: white;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: opacity 0.2s;
-            display: inline-block;
-            text-align: center;
-        }
-        .btn-muji:active { opacity: 0.8; }
-        
-        .btn-outline {
-            border: 2px solid #7F6B5D;
-            color: #7F6B5D;
-            border-radius: 12px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
-        .nav-item.active { color: #7F6B5D; font-weight: bold; }
-        .nav-item { color: #999; font-size: 0.85rem; transition: color 0.3s; }
-        .nav-icon { font-size: 26px; margin-bottom: 4px; }
-
-        .day-pill {
-            white-space: nowrap;
-            padding: 10px 20px;
-            border-radius: 25px;
-            background: #fff;
-            border: 1px solid #E0E0D8;
-            color: #666;
-            font-size: 1rem;
-            margin-right: 10px;
-            transition: all 0.3s;
-        }
-        .day-pill.active {
-            background: #7F6B5D;
-            color: white;
-            border-color: #7F6B5D;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(127, 107, 93, 0.3);
-        }
-        
-        html { scroll-behavior: smooth; }
-        .highlight-text {
-            color: #d9534f;
-            font-weight: bold;
-            background-color: #fff5f5;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        
-        /* Cover Image Styles */
-        .cover-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            border-radius: 16px;
-            overflow: hidden;
-            background-color: white;
-            border: 2px dashed #E0E0D8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .cover-container:hover { border-color: #7F6B5D; }
-        .cover-image { width: 100%; height: 100%; object-fit: cover; }
-        .cover-placeholder { text-align: center; color: #999; }
-        .cover-remove {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(0,0,0,0.5); color: white;
-            width: 30px; height: 30px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10;
-        }
-        .app-icon-img {
-            width: 32px; height: 32px; object-fit: cover; border-radius: 6px;
-        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.1",
+    "react-dom": "https://esm.sh/react-dom@^19.2.1",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.1/client",
+    "lucide-react": "https://esm.sh/lucide-react@^0.559.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
 </head>
 <body>
+    <div id="root"></div>
 
-    <header class="fixed top-0 w-full bg-[#F9F8F6]/95 backdrop-blur-sm z-50 border-b border-muji-border px-4 py-3 flex justify-between items-center shadow-sm h-[70px]">
-        <h1 class="text-2xl font-bold tracking-widest text-muji-primary flex items-center gap-2">
-            <span id="header-icon-container"><i class="fa-solid fa-person-skiing"></i></span>
-            滑雪不跌倒
-        </h1>
-        <div class="text-sm text-gray-600 font-medium" id="current-date"></div>
-    </header>
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useMemo } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            Calendar, Utensils, Wallet, CheckSquare, Info, Snowflake, 
+            MapPin, ArrowRight, Plane, Image as ImageIcon, X, Camera, 
+            Clock, Train, Upload, Trash, ShoppingBag, Sparkles, Loader2, 
+            ShoppingCart, Home, MoreHorizontal, Eraser, Globe, ExternalLink,
+            ChevronDown, ChevronRight, Luggage, QrCode, Building, Hash, TriangleAlert,
+            Square, Car, Plus, ThumbsUp, CloudSun, Cloud, Umbrella
+        } from 'lucide-react';
+        import { GoogleGenAI, Type } from "@google/genai";
 
-    <main class="px-4" id="app-container">
-    </main>
+        // --- Constants & Data ---
 
-    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <div class="flex justify-between items-center py-3 px-2">
-            <button onclick="switchTab('plan')" class="nav-item active flex flex-col items-center w-1/5" id="nav-plan">
-                <i class="fa-solid fa-calendar-days nav-icon"></i>
-                <span>行程</span>
-            </button>
-            <button onclick="switchTab('food')" class="nav-item flex flex-col items-center w-1/5" id="nav-food">
-                <i class="fa-solid fa-utensils nav-icon"></i>
-                <span>美食</span>
-            </button>
-            <button onclick="switchTab('wallet')" class="nav-item flex flex-col items-center w-1/5" id="nav-wallet">
-                <i class="fa-solid fa-wallet nav-icon"></i>
-                <span>記帳</span>
-            </button>
-            <button onclick="switchTab('lists')" class="nav-item flex flex-col items-center w-1/5" id="nav-lists">
-                <i class="fa-solid fa-list-check nav-icon"></i>
-                <span>清單</span>
-            </button>
-            <button onclick="switchTab('info')" class="nav-item flex flex-col items-center w-1/5" id="nav-info">
-                <i class="fa-solid fa-qrcode nav-icon"></i>
-                <span>資訊</span>
-            </button>
-        </div>
-    </nav>
-
-    <script>
-        // --- DATA ---
-        const rawItinerary = [
+        const ITINERARY_DATA = [
             { day: 1, date: "2/24 (一)", loc: "東京/輕井澤", items: [
                 { time: "06:40", title: "酷航 TR898 出發", desc: "第一航廈報到", type: "transport" },
                 { time: "10:45", title: "抵達成田機場", desc: "入境、拿行李", type: "transport" },
-                { time: "11:13+", title: "搭車至上野", desc: "車程約50分。班次：11:13, 11:39, 11:59...", type: "transport" },
+                { time: "11:13+", title: "成田機場 -> 上野 (Skyliner)", desc: "時刻表:\n11:13 | Skyliner 22號\n11:33 | Skyliner 24號\n11:53 | Skyliner 26號\n12:13 | Skyliner 28號", type: "transport" },
                 { time: "午餐", title: "上野午餐", desc: "推薦：蟹食放題 / 炸豬排 / 天婦羅 (詳見美食頁)", type: "meal" },
-                { time: "15:10", title: "新幹線 -> 輕井澤", desc: "從上野站搭新幹線", type: "transport" },
-                { time: "16:30", title: "租雪具", desc: "地址：4-8 Karuizawahigashi", map: "4-8 Karuizawahigashi, Karuizawa, Kitasaku District, Nagano 389-0104" },
+                { time: "15:10", title: "上野 -> 輕井澤 (新幹線)", desc: "時刻表:\n15:10 | Hakutaka 567\n15:30 | Asama 619\n15:50 | Hakutaka 569", type: "transport" },
+                { time: "16:30", title: "租雪具", desc: "地址：4-8 Karuizawahigashi", map: "4-8 Karuizawahigashi, Karuizawa, Kitasaku District, Nagano 389-0104", type: "activity" },
                 { time: "晚餐", title: "輕井澤晚餐", desc: "愛宕 / Access / 村民食堂 / 燒肉 (詳見美食頁)", type: "meal" },
                 { time: "住宿", title: "輕井澤王子飯店西館", map: "389-0193 長野縣北佐久郡輕井澤町輕井澤1016-85", type: "hotel" }
             ]},
@@ -205,7 +96,7 @@
                 { time: "09:30", title: "榆樹街小鎮", desc: "逛街、買伴手禮", type: "activity" },
                 { time: "11:00", title: "雲場池", desc: "散步拍照", type: "activity" },
                 { time: "11:30", title: "舊輕井澤銀座通", desc: "老街逛逛", type: "activity" },
-                { time: "13:57+", title: "回上野", desc: "發車：13:57, 15:00, 15:35, 15:56", type: "transport" },
+                { time: "13:57+", title: "輕井澤 -> 上野 (新幹線)", desc: "時刻表:\n13:57 | Asama 620\n15:00 | Hakutaka 566\n15:35 | Asama 624\n15:56 | Hakutaka 568", type: "transport" },
                 { time: "晚餐", title: "上野晚餐", desc: "迴轉壽司 / 豬排 (詳見美食頁)", type: "meal" },
                 { time: "住宿", title: "LANDABOUT TOKYO", map: "東京都, 東京, Taito-ku Negishi 3-4-5", type: "hotel" }
             ]},
@@ -213,7 +104,7 @@
                 { time: "09:30", title: "妙義神社", map: "3 Chome-16-16 Komagome, Toshima City, Tokyo", type: "activity" },
                 { time: "10:30", title: "池袋太陽城", map: "3 Chome-1 Higashiikebukuro, Toshima City, Tokyo", type: "activity" },
                 { time: "13:30", title: "抵達上野車站", desc: "準備移動", type: "transport" },
-                { time: "14:00", title: "新幹線 -> 新庄", desc: "前往山形縣", type: "transport" },
+                { time: "14:00", title: "上野 -> 新庄 (新幹線)", desc: "時刻表:\n14:00 | Tsubasa 141\n15:00 | Tsubasa 143\n16:00 | Tsubasa 145", type: "transport" },
                 { time: "14:20", title: "阿王阿真去機場", desc: "搭 SKYLINER 回家", type: "transport" },
                 { time: "住宿", title: "Route Inn 新莊站前", map: "山形県新庄市金沢沖1109-6", type: "hotel" }
             ]},
@@ -221,13 +112,13 @@
                 { time: "07:50", title: "出門", desc: "早起出發", type: "info" },
                 { time: "08:10", title: "陸羽西線 -> 古口", desc: "前往最上川", type: "transport" },
                 { time: "09:00", title: "最上川遊船", desc: "欣賞雪景，結束時間約12點", type: "activity" },
-                { time: "12:05", title: "交通 Step 1: 回新庄", desc: "<b>【JR陸羽西線 40分】</b><br>1. <span class='highlight-text'>高屋 12:05</span> -> 12:54 到新庄<br>2. <span class='highlight-text'>古口 12:18</span> -> 12:54 到新庄<br>3. 古口 13:39 -> 14:05 到新庄", type: "transport" },
-                { time: "轉乘", title: "交通 Step 2: 新庄->仙台", desc: "<b>【PLAN A: 經福島 (新幹線)】</b><br>1. 13:18 新庄 -> 15:17 福島 (轉) 15:37 -> 17:24 仙台<br>2. 15:14 新庄 -> 17:14 福島 (轉) -> 17:46 仙台<br><br><b>【PLAN B: 經山形 (JR+巴士/仙山線)】</b><br>新庄 -> 山形 (JR奧羽本線):<br>- 14:19發(15:32到)<br>- 16:14發(17:23到)<br>山形 -> 仙台:<br>- 高速巴士 (約1hr, 半小時一班)<br>- JR仙山線: 18:02發 -> 19:32到", type: "transport" },
+                { time: "12:05", title: "古口/高屋 -> 新庄", desc: "時刻表:\n12:05 | 高屋站發車\n12:18 | 古口站發車\n12:54 | 抵達新庄站", type: "transport" },
+                { time: "13:18", title: "新庄 -> 仙台 (新幹線)", desc: "時刻表:\n13:18 | 新庄發 (經福島轉乘)\n15:17 | 福島抵達\n15:37 | 福島發 (轉乘)\n17:24 | 仙台抵達", type: "transport" },
                 { time: "19:30", title: "抵達仙台車站", desc: "集合時間", type: "info" },
                 { time: "住宿", title: "The OneFive Sendai", map: "4 Chome-6-28 Tsutsujigaoka, Miyagino Ward, Sendai, Miyagi", type: "hotel" }
             ]},
             { day: 7, date: "3/2 (日)", loc: "仙台/山寺", items: [
-                { time: "Plan A", title: "山寺行", desc: "08:18 或 09:12 出發。午餐：焰藏蕎麥麵", type: "activity" },
+                { time: "08:18", title: "仙台 -> 山寺", desc: "時刻表:\n08:18 | 仙山線發車\n09:12 | 仙山線(次班)\n10:05 | 抵達山寺", type: "transport" },
                 { time: "Plan B", title: "自駕採果", desc: "08:30 仙台朝市 -> 09:30 租車 -> 10:00 採草莓 -> 超市 -> Costco", type: "activity" },
                 { time: "16:00", title: "仙台車站", desc: "會合", type: "info" }
             ]},
@@ -264,718 +155,340 @@
             ]}
         ];
 
-        const foodData = [
+        const FOOD_DATA = [
             { day: "Day 1 (上野午餐)", items: [
-                { name: "蟹食放題 ごっつお", addr: "東京都文京區湯島ライワビル 4F", 
-                  desc: "★必吃：紅楚蟹吃到飽！蟹肉鮮甜軟嫩，還有螃蟹茶碗蒸、焗烤蟹肉等豐富料理。" },
-                { name: "東京炸豬排 がぶう", addr: "東京都台東區上野4-6-4 OGSⅡ B1F", 
-                  desc: "★推薦：厚切炸豬排。外皮酥脆不油膩，肉質多汁，搭配特製醬汁非常下飯。" },
-                { name: "天婦羅 天寿ゞ", addr: "2 Chome-6-7 Ueno, Taito City, Tokyo", 
-                  desc: "★老店：80年歷史老店。麵衣輕薄酥脆，必點「特上天丼」，有大蝦、穴子魚，醬汁濃郁。" },
-                { name: "金沢まいもん寿司", addr: "東京都台東区上野3丁目24-6パルコヤ6階", 
-                  desc: "★推薦：來自北陸金澤的頂級迴轉壽司。必點「白蝦」、「喉黑魚」，鮮度超群！" }
+                { name: "蟹食放題 ごっつお", addr: "東京都文京區湯島ライワビル 4F", url: "https://www.hotpepper.jp/strJ001210630/", desc: "★必吃：紅楚蟹吃到飽！蟹肉鮮甜軟嫩。" },
+                { name: "東京炸豬排 がぶう", addr: "東京都台東區上野4-6-4", url: "https://tabelog.com/tokyo/A1311/A131101/13247447/", desc: "★推薦：厚切炸豬排。外皮酥脆不油膩。" },
+                { name: "天婦羅 天寿ゞ", addr: "2 Chome-6-7 Ueno, Taito City", url: "http://ten-suzu.com/", desc: "★老店：80年歷史老店。麵衣輕薄酥脆。" }
             ]},
             { day: "Day 1 (輕井澤晚餐)", items: [
-                { name: "しゃぶしゃぶ愛宕", addr: "長野県北佐久郡軽井沢町東167", tel: "0267-41-6111", 
-                  desc: "★高級：A5等級信州牛壽喜燒與涮涮鍋，肉質入口即化，就在車站附近飯店內。" },
-                { name: "アクセス-ACCESS", addr: "長野県北佐久郡軽井沢町軽井沢東23-2", tel: "0267-42-3081", 
-                  desc: "★氣氛：溫馨的洋食餐酒館，適合想吃點義大利麵、披薩或喝杯小酒放鬆。" },
-                { name: "村民食堂", addr: "長野県北佐久郡軽井沢町長倉2148", tel: "0267-44-3571", 
-                  desc: "★人氣：星野區必吃。推薦「信州彩御膳」與「味噌山賊燒」，能吃到當地野菜與特色料理。" },
-                { name: "ろぐ亭燒肉", addr: "長野縣北佐久郡輕井澤町長倉3148-1", tel: "0267-45-2341", 
-                  desc: "★高CP值：小木屋風格燒肉店。提供平價的和牛套餐，也有吃到飽選項，肉質很棒！" }
+                { name: "村民食堂", addr: "長野県北佐久郡軽井沢町長倉2148", url: "https://www.hoshino-area.jp/shop_and_restaurant/sonminsyokudo/", desc: "★人氣：星野區必吃。推薦「信州彩御膳」。" },
+                { name: "ろぐ亭燒肉", addr: "長野縣北佐久郡輕井澤町長倉3148-1", url: "http://www.logtei.jp/", desc: "★和牛：CP值高，和牛套餐超棒。" }
             ]},
             { day: "Day 4 (上野晚餐)", items: [
-                { name: "三浦三崎港迴轉壽司", addr: "東京都台東區上野6-12-14", 
-                  desc: "★浮誇系：必點「山盛軍艦」系列，鮪魚泥和蟹肉堆得像小山一樣高，CP值爆表。" },
-                { name: "ぽん多本家 豬排", addr: "東京都台東区上野3-23-3", 
-                  desc: "★米其林：必比登推薦名店。使用低溫油炸，豬排呈現粉嫩色澤，口感像牛排一樣軟嫩。" },
-                { name: "上野兔屋 銅鑼燒", addr: "東京都台東区上野１丁目１０−10", 
-                  desc: "★伴手禮：東京三大銅鑼燒之一。紅豆餡綿密，餅皮充滿蜂蜜香氣，建議現買現吃。" },
-                { name: "EGG BABY café", addr: "5 Chome-10-9 Ueno, Taito City, Tokyo", 
-                  desc: "★網美店：招牌「半熟蛋三明治」切面超誘人，還有大人味的焦糖硬布丁也是必點。" },
-                { name: "Torie Ueno", addr: "東京都文京区湯島3-40-8 栗田ビル 1F", 
-                  desc: "★燒鳥：好吃的日式烤雞串專門店，適合作為晚餐後的宵夜場。" }
+                { name: "三浦三崎港", addr: "東京都台東區上野6-12-14", url: "https://tabelog.com/tokyo/A1311/A131101/13010461/", desc: "★浮誇系：必點鮪魚泥山盛軍艦。" }
             ]},
-            { day: "Day 5 (新庄/山形)", items: [
-                { name: "蕎麥Works蔥房廚 (Negibozu)", addr: "新庄市大手町2-28", tel: "0233-23-3120", desc: "營業時間：11:00～22:00" },
-                { name: "Geta Pan (麵包店)", addr: "新庄市鳥越3807-7", tel: "0233-77-4019", desc: "營業時間：8:30-18:30 賣完為止" },
-                { name: "竹美堂 (和果子店)", addr: "新庄市沖之町2-28", tel: "0233-22-2297", desc: "營業時間：9:00-19:00" },
-                { name: "新旬屋 本店", addr: "山形県新庄市沖の町3-20", tel: "050-5595-9102", desc: "營業時間：16:30～20:30" }
-            ]},
-            { day: "Day 6 (仙台)", items: [
-                { name: "Zunda Saryo 仙台站 (ずんだ茶寮)", addr: "Miyagi, Sendai, Aoba Ward, Central, 1 Chome−1−1 仙台駅3F", desc: "必喝毛豆奶昔！" },
-                { name: "牛舌-善治郎 仙台站牛舌通", addr: "Miyagi, Sendai, Aoba Ward, Central, 1 Chome−1−1 ＪＲ仙台駅 3F", desc: "仙台牛舌名店。" },
-                { name: "藤原屋 みちのく酒紀行 (地酒)", addr: "Miyagi, Sendai, Aoba Ward, Central, 1 Chome−1−1 エスパル仙台 東館 2F", desc: "S-PAL仙台東館，品嚐東北地酒。" }
-            ]},
-            { day: "Day 7 (山寺/仙台)", items: [
-                { name: "焰藏 / 山形蕎麦の焔藏", addr: "山寺店", 
-                  desc: "★名物：山寺站旁。必吃「板蕎麥麵」與「鴨肉鍋」，100%使用當地蕎麥粉，香氣十足。" },
-                { name: "一苺一笑 松森農場", addr: "Shiromae-157-1 Matsumori, Izumi Ward, Sendai", 
-                  desc: "★體驗：仙台採草莓名所。溫室種植，草莓又大又甜，還有煉乳無限加。" },
-                { name: "UJIE 超市 吉岡店", addr: "981-3632 Miyagi, Kurokawa District, Taiwa", 
-                  desc: "★補給：在地大型超市，適合買水果、飲料和伴手禮。" }
-            ]},
-            { day: "Day 8 (晚餐)", items: [
-                { name: "肉十八", addr: "仙台", 
-                  desc: "★吃到飽：仙台牛燒肉吃到飽！必攻「厚切牛舌」與「A5和牛」，大口吃肉超滿足。" }
-            ]},
-            { day: "Day 9 (山形晚餐)", items: [
-                { name: "Nanbara Tasuke Sushi (南原 太助寿司)", addr: "Yamagata, Minamiharamachi, 2 Chome−9−12 南原プラザ", desc: "在地壽司店。" },
-                { name: "ISLAND PEAK", addr: "1 Chome-7-24 Honcho, Yamagata, 990-0043", desc: "International Café & Bar。營業時間：11:30–14:30, 18:30–00:00" }
+            { day: "Day 8 (仙台晚餐)", items: [
+                { name: "肉十八", addr: "仙台", url: "https://nikuju-sendai.com/", desc: "★吃到飽：仙台牛燒肉吃到飽！" }
             ]}
         ];
 
-        const packingList = [
-            "護照", "信用卡", "身分證", "現金", "身分證影本", "護照影本", "駕照", "國際駕照", "駕照譯本",
-            "衣物", "帽子", "太陽眼鏡", "隱眼", "梳子", "保養品", "感冒藥", "暈車藥", "過敏藥", "腸胃藥",
-            "充電器", "充電線", "行動電源", "萬國插座", "GoPro/相機", "電池/記憶卡", "網卡", "SIM卡針",
-            "雪鏡", "排汗衣", "保暖長袖", "手套", "長襪", "防滑鞋", "屁墊", "暖暖包", "護膝", "護手", "冰爪"
+        const HOTEL_DATA = [
+            { name: "輕井澤王子飯店西館", date: "2/24 - 2/27", addr: "長野縣北佐久郡輕井澤町輕井澤1016-85", confNo: "W-12345678" },
+            { name: "LANDABOUT TOKYO", date: "2/27 - 2/28", addr: "東京都台東區根岸3-4-5", confNo: "L-99887766" },
+            { name: "Hotel Route Inn 新莊站前", date: "2/28 - 3/1", addr: "山形縣新庄市金澤沖1109-6", confNo: "R-55443322" },
+            { name: "The OneFive Sendai", date: "3/1 - 3/3", addr: "仙台市宮城野區榴岡4-6-28", confNo: "O-11223344" },
+            { name: "Hotel Route Inn 山形南", date: "3/4 - 3/5", addr: "山形縣山形市飯田西1-1-11", confNo: "R-88776655" },
+            { name: "The OneFive Sendai (回程)", date: "3/5 - 3/6", addr: "仙台市宮城野區榴岡4-6-28", confNo: "O-55667788" }
         ];
 
-        // --- STATE & UTILS ---
-
-        let currentTab = 'plan';
-        let walletRate = 0.22;
-        
-        const formatMoney = (num) => new Intl.NumberFormat('en-US').format(num);
-        const getMapLink = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-        const linkify = (text) => {
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-blue-500 underline break-all"><i class="fa-solid fa-link mr-1"></i>連結</a>`);
+        const CATEGORIZED_PACKING_LIST = {
+            "證件與重要物品": ["護照", "信用卡", "現金", "身分證", "護照影本", "駕照", "國際駕照", "駕照譯本", "住宿預約單", "保險單據"],
+            "滑雪專業裝備": ["雪鏡", "排汗衣", "保暖長袖", "雪襪(長)", "雪手套", "屁墊", "護膝", "護手", "防霧噴霧", "冰爪"],
+            "衣物與配件": ["羽絨外套", "帽子(遮耳)", "太陽眼鏡", "發熱衣褲", "休閒衣物", "內衣褲", "防滑鞋/雪靴", "圍巾/脖圍"],
+            "電子產品": ["充電器", "多頭充電線", "行動電源", "萬國插座", "GoPro/相機", "電池/記憶卡", "網卡/SIM卡", "SIM卡針"],
+            "生活用品與藥品": ["感冒藥", "暈車藥", "過敏藥", "腸胃藥", "止痛藥", "暖暖包", "保養品/乳液", "防曬乳", "護唇膏", "隱形眼鏡", "梳子", "牙膏牙刷", "口罩"]
         };
 
-        // --- CORE FUNCTIONS ---
+        // --- Utils ---
 
-        function init() {
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
-            loadLocalStorage();
-            switchTab('plan');
-            checkCoverImg();
-        }
-
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${tab}`).classList.add('active');
-            
-            const container = document.getElementById('app-container');
-            container.innerHTML = '';
-            
-            const existingTopBar = document.getElementById('day-selector-bar');
-            if(existingTopBar) existingTopBar.remove();
-
-            if (tab === 'plan') renderPlan(container);
-            else {
-                document.body.style.paddingTop = '70px';
-            }
-
-            if (tab === 'food') renderFood(container);
-            if (tab === 'wallet') renderWallet(container);
-            if (tab === 'lists') renderLists(container);
-            if (tab === 'info') renderInfo(container);
-
-            window.scrollTo(0, 0);
-        }
-
-        // --- RENDERERS ---
-
-        function renderPlan(container) {
-            let dayBar = `
-                <div id="day-selector-bar" class="fixed top-[70px] left-0 w-full bg-[#F9F8F6]/95 z-40 overflow-x-auto no-scrollbar py-3 px-2 border-b border-muji-border flex items-center shadow-sm">
-            `;
-            rawItinerary.forEach((day, index) => {
-                 dayBar += `<button onclick="scrollToDay(${day.day})" id="btn-day-${day.day}" class="day-pill flex-shrink-0">Day ${day.day}</button>`;
-            });
-            dayBar += `</div>`;
-            
-            document.body.style.paddingTop = '130px'; 
-            
-            container.innerHTML = dayBar + `<div class="space-y-6 animate-fade-in pt-2">`;
-            let html = container.innerHTML;
-            
-            // Cover Image Section
-            const savedCover = localStorage.getItem('planCoverImg');
-            html += `
-                <div class="cover-container relative group" onclick="document.getElementById('coverInput').click()">
-                    ${savedCover 
-                        ? `<img src="${savedCover}" class="cover-image">
-                           <button onclick="event.stopPropagation(); removeCover()" class="cover-remove"><i class="fa-solid fa-xmark"></i></button>` 
-                        : `<div class="cover-placeholder">
-                             <i class="fa-regular fa-image text-3xl mb-2"></i><br>
-                             <span class="text-sm">點擊設定封面照片</span>
-                           </div>`
-                    }
-                    <input type="file" id="coverInput" accept="image/*" class="hidden" onchange="handleCoverUpload(this)">
-                </div>
-            `;
-
-            html += `
-                <div class="card bg-muji-primary text-white border-none relative overflow-hidden mb-6">
-                    <div class="absolute -right-4 -top-4 text-white/10 text-8xl"><i class="fa-solid fa-plane"></i></div>
-                    <h3 class="font-bold text-xl mb-3">航班資訊</h3>
-                    <div class="flex justify-between items-center mb-3">
-                        <div>
-                            <div class="text-sm opacity-80">2/24 去程 (酷航 TR898)</div>
-                            <div class="text-2xl font-bold">06:40 <i class="fa-solid fa-arrow-right text-sm mx-1"></i> 10:45</div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center border-t border-white/20 pt-3">
-                        <div>
-                            <div class="text-sm opacity-80">3/6 回程 (星宇 JX863)</div>
-                            <div class="text-2xl font-bold">17:25 <i class="fa-solid fa-arrow-right text-sm mx-1"></i> 20:35</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            rawItinerary.forEach(day => {
-                html += `
-                    <div id="day-${day.day}" class="mb-10 scroll-mt-40">
-                        <div class="flex items-baseline mb-4 py-2 border-b-2 border-gray-200">
-                            <span class="text-3xl font-bold text-muji-primary mr-3">DAY ${day.day}</span>
-                            <span class="text-lg text-gray-500">${day.date}</span>
-                            <span class="ml-auto text-sm bg-muji-accent text-white px-3 py-1 rounded-full">${day.loc}</span>
-                        </div>
-                        <div class="border-l-4 border-muji-border ml-3 space-y-6 pb-2">
-                `;
-                
-                day.items.forEach(item => {
-                    const mapBtn = item.map ? `<a href="${getMapLink(item.map)}" target="_blank" class="absolute top-4 right-4 text-muji-primary w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full shadow-sm"><i class="fa-solid fa-location-dot fa-xl"></i></a>` : '';
-
-                    html += `
-                        <div class="relative pl-8">
-                            <div class="absolute -left-[11px] top-2 w-5 h-5 rounded-full bg-muji-bg border-4 border-muji-accent flex items-center justify-center"></div>
-                            <div class="card p-5 hover:shadow-lg transition-shadow">
-                                ${mapBtn}
-                                <div class="text-muji-accent font-bold text-lg mb-1">${item.time}</div>
-                                <div class="font-bold text-xl text-muji-text mb-2">${item.title}</div>
-                                ${item.desc ? `<div class="text-base text-gray-600 leading-relaxed">${item.desc}</div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += `</div></div>`;
-            });
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function scrollToDay(day) {
-            const el = document.getElementById(`day-${day}`);
-            if(el) {
-                document.querySelectorAll('.day-pill').forEach(b => b.classList.remove('active'));
-                document.getElementById(`btn-day-${day}`).classList.add('active');
-                el.scrollIntoView({behavior: 'smooth', block: 'start'});
-            }
-        }
-
-        // Cover Image Logic
-        function handleCoverUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
-            processImage(file, (base64) => {
-                localStorage.setItem('planCoverImg', base64);
-                // Re-render to show image
-                if (currentTab === 'plan') renderPlan(document.getElementById('app-container'));
-                checkCoverImg(); // Update icon/header
-            });
-        }
-
-        function removeCover() {
-            if (confirm('確定移除封面照片嗎？')) {
-                localStorage.removeItem('planCoverImg');
-                if (currentTab === 'plan') renderPlan(document.getElementById('app-container'));
-                checkCoverImg();
-            }
-        }
-
-        function checkCoverImg() {
-            const saved = localStorage.getItem('planCoverImg');
-            const iconContainer = document.getElementById('header-icon-container');
-            const favicon = document.getElementById('app-favicon');
-            
-            if (saved) {
-                // Update Header Icon
-                iconContainer.innerHTML = `<img src="${saved}" class="app-icon-img" />`;
-                // Update Favicon
-                favicon.href = saved;
-            } else {
-                iconContainer.innerHTML = `<i class="fa-solid fa-person-skiing"></i>`;
-                // Reset Favicon to default snow
-                favicon.href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>`;
-            }
-        }
-
-        function renderFood(container) {
-            let html = `
-                <div class="grid gap-6">
-                <div class="text-center mb-4">
-                    <h2 class="text-3xl font-serif text-muji-primary font-bold">必吃美食導覽</h2>
-                    <p class="text-sm text-gray-500 mt-1">Gourmet Guide</p>
-                </div>
-            `;
-
-            const customFood = JSON.parse(localStorage.getItem('customFood') || '[]');
-            const allFood = [...foodData];
-            if(customFood.length > 0) {
-                allFood.unshift({day: "自訂新增", items: customFood});
-            }
-
-            allFood.forEach(section => {
-                html += `
-                    <div class="mb-6">
-                        <h3 class="bg-muji-primary text-white py-2 px-4 rounded-lg font-bold text-lg mb-4 inline-block shadow-sm">${section.day}</h3>
-                        <div class="grid gap-4">
-                `;
-                section.items.forEach(item => {
-                    html += `
-                        <div class="card p-5 flex flex-col relative">
-                            <a href="${getMapLink(item.addr)}" target="_blank" class="absolute top-5 right-5 w-12 h-12 bg-muji-bg rounded-full flex items-center justify-center text-muji-primary shadow-md border border-gray-200"><i class="fa-solid fa-location-arrow fa-lg"></i></a>
-                            <h4 class="font-bold text-xl mb-2 text-muji-text pr-12">${item.name}</h4>
-                            <p class="text-base text-gray-500 mb-3"><i class="fa-solid fa-map-pin mr-2 text-muji-primary"></i>${item.addr}</p>
-                            ${item.tel ? `<p class="text-base text-gray-500 mb-3"><i class="fa-solid fa-phone mr-2 text-muji-primary"></i>${item.tel}</p>` : ''}
-                            ${item.desc ? `<div class="bg-orange-50 p-3 rounded-lg border border-orange-100 text-base text-gray-700 leading-relaxed"><i class="fa-solid fa-thumbs-up text-orange-400 mr-2"></i>${item.desc}</div>` : ''}
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            });
-
-            // Add button
-            html += `
-                <button onclick="document.getElementById('addFoodModal').classList.remove('hidden')" class="fixed bottom-24 right-5 bg-muji-primary text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl z-30 transition-transform active:scale-95">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                
-                <div id="addFoodModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-                    <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl">
-                        <h3 class="font-bold text-xl mb-4 text-center">新增餐廳</h3>
-                        <input id="newFoodName" placeholder="餐廳名稱" class="w-full border-2 border-gray-200 rounded-lg p-3 mb-3 text-lg">
-                        <input id="newFoodAddr" placeholder="地址" class="w-full border-2 border-gray-200 rounded-lg p-3 mb-3 text-lg">
-                        <textarea id="newFoodDesc" placeholder="備註/食記..." class="w-full border-2 border-gray-200 rounded-lg p-3 mb-5 text-lg h-24"></textarea>
-                        <div class="flex justify-end gap-3">
-                            <button onclick="document.getElementById('addFoodModal').classList.add('hidden')" class="px-6 py-3 rounded-lg text-gray-500 font-bold border border-gray-300">取消</button>
-                            <button onclick="addCustomFood()" class="bg-muji-primary text-white px-6 py-3 rounded-lg font-bold shadow-md">儲存</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function renderWallet(container) {
-            const records = JSON.parse(localStorage.getItem('walletRecords') || '[]');
-            const totalYen = records.reduce((acc, cur) => acc + cur.amount, 0);
-
-            let html = `
-                <div class="space-y-5">
-                    <div class="card bg-muji-bg border border-muji-primary/20 p-4 flex justify-between items-center">
-                        <span class="text-lg font-bold text-muji-primary">目前匯率</span>
-                        <div class="flex items-center gap-3">
-                            <span class="text-base">1 JPY = </span>
-                            <input type="number" id="rateInput" value="${walletRate}" onchange="updateRate(this.value)" class="w-20 border-2 rounded text-center p-2 text-lg font-bold">
-                            <span class="text-base">TWD</span>
-                        </div>
-                    </div>
-
-                    <div class="card p-5 bg-white">
-                        <label class="block text-sm font-bold text-gray-400 mb-2">快速試算 (可輸入如 500+200*3)</label>
-                        <div class="flex gap-3 mb-3">
-                            <input type="text" id="calcInput" placeholder="輸入日幣..." class="flex-1 border-b-2 border-muji-primary/50 text-2xl py-2 focus:outline-none font-mono">
-                            <button onclick="calculate()" class="btn-muji"><i class="fa-solid fa-calculator"></i></button>
-                        </div>
-                        <div id="calcResult" class="text-right h-8 text-xl text-muji-accent font-bold"></div>
-                    </div>
-
-                    <div class="card p-5">
-                        <h3 class="font-bold text-xl text-muji-primary mb-4"><i class="fa-solid fa-pen-to-square mr-2"></i>新增記帳</h3>
-                        <input id="expenseItem" placeholder="品項名稱" class="w-full border-2 rounded-lg p-3 mb-3 text-lg">
-                        <input id="expenseAmount" type="number" placeholder="日幣金額" class="w-full border-2 rounded-lg p-3 mb-3 text-lg">
-                        
-                        <div class="flex items-center gap-3 mb-4">
-                            <label for="expenseImg" class="flex-1 cursor-pointer bg-gray-100 text-gray-600 py-3 rounded-lg text-center text-base border-2 border-dashed border-gray-300 hover:bg-gray-200 transition-colors">
-                                <i class="fa-solid fa-camera mr-2"></i> 拍照存證
-                            </label>
-                            <input type="file" id="expenseImg" accept="image/*" class="hidden" onchange="previewImage(this)">
-                        </div>
-                        <div id="imgPreviewArea" class="hidden mb-4 relative">
-                            <img id="imgPreview" class="h-32 rounded-lg object-cover border-2 border-gray-200">
-                            <button onclick="clearImage()" class="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg shadow-md"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-
-                        <button onclick="addExpense()" class="w-full btn-muji shadow-md">記一筆</button>
-                    </div>
-
-                    <div>
-                        <h3 class="font-bold text-2xl mb-4 pl-1 border-l-4 border-muji-primary ml-1 pl-3">消費紀錄</h3>
-                        <div class="space-y-4">
-            `;
-
-            if (records.length === 0) {
-                html += `<div class="text-center text-gray-400 py-10 text-lg">目前還沒有亂花錢喔！</div>`;
-            } else {
-                records.slice().reverse().forEach((rec, idx) => {
-                    html += `
-                        <div class="card p-4 flex items-center gap-4">
-                            ${rec.img ? `<img src="${rec.img}" onclick="showFullImage('${rec.img}')" class="w-16 h-16 rounded-lg object-cover border bg-gray-100 shrink-0 shadow-sm">` : `<div class="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-300 shrink-0"><i class="fa-solid fa-bag-shopping fa-xl"></i></div>`}
-                            <div class="flex-1 min-w-0">
-                                <div class="font-bold text-lg truncate text-gray-800">${rec.item}</div>
-                                <div class="text-sm text-gray-500 mt-1">${new Date(rec.date).toLocaleDateString()}</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold font-mono text-xl">¥${formatMoney(rec.amount)}</div>
-                                <div class="text-sm text-muji-accent font-bold">≈ NT$${formatMoney(Math.round(rec.amount * walletRate))}</div>
-                            </div>
-                            <button onclick="deleteExpense(${records.length - 1 - idx})" class="text-gray-300 ml-2 p-2"><i class="fa-solid fa-trash fa-lg"></i></button>
-                        </div>
-                    `;
-                });
-            }
-
-            html += `
-                        <div class="mt-6 p-5 bg-muji-primary text-white rounded-xl flex justify-between items-center shadow-lg mb-8">
-                            <span class="text-lg font-bold">總支出</span>
-                            <div class="text-right">
-                                <div class="text-2xl font-bold">¥${formatMoney(totalYen)}</div>
-                                <div class="text-base opacity-90">≈ NT$${formatMoney(Math.round(totalYen * walletRate))}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.innerHTML = html;
-        }
-
-        function renderLists(container) {
-            const checks = JSON.parse(localStorage.getItem('checkListState') || '{}');
-            const memo = localStorage.getItem('memoText') || '';
-            const shopList = JSON.parse(localStorage.getItem('shopList') || '[]');
-
-            let html = `<div class="space-y-6">`;
-
-            // Tab Switcher
-            html += `
-                <div class="flex border-b-2 border-gray-200 mb-6">
-                    <button onclick="document.getElementById('list-pack').style.display='block';document.getElementById('list-memo').style.display='none';document.getElementById('list-shop').style.display='none';updateListTab(this)" class="flex-1 py-3 text-center font-bold text-xl text-muji-primary border-b-4 border-muji-primary">必備</button>
-                    <button onclick="document.getElementById('list-pack').style.display='none';document.getElementById('list-memo').style.display='block';document.getElementById('list-shop').style.display='none';updateListTab(this)" class="flex-1 py-3 text-center text-xl text-gray-400 border-b-4 border-transparent">備忘</button>
-                    <button onclick="document.getElementById('list-pack').style.display='none';document.getElementById('list-memo').style.display='none';document.getElementById('list-shop').style.display='block';updateListTab(this)" class="flex-1 py-3 text-center text-xl text-gray-400 border-b-4 border-transparent">購物</button>
-                </div>
-            `;
-
-            // 1. Packing List
-            html += `<div id="list-pack" class="animate-fade-in"><div class="grid grid-cols-1 gap-4">`;
-            packingList.forEach(item => {
-                const checked = checks[item] ? 'checked' : '';
-                const style = checks[item] ? 'bg-muji-primary text-white border-transparent' : 'bg-white text-gray-700 border-gray-300';
-                html += `
-                    <label class="cursor-pointer ${style} border-2 rounded-xl p-4 flex items-center gap-4 transition-all duration-200 shadow-sm active:scale-98">
-                        <input type="checkbox" class="hidden" onchange="toggleCheck('${item}')" ${checked}>
-                        <i class="fa-solid ${checks[item] ? 'fa-square-check' : 'fa-square'} text-2xl"></i>
-                        <span class="text-xl font-medium">${item}</span>
-                    </label>
-                `;
-            });
-            html += `</div></div>`;
-
-            // 2. Memo
-            html += `
-                <div id="list-memo" style="display:none" class="animate-fade-in">
-                    <div class="card p-0 overflow-hidden border-2 border-gray-200">
-                        <textarea id="memoArea" class="w-full h-80 p-5 resize-none focus:outline-none text-gray-700 leading-relaxed text-lg" placeholder="隨手記點什麼..." oninput="saveMemo(this.value)">${memo}</textarea>
-                    </div>
-                    <div class="p-5 bg-white rounded-xl mt-4 border border-gray-200 shadow-sm">
-                        <h4 class="text-sm font-bold text-gray-400 mb-3">預覽 (網址可點擊)</h4>
-                        <div class="text-lg break-all text-gray-800 space-y-2">${linkify(memo).replace(/\n/g, '<br>')}</div>
-                    </div>
-                </div>
-            `;
-
-            // 3. Shopping List
-            html += `
-                <div id="list-shop" style="display:none" class="animate-fade-in space-y-5">
-                    <div class="card p-5">
-                         <div class="flex gap-3 mb-3">
-                             <input id="shopItem" placeholder="想買什麼？" class="flex-1 border-2 rounded-lg p-3 text-lg">
-                             <label class="bg-gray-100 px-4 py-3 rounded-lg cursor-pointer border-2 hover:bg-gray-200"><i class="fa-solid fa-camera fa-lg"></i><input type="file" id="shopImg" class="hidden" accept="image/*" onchange="previewShopImg(this)"></label>
-                         </div>
-                         <div id="shopPreviewArea" class="hidden mb-4 relative w-24">
-                            <img id="shopPreview" class="w-24 h-24 object-cover rounded-lg border">
-                             <button onclick="clearShopImg()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-sm"><i class="fa-solid fa-xmark"></i></button>
-                         </div>
-                         <button onclick="addShopItem()" class="btn-muji w-full shadow-md">加入清單</button>
-                    </div>
-                    <div class="space-y-4">
-            `;
-            if (shopList.length === 0) html += `<div class="text-center text-gray-400 text-lg py-5">購物車空空的</div>`;
-            
-            shopList.forEach((item, idx) => {
-                html += `
-                    <div class="card p-4 flex gap-4 items-start">
-                         <div class="pt-2 text-center">
-                            <input type="checkbox" ${item.done?'checked':''} onchange="toggleShopDone(${idx})" class="w-6 h-6 accent-muji-primary transform scale-125">
-                         </div>
-                         ${item.img ? `<img src="${item.img}" class="w-20 h-20 object-cover rounded-lg bg-gray-100 shrink-0 border" onclick="showFullImage('${item.img}')">` : ''}
-                         <div class="flex-1 min-w-0 pt-1">
-                             <div class="text-xl ${item.done?'line-through text-gray-300':'text-gray-800 font-medium'}">${linkify(item.text)}</div>
-                         </div>
-                         <button onclick="deleteShopItem(${idx})" class="text-gray-300 p-2"><i class="fa-solid fa-xmark fa-xl"></i></button>
-                    </div>
-                `;
-            });
-
-            html += `</div></div></div>`;
-            container.innerHTML = html;
-        }
-        
-        function updateListTab(btn) {
-            const parent = btn.parentNode;
-            Array.from(parent.children).forEach(c => {
-                c.classList.remove('text-muji-primary', 'border-muji-primary', 'font-bold');
-                c.classList.add('text-gray-400', 'border-transparent');
-            });
-            btn.classList.remove('text-gray-400', 'border-transparent');
-            btn.classList.add('text-muji-primary', 'border-muji-primary', 'font-bold');
-        }
-
-        function renderInfo(container) {
-            const qrCodeImg = localStorage.getItem('entryQRCode');
-            
-            let html = `
-                <div class="space-y-6 animate-fade-in">
-                    
-                    <div class="card p-5 border-l-4 border-muji-accent">
-                        <h3 class="font-bold text-2xl text-muji-primary mb-4 flex items-center">
-                            <i class="fa-solid fa-qrcode mr-3"></i>入境 QR Code
-                        </h3>
-                        
-                        ${qrCodeImg ? `
-                            <div class="text-center mb-4 relative">
-                                <img src="${qrCodeImg}" class="max-w-full h-auto rounded-lg border-2 border-gray-200 mx-auto shadow-sm" onclick="showFullImage('${qrCodeImg}')">
-                                <button onclick="deleteQRCode()" class="mt-3 text-red-500 border border-red-500 px-4 py-2 rounded-lg text-sm"><i class="fa-solid fa-trash mr-1"></i>刪除重傳</button>
-                                <p class="text-xs text-gray-400 mt-2">點擊圖片可放大</p>
-                            </div>
-                        ` : `
-                            <div class="text-center py-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-                                <i class="fa-solid fa-image text-4xl text-gray-300 mb-3"></i>
-                                <p class="text-gray-500 mb-4">還沒上傳截圖喔</p>
-                                <label class="btn-muji cursor-pointer">
-                                    <i class="fa-solid fa-upload mr-2"></i>上傳 QR Code
-                                    <input type="file" accept="image/*" class="hidden" onchange="uploadQRCode(this)">
-                                </label>
-                            </div>
-                        `}
-                    </div>
-
-                    <div class="card p-5">
-                        <h3 class="font-bold text-xl text-muji-primary mb-4">天氣預報</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <a href="https://tenki.jp/forecast/3/16/4410/13106/" target="_blank" class="btn-outline text-center block"><i class="fa-solid fa-cloud-sun mr-2"></i>東京</a>
-                            <a href="https://tenki.jp/forecast/3/23/4810/20321/" target="_blank" class="btn-outline text-center block"><i class="fa-solid fa-snowflake mr-2"></i>輕井澤</a>
-                            <a href="https://tenki.jp/forecast/2/7/3410/4100/" target="_blank" class="btn-outline text-center block"><i class="fa-solid fa-cloud mr-2"></i>仙台</a>
-                            <a href="https://tenki.jp/forecast/2/6/3510/6201/" target="_blank" class="btn-outline text-center block"><i class="fa-solid fa-umbrella mr-2"></i>山形</a>
-                        </div>
-                    </div>
-
-                    <div class="card p-5 border-l-4 border-red-400 bg-red-50/30">
-                        <h3 class="font-bold text-xl text-red-800 mb-3"><i class="fa-solid fa-triangle-exclamation mr-2"></i>緊急聯絡</h3>
-                        <div class="space-y-3 text-base">
-                            <div class="flex justify-between items-center border-b border-red-100 pb-2"><span>警察局 (Police)</span><span class="font-bold font-mono text-2xl">110</span></div>
-                            <div class="flex justify-between items-center border-b border-red-100 pb-2"><span>救護車 (Fire/Amb)</span><span class="font-bold font-mono text-2xl">119</span></div>
-                            <div class="mt-3 text-sm text-gray-600">
-                                <p class="mb-1"><strong>台北駐日經濟文化代表處:</strong> <a href="tel:0332807111" class="text-blue-600">03-3280-7111</a></p>
-                                <p><strong>緊急聯絡電話:</strong> <a href="tel:08010097179" class="text-blue-600">080-1009-7179</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.innerHTML = html;
-        }
-
-        // --- ACTION HANDLERS ---
-
-        function updateRate(val) {
-            walletRate = parseFloat(val);
-            localStorage.setItem('walletRate', walletRate);
-            renderWallet(document.getElementById('app-container'));
-        }
-
-        function calculate() {
-            const input = document.getElementById('calcInput').value;
-            try {
-                if(/^[0-9+\-*/().\s]+$/.test(input)) {
-                    const result = eval(input);
-                    const twd = Math.round(result * walletRate);
-                    document.getElementById('calcResult').innerText = `¥${result} ≈ NT$${twd}`;
-                } else {
-                    document.getElementById('calcResult').innerText = "格式錯誤";
-                }
-            } catch (e) {
-                document.getElementById('calcResult').innerText = "錯誤";
-            }
-        }
-
-        // Image Handling
-        let currentImgBase64 = null;
-        function previewImage(input) {
-            const file = input.files[0];
-            if (!file) return;
-            processImage(file, (base64) => {
-                currentImgBase64 = base64;
-                document.getElementById('imgPreview').src = base64;
-                document.getElementById('imgPreviewArea').classList.remove('hidden');
-            });
-        }
-        function clearImage() {
-            currentImgBase64 = null;
-            document.getElementById('expenseImg').value = '';
-            document.getElementById('imgPreviewArea').classList.add('hidden');
-        }
-
-        function processImage(file, callback) {
+        const formatMoney = (num) => new Intl.NumberFormat('en-US').format(num);
+        const getMapLink = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+        const processImage = (file, callback) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const MAX_WIDTH = 600; 
+                    const MAX_WIDTH = 600;
                     const scale = MAX_WIDTH / img.width;
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    callback(canvas.toDataURL('image/jpeg', 0.7)); 
+                    callback(canvas.toDataURL('image/jpeg', 0.7));
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
-        }
+        };
 
-        function addExpense() {
-            const item = document.getElementById('expenseItem').value;
-            const amount = parseFloat(document.getElementById('expenseAmount').value);
-            if (!item || isNaN(amount)) return alert('請輸入完整資訊');
+        // --- Components ---
 
-            const records = JSON.parse(localStorage.getItem('walletRecords') || '[]');
-            records.push({
-                item, amount, date: new Date().toISOString(), img: currentImgBase64
-            });
-            localStorage.setItem('walletRecords', JSON.stringify(records));
-            
-            document.getElementById('expenseItem').value = '';
-            document.getElementById('expenseAmount').value = '';
-            clearImage();
-            renderWallet(document.getElementById('app-container'));
-        }
+        const PlanView = () => {
+            const [activeDayIdx, setActiveDayIdx] = useState(0);
+            const [coverImg, setCoverImg] = useState(localStorage.getItem('planCoverImg'));
+            const [itemImages, setItemImages] = useState(JSON.parse(localStorage.getItem('itineraryItemImages') || '{}'));
 
-        function deleteExpense(idx) {
-            if(!confirm('確定刪除?')) return;
-            const records = JSON.parse(localStorage.getItem('walletRecords') || '[]');
-            records.splice(idx, 1);
-            localStorage.setItem('walletRecords', JSON.stringify(records));
-            renderWallet(document.getElementById('app-container'));
-        }
+            const handleCoverUpload = (e) => {
+                const file = e.target.files?.[0];
+                if (file) processImage(file, (base64) => { setCoverImg(base64); localStorage.setItem('planCoverImg', base64); });
+            };
 
-        // QR Code Logic
-        function uploadQRCode(input) {
-             const file = input.files[0];
-             if(!file) return;
-             processImage(file, (base64) => {
-                 localStorage.setItem('entryQRCode', base64);
-                 renderInfo(document.getElementById('app-container'));
-             });
-        }
-        function deleteQRCode() {
-            if(!confirm('確定刪除 QR Code?')) return;
-            localStorage.removeItem('entryQRCode');
-            renderInfo(document.getElementById('app-container'));
-        }
+            const handleItemPhotoUpload = (day, itemIdx, e) => {
+                const file = e.target.files?.[0];
+                if (file) processImage(file, (base64) => {
+                    const updated = { ...itemImages, [`${day}-${itemIdx}`]: base64 };
+                    setItemImages(updated);
+                    localStorage.setItem('itineraryItemImages', JSON.stringify(updated));
+                });
+            };
 
-        // Custom Food
-        function addCustomFood() {
-            const name = document.getElementById('newFoodName').value;
-            const addr = document.getElementById('newFoodAddr').value;
-            const desc = document.getElementById('newFoodDesc').value;
-            if(!name) return;
-            
-            const custom = JSON.parse(localStorage.getItem('customFood') || '[]');
-            custom.push({name, addr, desc});
-            localStorage.setItem('customFood', JSON.stringify(custom));
-            
-            document.getElementById('addFoodModal').classList.add('hidden');
-            renderFood(document.getElementById('app-container'));
-        }
+            const dayData = ITINERARY_DATA[activeDayIdx];
 
-        // Check Lists
-        function toggleCheck(item) {
-            const checks = JSON.parse(localStorage.getItem('checkListState') || '{}');
-            checks[item] = !checks[item];
-            localStorage.setItem('checkListState', JSON.stringify(checks));
-            renderLists(document.getElementById('app-container'));
-        }
+            return (
+                <div className="pt-[130px] pb-24 px-4 space-y-6 animate-fade-in" key={activeDayIdx}>
+                    <div className="fixed top-[70px] left-0 w-full bg-[#F9F8F6]/95 z-40 overflow-x-auto no-scrollbar py-3 px-4 border-b border-muji-border flex gap-2">
+                        {ITINERARY_DATA.map((day, idx) => (
+                            <button key={idx} onClick={() => setActiveDayIdx(idx)} className={`whitespace-nowrap px-5 py-2 rounded-full font-bold text-sm shadow-sm transition-all ${activeDayIdx === idx ? 'bg-muji-primary text-white scale-105' : 'bg-white text-gray-400 border'}`}>
+                                Day {day.day}
+                            </button>
+                        ))}
+                    </div>
 
-        function saveMemo(val) {
-            localStorage.setItem('memoText', val);
-        }
+                    <div className="relative">
+                        {coverImg ? (
+                            <div className="relative group">
+                                <img src={coverImg} className="w-full h-48 object-cover rounded-2xl shadow-md" />
+                                <label className="absolute bottom-3 right-3 bg-white/90 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm cursor-pointer"><Camera size={14} className="inline mr-1"/>更換封面<input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload}/></label>
+                            </div>
+                        ) : (
+                            <label className="w-full h-32 bg-white border-2 border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-400 cursor-pointer shadow-sm">
+                                <ImageIcon size={24} className="mb-2"/><span className="text-sm font-bold">點擊設定封面</span><input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload}/></label>
+                        )}
+                    </div>
 
-        // Shop List
-        let currentShopImgBase64 = null;
-        function previewShopImg(input) {
-             const file = input.files[0];
-            if (!file) return;
-            processImage(file, (base64) => {
-                currentShopImgBase64 = base64;
-                document.getElementById('shopPreview').src = base64;
-                document.getElementById('shopPreviewArea').classList.remove('hidden');
-            });
-        }
-        function clearShopImg() {
-            currentShopImgBase64 = null;
-            document.getElementById('shopImg').value = '';
-            document.getElementById('shopPreviewArea').classList.add('hidden');
-        }
-        function addShopItem() {
-            const text = document.getElementById('shopItem').value;
-            if(!text && !currentShopImgBase64) return;
-            const list = JSON.parse(localStorage.getItem('shopList') || '[]');
-            list.push({text, img: currentShopImgBase64, done: false});
-            localStorage.setItem('shopList', JSON.stringify(list));
-            renderLists(document.getElementById('app-container'));
-        }
-        function toggleShopDone(idx) {
-            const list = JSON.parse(localStorage.getItem('shopList') || '[]');
-            list[idx].done = !list[idx].done;
-            localStorage.setItem('shopList', JSON.stringify(list));
-            renderLists(document.getElementById('app-container'));
-        }
-        function deleteShopItem(idx) {
-             const list = JSON.parse(localStorage.getItem('shopList') || '[]');
-             list.splice(idx, 1);
-             localStorage.setItem('shopList', JSON.stringify(list));
-             renderLists(document.getElementById('app-container'));
-        }
+                    <div className="flex justify-between items-end border-b-2 border-muji-primary/10 pb-2">
+                        <div><h2 className="text-3xl font-bold text-muji-primary">DAY {dayData.day}</h2><p className="text-gray-500">{dayData.date}</p></div>
+                        <div className="bg-muji-accent text-white px-4 py-1.5 rounded-xl text-sm font-bold">{dayData.loc}</div>
+                    </div>
 
-        // Modal for Full Image
-        function showFullImage(src) {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4 animate-fade-in';
-            modal.onclick = () => modal.remove();
-            modal.innerHTML = `<img src="${src}" class="max-w-full max-h-full rounded-lg shadow-2xl">`;
-            document.body.appendChild(modal);
-        }
+                    <div className="border-l-4 border-muji-border ml-3 space-y-8">
+                        {dayData.items.map((item, idx) => {
+                            const itemPhoto = itemImages[`${dayData.day}-${idx}`];
+                            return (
+                                <div key={idx} className="relative pl-8">
+                                    <div className="absolute -left-[11px] top-2 w-5 h-5 rounded-full bg-muji-bg border-4 border-muji-accent z-10"></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative group">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div className="flex items-center gap-2 text-muji-accent font-bold text-lg">{item.type === 'transport' ? <Train size={18}/> : <Clock size={18}/>}{item.time}</div>
+                                            <div className="flex gap-2">
+                                                <label className="text-gray-300 hover:text-muji-primary cursor-pointer"><Upload size={18}/><input type="file" accept="image/*" className="hidden" onChange={(e)=>handleItemPhotoUpload(dayData.day, idx, e)}/></label>
+                                                {item.map && <a href={getMapLink(item.map)} target="_blank" className="text-muji-primary"><MapPin size={20}/></a>}
+                                            </div>
+                                        </div>
+                                        <div className="font-bold text-xl text-muji-text mb-2">{item.title}</div>
+                                        {item.desc && <div className="text-sm text-gray-600 whitespace-pre-wrap">{item.desc}</div>}
+                                        {itemPhoto && <img src={itemPhoto} className="mt-4 w-full h-40 object-cover rounded-xl border" />}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
 
-        function loadLocalStorage() {
-            const savedRate = localStorage.getItem('walletRate');
-            if(savedRate) walletRate = parseFloat(savedRate);
-        }
+        const FoodView = () => {
+            const [customFood] = useState(JSON.parse(localStorage.getItem('customFood') || '[]'));
+            const allSections = [...(customFood.length > 0 ? [{ day: "自訂新增", items: customFood }] : []), ...FOOD_DATA];
+            return (
+                <div className="pt-24 pb-24 px-4 space-y-8 animate-fade-in">
+                    <div className="text-center"><h2 className="text-3xl font-bold text-muji-primary uppercase tracking-widest">美食導覽</h2></div>
+                    {allSections.map((sec, i) => (
+                        <div key={i}>
+                            <div className="bg-muji-primary text-white py-1.5 px-4 rounded-lg font-bold mb-4 inline-block">{sec.day}</div>
+                            <div className="grid gap-4">
+                                {sec.items.map((item, j) => (
+                                    <div key={j} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative">
+                                        <div className="absolute top-5 right-5 flex gap-2">
+                                            {item.url && <a href={item.url} target="_blank" className="w-10 h-10 bg-muji-accent text-white rounded-full flex items-center justify-center"><Globe size={18}/></a>}
+                                            <a href={getMapLink(item.addr)} target="_blank" className="w-10 h-10 bg-gray-50 text-muji-primary rounded-full flex items-center justify-center border"><MapPin size={18}/></a>
+                                        </div>
+                                        <h4 className="font-bold text-xl mb-1 pr-24">{item.name}</h4>
+                                        <p className="text-xs text-gray-400 mb-3 flex items-center gap-1"><MapPin size={12}/>{item.addr}</p>
+                                        {item.desc && <div className="text-sm text-gray-600 bg-orange-50/50 p-3 rounded-xl border border-orange-100">{item.desc}</div>}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
 
-        // Init App
-        window.onload = init;
+        const WalletView = () => {
+            const [rate, setRate] = useState(parseFloat(localStorage.getItem('walletRate') || '0.22'));
+            const [records, setRecords] = useState(JSON.parse(localStorage.getItem('walletRecords') || '[]'));
+            const [item, setItem] = useState('');
+            const [amount, setAmount] = useState('');
+            const [category, setCategory] = useState('其他');
 
+            const addExpense = () => {
+                if (!item || !amount) return;
+                const updated = [...records, { id: Date.now().toString(), item, amount: parseFloat(amount), category, date: new Date().toISOString() }];
+                setRecords(updated); localStorage.setItem('walletRecords', JSON.stringify(updated));
+                setItem(''); setAmount('');
+            };
+
+            return (
+                <div className="pt-24 pb-24 px-4 space-y-6 animate-fade-in">
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border flex justify-between items-center">
+                        <span className="font-bold">1 JPY =</span>
+                        <input type="number" value={rate} onChange={(e)=>{setRate(parseFloat(e.target.value)); localStorage.setItem('walletRate', e.target.value)}} className="w-20 border-b-2 text-center font-bold text-muji-primary" />
+                        <span className="text-gray-400">TWD</span>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border space-y-4">
+                        <h3 className="font-bold text-xl flex items-center gap-2"><ShoppingBag size={20}/> 記帳</h3>
+                        <input placeholder="品項" value={item} onChange={(e)=>setItem(e.target.value)} className="w-full border-b py-2 focus:outline-none" />
+                        <input type="number" placeholder="金額 (JPY)" value={amount} onChange={(e)=>setAmount(e.target.value)} className="w-full border-b py-2 focus:outline-none" />
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                            {['美食','交通','購物','住宿','其他'].map(c=>(
+                                <button key={c} onClick={()=>setCategory(c)} className={`px-4 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap ${category===c?'bg-muji-primary text-white':'bg-gray-50 text-gray-400'}`}>{c}</button>
+                            ))}
+                        </div>
+                        <button onClick={addExpense} className="w-full bg-muji-primary text-white py-3 rounded-xl font-bold">儲存</button>
+                    </div>
+                    <div className="space-y-3">
+                        {records.slice().reverse().map(r=>(
+                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                                <div><div className="font-bold">{r.item}</div><div className="text-xs text-gray-400">{r.category} | {new Date(r.date).toLocaleDateString()}</div></div>
+                                <div className="text-right"><div className="font-bold">¥{formatMoney(r.amount)}</div><div className="text-xs text-muji-accent">≈ NT${formatMoney(Math.round(r.amount*rate))}</div></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const ListsView = () => {
+            const [tab, setTab] = useState('pack');
+            const [checks, setChecks] = useState(JSON.parse(localStorage.getItem('checkListState') || '{}'));
+            const [shopList, setShopList] = useState(JSON.parse(localStorage.getItem('shopList') || '[]'));
+            const [shopText, setShopText] = useState('');
+
+            const addShop = () => { if(!shopText) return; const updated = [...shopList, { id: Date.now().toString(), text: shopText, done: false }]; setShopList(updated); localStorage.setItem('shopList', JSON.stringify(updated)); setShopText(''); };
+            const toggleCheck = (i) => { const updated = { ...checks, [i]: !checks[i] }; setChecks(updated); localStorage.setItem('checkListState', JSON.stringify(updated)); };
+            const toggleShop = (id) => { const updated = shopList.map(i=>i.id===id?{...i, done:!i.done}:i); setShopList(updated); localStorage.setItem('shopList', JSON.stringify(updated)); };
+
+            return (
+                <div className="pt-24 pb-24 px-4 animate-fade-in">
+                    <div className="flex border-b mb-6">
+                        {['pack','shop'].map(t=>(<button key={t} onClick={()=>setTab(t)} className={`flex-1 py-3 font-bold text-xl ${tab===t?'text-muji-primary border-b-4 border-muji-primary':'text-gray-300'}`}>{t==='pack'?'必備':'購物'}</button>))}
+                    </div>
+                    {tab === 'pack' ? (
+                        <div className="space-y-4">
+                            {Object.entries(CATEGORIZED_PACKING_LIST).map(([cat, items])=>(
+                                <div key={cat} className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                                    <div className="p-4 bg-gray-50/50 font-bold text-muji-text">{cat}</div>
+                                    <div className="divide-y divide-gray-50">
+                                        {items.map(i=>(
+                                            <label key={i} className="flex items-center gap-3 p-4 cursor-pointer">
+                                                <input type="checkbox" checked={!!checks[i]} onChange={()=>toggleCheck(i)} className="hidden"/>
+                                                {checks[i] ? <CheckSquare size={22} className="text-muji-accent"/> : <Square size={22} className="text-gray-300"/>}
+                                                <span className={`text-lg ${checks[i]?'text-gray-300 line-through':'text-gray-700'}`}>{i}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="flex gap-2"><input value={shopText} onChange={(e)=>setShopText(e.target.value)} placeholder="想買什麼？" className="flex-1 border-2 p-3 rounded-xl"/><button onClick={addShop} className="bg-muji-primary text-white px-6 rounded-xl font-bold">加入</button></div>
+                            <div className="space-y-3">
+                                {shopList.slice().reverse().map(i=>(
+                                    <div key={i.id} className="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-3">
+                                        <input type="checkbox" checked={i.done} onChange={()=>toggleShop(i.id)} className="w-6 h-6 accent-muji-primary"/>
+                                        <span className={`flex-1 text-lg ${i.done?'text-gray-300 line-through':'text-gray-800'}`}>{i.text}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const InfoView = () => {
+            const [qrCode, setQrCode] = useState(localStorage.getItem('entryQRCode'));
+
+            const handleQr = (e) => {
+                const f = e.target.files?.[0]; if (f) processImage(f, (b) => { setQrCode(b); localStorage.setItem('entryQRCode', b); });
+            };
+
+            return (
+                <div className="pt-24 pb-24 px-4 space-y-6 animate-fade-in">
+                    <div className="bg-white rounded-2xl p-5 border-l-4 border-indigo-500 shadow-sm space-y-4">
+                        <h3 className="font-bold text-xl flex items-center gap-2"><Building size={20}/> 飯店資訊</h3>
+                        {HOTEL_DATA.map((h, i)=>(
+                            <div key={i} className="bg-gray-50/50 p-4 rounded-xl border relative">
+                                <a href={getMapLink(h.addr)} target="_blank" className="absolute top-4 right-4 text-indigo-500"><MapPin size={18}/></a>
+                                <div className="font-bold text-lg">{h.name}</div>
+                                <div className="text-xs text-gray-500">確認碼: {h.confNo} | {h.date}</div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="bg-white rounded-2xl p-5 border-l-4 border-muji-accent shadow-sm">
+                        <h3 className="font-bold text-xl mb-4 flex items-center gap-2"><QrCode size={20}/> 入境 QR Code</h3>
+                        {qrCode ? (
+                            <div className="text-center"><img src={qrCode} className="max-w-full rounded-lg border-2 shadow-sm mx-auto"/><button onClick={()=>{setQrCode(null); localStorage.removeItem('entryQRCode')}} className="text-red-400 text-xs font-bold mt-2">刪除重新上傳</button></div>
+                        ) : (
+                            <label className="w-full h-32 bg-gray-50 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-gray-300 cursor-pointer">
+                                <Upload size={24}/><span className="text-xs font-bold">點擊上傳 QR</span><input type="file" accept="image/*" className="hidden" onChange={handleQr}/></label>
+                        )}
+                    </div>
+                    <div className="bg-white rounded-2xl p-5 shadow-sm space-y-4">
+                        <h3 className="font-bold text-xl">天氣預報</h3>
+                        <div className="grid grid-cols-2 gap-3 text-sm font-bold">
+                            {[{l:'東京', u:'4410/13106'}, {l:'輕井澤', u:'4810/20321'}, {l:'仙台', u:'3410/4100'}, {l:'山形', u:'3510/6201'}].map(w=>(
+                                <a key={w.l} href={`https://tenki.jp/forecast/3/16/${w.u}/`} target="_blank" className="border-2 border-muji-primary text-muji-primary py-3 rounded-xl text-center">{w.l}</a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('plan');
+            const renderContent = () => {
+                switch (activeTab) {
+                    case 'plan': return <PlanView />;
+                    case 'food': return <FoodView />;
+                    case 'wallet': return <WalletView />;
+                    case 'lists': return <ListsView />;
+                    case 'info': return <InfoView />;
+                }
+            };
+            const NavBtn = ({ tab, icon: Icon, label }) => (
+                <button onClick={() => { setActiveTab(tab); window.scrollTo(0, 0); }} className={`flex flex-col items-center justify-center w-full py-2 transition-all ${activeTab === tab ? 'text-muji-primary scale-110' : 'text-gray-400'}`}>
+                    <Icon size={22} className="mb-1" /><span className="text-[10px] font-bold">{label}</span>
+                </button>
+            );
+            return (
+                <div className="min-h-screen bg-[#F9F8F6]">
+                    <header className="fixed top-0 w-full bg-[#F9F8F6]/90 backdrop-blur-md z-50 border-b h-[70px] flex justify-between items-center px-4 shadow-sm">
+                        <h1 className="text-xl font-bold text-muji-primary flex items-center gap-2">滑雪不跌倒 <Snowflake size={20} className="animate-pulse"/></h1>
+                        <div className="text-xs text-gray-400 font-bold uppercase">{new Date().toLocaleDateString()}</div>
+                    </header>
+                    <main>{renderContent()}</main>
+                    <nav className="fixed bottom-0 w-full bg-white border-t z-50 pb-[env(safe-area-inset-bottom)]">
+                        <div className="flex justify-between items-center h-[65px] px-1">
+                            <NavBtn tab="plan" icon={Calendar} label="行程" />
+                            <NavBtn tab="food" icon={Utensils} label="美食" />
+                            <NavBtn tab="wallet" icon={Wallet} label="記帳" />
+                            <NavBtn tab="lists" icon={CheckSquare} label="清單" />
+                            <NavBtn tab="info" icon={Info} label="資訊" />
+                        </div>
+                    </nav>
+                </div>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = createRoot(container);
+        root.render(<App />);
     </script>
 </body>
 </html>
