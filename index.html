@@ -392,27 +392,40 @@
         
         // --- Updated Food Data ---
         const foodData = [
-            { 
-                id: "karuizawa",
-                label: "D1-3 輕井澤",
-                area: "長野縣北佐久郡",
+            {
+                id: "d1-lunch",
+                label: "D1 上野午餐",
+                area: "東京上野",
                 spots: [
-                    { name: "しゃぶしゃぶ愛宕", type: "涮涮鍋", address: "389-0104 長野県北佐久郡軽井沢町東167", tel: "0267-41-6111", note: "晚餐推薦" },
-                    { name: "アクセス (Access)", type: "餐廳/地標", address: "389-0104 長野県北佐久郡軽井沢町軽井沢東23-2", tel: "0267-42-3081", note: "車站周邊" },
-                    { name: "村民食堂", type: "日式定食", address: "389-0104 長野県北佐久郡軽井沢町長倉2148", tel: "0267-44-3571", note: "星野區 鄉土料理" },
-                    { name: "ろぐ亭 (Log-tei)", type: "燒肉/牛排", address: "389-0104 長野縣北佐久郡輕井澤町長倉3148-1", tel: "0267-45-2341", note: "木屋燒肉" }
+                    { name: "蟹食放題 ごっつお", type: "吃到飽", address: "https://maps.app.goo.gl/Rp6dMS3VGsW6yh9K8", tel: "", note: "螃蟹吃到飽" },
+                    { name: "東京炸豬排 がぶう", type: "豬排", address: "https://maps.app.goo.gl/pg8YiKhQ7DvFyB6p9", tel: "", note: "" },
+                    { name: "天婦羅 天寿ゞ", type: "天婦羅", address: "https://maps.app.goo.gl/1UPZHjPUsC9de1UQA", tel: "", note: "" },
+                    { name: "金沢まいもん寿司", type: "壽司", address: "https://maps.app.goo.gl/VPMDuMSszPCgQpFV6", tel: "", note: "迴轉壽司" }
                 ]
             },
-            { 
-                id: "ueno", 
-                label: "D4 東京上野",
-                area: "東京都台東區/文京區",
+            {
+                id: "d1-d3-dinner",
+                label: "D1-3 輕井澤晚餐",
+                area: "輕井澤",
                 spots: [
-                    { name: "三浦三崎港 迴轉壽司", type: "壽司", address: "東京都台東區上野6-12-14", tel: "", note: "食材堆高高" },
-                    { name: "ぽん多本家", type: "炸豬排", address: "東京都台東区上野3-23-3", tel: "", note: "炸豬排老舖" },
-                    { name: "上野兔屋 (Usagiya)", type: "甜點", address: "東京都台東区上野1丁目10-10", tel: "", note: "銅鑼燒名店" },
-                    { name: "EGG BABY CAFÉ", type: "早午餐", address: "5 CHOME-10-9 UENO, TAITO CITY", tel: "", note: "半熟蛋三明治" },
-                    { name: "鳥恵 上野広小路店", type: "燒鳥", address: "東京都文京区湯島3-40-8 栗田ビル 1F", tel: "", note: "米其林推薦串燒" }
+                    { name: "しゃぶしゃぶ愛宕", type: "涮涮鍋", address: "https://maps.app.goo.gl/uGzDhdyx7qHgRKyy5", tel: "0267-41-6111", note: "" },
+                    { name: "アクセス (Access)", type: "餐廳", address: "https://maps.app.goo.gl/sYZRLBTJ7d3M66Wd6", tel: "0267-42-3081", note: "" },
+                    { name: "村民食堂", type: "日式定食", address: "https://maps.app.goo.gl/kaefExA2mjnSSkpd8", tel: "0267-44-3571", note: "星野區" },
+                    { name: "ろぐ亭燒肉", type: "燒肉", address: "https://maps.app.goo.gl/qbN35Ey3FKH4e9YW9", tel: "0267-45-2341", note: "木屋燒肉" },
+                    { name: "Fujiya", type: "西式", address: "https://maps.app.goo.gl/e3EARNFtAoGALaid9", tel: "", note: "經典飯店餐廳" },
+                    { name: "Primo Fito", type: "義式", address: "https://maps.app.goo.gl/C4WtRCwJ9JHAnzLr5", tel: "", note: "" }
+                ]
+            },
+            {
+                id: "d4-dinner",
+                label: "D4 上野晚餐",
+                area: "東京上野",
+                spots: [
+                    { name: "三浦三崎港迴轉壽司", type: "壽司", address: "https://maps.app.goo.gl/VJXgERqoWoxW7uAa9", tel: "", note: "" },
+                    { name: "ぽん多本家 豬排", type: "豬排", address: "https://maps.app.goo.gl/4W1kfAtLvaYV6bqeA", tel: "", note: "老店" },
+                    { name: "上野兔屋 銅鑼燒", type: "甜點", address: "https://maps.app.goo.gl/3wWrCgXUDpZkRApn6", tel: "", note: "" },
+                    { name: "EGG BABY CAFÉ", type: "咖啡廳", address: "https://maps.app.goo.gl/YGDFKHrPwm7JcBGu6", tel: "", note: "半熟蛋三明治" },
+                    { name: "TORIE UENO HIRO KOJI TEN", type: "燒鳥", address: "https://maps.app.goo.gl/DGbWb1ibo8DTaD6J7", tel: "", note: "串燒" }
                 ]
             }
         ];
@@ -602,7 +615,14 @@
             event.currentTarget.classList.remove('text-muji-secondary'); event.currentTarget.classList.add('text-muji-accent');
             window.scrollTo(0,0);
         }
-        function openMap(address) { if(!address) return; window.open(`https://www.google.com/maps/search/?api=1&query=$?q=${encodeURIComponent(address)}`, '_blank'); }
+        function openMap(loc) { 
+            if(!loc) return;
+            if(loc.startsWith('http')) {
+                window.open(loc, '_blank');
+            } else {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`, '_blank'); 
+            }
+        }
         function openWeather(loc) { window.open(`https://www.google.com/search?q=weather+${loc}+japan`, '_blank'); }
         function loadCover() { const s = localStorage.getItem('ahwang_trip_cover'); if(s) document.getElementById('cover-area').style.backgroundImage = `url(${s})`; }
         function changeCover(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = function (e) { const img = new Image(); img.src = e.target.result; img.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const s = 800/img.width; c.width = 800; c.height = img.height * s; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); const d = c.toDataURL('image/jpeg', 0.7); document.getElementById('cover-area').style.backgroundImage = `url(${d})`; localStorage.setItem('ahwang_trip_cover', d); }}; r.readAsDataURL(input.files[0]); }}
@@ -647,7 +667,7 @@
         function deleteQR(idx) { if(confirm('刪除?')) { qrCodes.splice(idx, 1); localStorage.setItem('trip_qrcodes', JSON.stringify(qrCodes)); renderQRs(); } }
 
         // --- New Food Logic with Tabs ---
-        let currentFoodTab = "karuizawa";
+        let currentFoodTab = "d1-lunch";
 
         function initFood() { 
             // 1. Render Tabs
@@ -690,6 +710,10 @@
             `;
             
             selectedGroup.spots.forEach(spot => {
+                 // Check if address is a link
+                 const isLink = spot.address && spot.address.startsWith('http');
+                 const displayAddress = isLink ? '📍 點擊右側導航' : spot.address;
+
                  html += `
                     <div class="muji-card p-0 flex flex-col">
                         <div class="p-4">
@@ -702,7 +726,7 @@
                                     <i class="fa-solid fa-location-arrow text-sm"></i>
                                 </button>
                             </div>
-                            <p class="text-sm text-gray-500 mt-2"><i class="fa-solid fa-map-pin mr-1 w-4 text-center"></i> ${spot.address}</p>
+                            <p class="text-sm text-gray-500 mt-2"><i class="fa-solid fa-map-pin mr-1 w-4 text-center"></i> ${displayAddress}</p>
                             ${spot.tel ? `<p class="text-sm text-gray-500 mt-1"><a href="tel:${spot.tel}" class="hover:text-muji-accent"><i class="fa-solid fa-phone mr-1 w-4 text-center"></i> ${spot.tel}</a></p>` : ''}
                             ${spot.note ? `<div class="mt-3 text-sm bg-gray-50 p-2 rounded text-gray-600 border border-gray-100"><i class="fa-solid fa-quote-left text-gray-300 mr-1"></i>${spot.note}</div>` : ''}
                         </div>
