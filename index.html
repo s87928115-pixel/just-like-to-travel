@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>滑雪不跌倒</title>
+    <title>滑雪不跌倒 v2.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -24,12 +24,24 @@
                             secondary: '#8c8c8c',
                             border: '#e6e6e6',
                             highlight: '#d4493e',
-                            planA: '#5c7c8a',
-                            planB: '#c47c6e'
                         }
                     },
                     fontFamily: {
                         sans: ['"Zen Maru Gothic"', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'zoom-in': 'zoomIn 0.2s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        zoomIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.95)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        }
                     }
                 }
             }
@@ -177,17 +189,44 @@
             font-weight: 500;
         }
         
-        /* Food Tabs */
-        .food-tab-btn {
+        /* Generic Tab Styles */
+        .scroll-tabs {
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
+        }
+        .scroll-tabs::-webkit-scrollbar { display: none; }
+
+        .pill-tab-btn {
             white-space: nowrap;
             transition: all 0.2s;
+            border: 1px solid #e6e6e6;
+            background: white;
+            color: #8c8c8c;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: bold;
         }
-        .food-tab-btn.active {
+        .pill-tab-btn.active {
             background-color: #2c5d63;
             color: white;
             border-color: #2c5d63;
             box-shadow: 0 2px 5px rgba(44, 93, 99, 0.2);
         }
+
+        /* Modal for Image */
+        #imgModal {
+            transition: opacity 0.3s;
+        }
+        #imgModal.hidden {
+            pointer-events: none;
+            opacity: 0;
+        }
+        #imgModal:not(.hidden) {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
     </style>
 </head>
 <body class="font-sans antialiased text-muji-text">
@@ -246,7 +285,7 @@
         <div id="page-food" class="page-container px-4 pt-4">
             <h2 class="text-2xl font-bold mb-2 text-muji-text">Food Guide</h2>
             
-            <div class="flex space-x-2 mb-4 overflow-x-auto pb-2 no-scrollbar sticky top-0 bg-muji-bg z-30 pt-2" id="foodTabsContainer">
+            <div class="flex space-x-2 mb-4 overflow-x-auto pb-2 scroll-tabs sticky top-0 bg-muji-bg z-30 pt-2" id="foodTabsContainer">
                 </div>
 
             <div id="food-list" class="space-y-4"></div>
@@ -293,39 +332,60 @@
         </div>
 
         <div id="page-lists" class="page-container px-4 pt-4">
-             <div class="flex space-x-2 mb-4 overflow-x-auto pb-2" id="listTabs">
+             <div class="flex space-x-2 mb-4 overflow-x-auto pb-2 scroll-tabs" id="listTabs">
                 <button onclick="switchListTab('packing')" class="list-tab-btn active px-4 py-2 rounded-full text-sm font-bold border border-muji-accent bg-muji-accent text-white">必備清單</button>
                 <button onclick="switchListTab('memo')" class="list-tab-btn px-4 py-2 rounded-full text-sm font-bold border border-muji-border bg-white text-gray-500">備忘錄</button>
                 <button onclick="switchListTab('shop')" class="list-tab-btn px-4 py-2 rounded-full text-sm font-bold border border-muji-border bg-white text-gray-500">購買清單</button>
             </div>
+            
             <div id="list-packing" class="list-content"></div>
+            
             <div id="list-memo" class="list-content hidden">
                 <textarea id="memoInput" class="muji-input h-32 mb-2" placeholder="輸入備忘事項..."></textarea>
                 <button onclick="saveMemo()" class="muji-btn w-full mb-4">新增</button>
                 <div id="memoContainer" class="space-y-3"></div>
             </div>
+            
             <div id="list-shop" class="list-content hidden">
-                <div class="flex flex-col space-y-2 mb-3">
+                
+                <div class="flex space-x-2 mb-3 overflow-x-auto pb-1 scroll-tabs">
+                    <button onclick="switchShopFilter('all')" class="pill-tab-btn active" id="shop-filter-all">全部</button>
+                    <button onclick="switchShopFilter('food')" class="pill-tab-btn" id="shop-filter-food">食物</button>
+                    <button onclick="switchShopFilter('clothes')" class="pill-tab-btn" id="shop-filter-clothes">衣物</button>
+                    <button onclick="switchShopFilter('misc')" class="pill-tab-btn" id="shop-filter-misc">雜物</button>
+                    <button onclick="switchShopFilter('drug')" class="pill-tab-btn" id="shop-filter-drug">藥品</button>
+                </div>
+
+                <div class="flex flex-col space-y-2 mb-3 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
                     <div class="flex space-x-2">
-                        <input type="text" id="shopInput" class="muji-input" placeholder="想買什麼? 輸入網址會自動變成連結">
-                        
-                        <label class="flex-shrink-0 flex items-center justify-center w-11 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 text-muji-secondary">
-                            <i class="fa-solid fa-camera"></i>
-                            <input type="file" accept="image/*" class="hidden" onchange="handleShopImagePreview(this)">
-                        </label>
-                        
-                        <button onclick="addShopItem()" class="muji-btn whitespace-nowrap">新增</button>
+                        <select id="shopCategoryInput" class="muji-input w-24 px-1 text-sm bg-gray-50 text-gray-600">
+                            <option value="food">食物</option>
+                            <option value="clothes">衣物</option>
+                            <option value="misc" selected>雜物</option>
+                            <option value="drug">藥品</option>
+                        </select>
+                        <input type="text" id="shopInput" class="muji-input flex-1" placeholder="輸入名稱或網址...">
                     </div>
                     
-                    <div id="shopImgPreviewContainer" class="hidden relative w-fit">
-                        <div id="shopImgPreview" class="w-16 h-16 rounded bg-cover bg-center border border-gray-300"></div>
-                        <button onclick="clearShopImg()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-sm">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <label class="flex-shrink-0 flex items-center justify-center w-10 h-9 bg-gray-50 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 text-muji-secondary">
+                                <i class="fa-solid fa-camera"></i>
+                                <input type="file" accept="image/*" class="hidden" onchange="handleShopImagePreview(this)">
+                            </label>
+                            
+                            <div id="shopImgPreviewContainer" class="hidden relative w-fit">
+                                <div id="shopImgPreview" class="w-9 h-9 rounded bg-cover bg-center border border-gray-300"></div>
+                                <button onclick="clearShopImg()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] shadow-sm">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="addShopItem()" class="muji-btn text-sm">新增</button>
                     </div>
                 </div>
 
-                 <div id="shopContainer" class="space-y-3"></div>
+                <div id="shopContainer" class="grid grid-cols-3 gap-2 pb-20"></div>
             </div>
         </div>
 
@@ -375,6 +435,15 @@
             </button>
         </nav>
 
+        <div id="imgModal" class="hidden fixed inset-0 z-[1000] bg-black/95 flex items-center justify-center p-2" onclick="closeFullImg()">
+            <div class="relative w-full h-full flex items-center justify-center">
+                <img id="modalImg" src="" class="max-w-full max-h-full rounded shadow-lg object-contain">
+                <button class="absolute top-4 right-4 text-white bg-gray-800/50 rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -406,7 +475,7 @@
             "滑雪準備": ["雪鏡", "排汗衣", "保暖長袖", "手套", "長襪", "防滑鞋", "屁墊", "暖暖包", "護膝", "護手", "冰爪"]
         };
         
-        // --- Updated Food Data ---
+        // --- Food Data ---
         const foodData = [
             {
                 id: "d1-lunch",
@@ -581,12 +650,12 @@
                         img.onload = function() {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            const MAX_WIDTH = 300;
+                            const MAX_WIDTH = 600; // Increased quality
                             const scaleSize = MAX_WIDTH / img.width;
                             canvas.width = MAX_WIDTH;
                             canvas.height = img.height * scaleSize;
                             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
                             dayPhotos[dayIdx].push(dataUrl);
                             processedCount++;
                             if(processedCount === files.length) {
@@ -609,7 +678,7 @@
             }
             container.innerHTML = photos.map((src, photoIdx) => `
                 <div class="relative group aspect-square">
-                    <div class="w-full h-full bg-cover bg-center rounded-lg border border-gray-100 shadow-sm" style="background-image: url(${src})" onclick="showFullImg('${src}')"></div>
+                    <div class="w-full h-full bg-cover bg-center rounded-lg border border-gray-100 shadow-sm cursor-pointer" style="background-image: url(${src})" onclick="showFullImg('${src}')"></div>
                     <button onclick="deleteDayPhoto(${idx}, ${photoIdx})" class="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center opacity-80 shadow"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             `).join('');
@@ -641,7 +710,7 @@
         }
         function openWeather(loc) { window.open(`https://www.google.com/search?q=weather+${loc}+japan`, '_blank'); }
         function loadCover() { const s = localStorage.getItem('ahwang_trip_cover'); if(s) document.getElementById('cover-area').style.backgroundImage = `url(${s})`; }
-        function changeCover(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = function (e) { const img = new Image(); img.src = e.target.result; img.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const s = 800/img.width; c.width = 800; c.height = img.height * s; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); const d = c.toDataURL('image/jpeg', 0.7); document.getElementById('cover-area').style.backgroundImage = `url(${d})`; localStorage.setItem('ahwang_trip_cover', d); }}; r.readAsDataURL(input.files[0]); }}
+        function changeCover(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = function (e) { const img = new Image(); img.src = e.target.result; img.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const s = 800/img.width; c.width = 800; c.height = img.height * s; ctx.drawImage(img, 0, 0, c.width, c.height); const d = c.toDataURL('image/jpeg', 0.7); document.getElementById('cover-area').style.backgroundImage = `url(${d})`; localStorage.setItem('ahwang_trip_cover', d); }}; r.readAsDataURL(input.files[0]); }}
 
         // --- Wallet Logic ---
         let rate = localStorage.getItem('trip_rate') || 0.22;
@@ -651,19 +720,29 @@
         function updateRate() { const val = parseFloat(document.getElementById('customRate').value); if(val) { rate = val; localStorage.setItem('trip_rate', rate); document.getElementById('displayRate').innerText = rate; calculate(); renderExpenses(); toggleRateEdit(); } }
         function calculate() { const input = document.getElementById('calcInput').value; try { if(input.match(/^[0-9+\-*/.() ]+$/)) { const jpy = new Function('return ' + input)(); document.getElementById('twdResult').innerText = Math.round(jpy * rate).toLocaleString(); } } catch(e) {} }
         let currentExpenseImg = null;
-        function handleImagePreview(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = function (e) { const img = new Image(); img.src = e.target.result; img.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const s = 400/img.width; c.width = 400; c.height = img.height * s; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); currentExpenseImg = c.toDataURL('image/jpeg', 0.6); document.getElementById('imgPreviewArea').style.backgroundImage = `url(${currentExpenseImg})`; document.getElementById('imgPreviewArea').classList.remove('hidden'); }}; r.readAsDataURL(input.files[0]); }}
+        function handleImagePreview(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = function (e) { const img = new Image(); img.src = e.target.result; img.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const s = 400/img.width; c.width = 400; c.height = img.height * s; ctx.drawImage(img, 0, 0, c.width, c.height); currentExpenseImg = c.toDataURL('image/jpeg', 0.6); document.getElementById('imgPreviewArea').style.backgroundImage = `url(${currentExpenseImg})`; document.getElementById('imgPreviewArea').classList.remove('hidden'); }}; r.readAsDataURL(input.files[0]); }}
         function addExpense() { const item = document.getElementById('expenseItem').value; const price = parseFloat(document.getElementById('expensePrice').value); if(!item || !price) return alert('請輸入項目與金額'); expenses.unshift({ id: Date.now(), item, price, img: currentExpenseImg, date: new Date().toLocaleDateString() }); localStorage.setItem('trip_expenses', JSON.stringify(expenses)); document.getElementById('expenseItem').value = ''; document.getElementById('expensePrice').value = ''; document.getElementById('imgPreviewArea').classList.add('hidden'); currentExpenseImg = null; renderExpenses(); }
         function deleteExpense(id) { if(confirm('確定刪除?')) { expenses = expenses.filter(e => e.id !== id); localStorage.setItem('trip_expenses', JSON.stringify(expenses)); renderExpenses(); } }
-        function renderExpenses() { const list = document.getElementById('expenseList'); list.innerHTML = expenses.map(e => `<div class="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center border border-gray-100"><div class="flex items-center gap-3">${e.img ? `<div onclick="showFullImg('${e.img}')" class="w-10 h-10 bg-cover bg-center rounded bg-gray-200 flex-shrink-0" style="background-image:url(${e.img})"></div>` : `<div class="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-400"><i class="fa-solid fa-yen-sign"></i></div>`}<div><div class="font-bold text-sm">${e.item}</div><div class="text-xs text-gray-400">${e.date}</div></div></div><div class="text-right"><div class="font-bold">¥${e.price}</div><div class="text-xs text-gray-400">NT$${Math.round(e.price * rate)}</div><button onclick="deleteExpense(${e.id})" class="text-gray-300 text-xs mt-1"><i class="fa-solid fa-trash"></i></button></div></div>`).join(''); }
-        function showFullImg(src) { const w = window.open(""); w.document.write(`<img src="${src}" style="width:100%">`); }
+        function renderExpenses() { const list = document.getElementById('expenseList'); list.innerHTML = expenses.map(e => `<div class="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center border border-gray-100"><div class="flex items-center gap-3">${e.img ? `<div onclick="showFullImg('${e.img}')" class="w-10 h-10 bg-cover bg-center rounded bg-gray-200 flex-shrink-0 cursor-pointer" style="background-image:url(${e.img})"></div>` : `<div class="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-400"><i class="fa-solid fa-yen-sign"></i></div>`}<div><div class="font-bold text-sm">${e.item}</div><div class="text-xs text-gray-400">${e.date}</div></div></div><div class="text-right"><div class="font-bold">¥${e.price}</div><div class="text-xs text-gray-400">NT$${Math.round(e.price * rate)}</div><button onclick="deleteExpense(${e.id})" class="text-gray-300 text-xs mt-1"><i class="fa-solid fa-trash"></i></button></div></div>`).join(''); }
+
+        // --- FULL SCREEN IMG MODAL (NEW) ---
+        function showFullImg(src) { 
+            const modal = document.getElementById('imgModal');
+            document.getElementById('modalImg').src = src;
+            modal.classList.remove('hidden');
+        }
+        function closeFullImg() {
+             document.getElementById('imgModal').classList.add('hidden');
+        }
 
         // --- Lists Logic ---
         let userChecklist = JSON.parse(localStorage.getItem('trip_checklist')) || {};
         let memoList = JSON.parse(localStorage.getItem('trip_memos')) || [];
         let shopList = JSON.parse(localStorage.getItem('trip_shop')) || [];
         
-        // Shop Image Temp Variable
+        // Shop Variables
         let currentShopImg = null;
+        let currentShopFilter = "all";
 
         function initLists() { renderPacking(); renderMemo(); renderShop(); }
         function switchListTab(tab) { document.querySelectorAll('.list-tab-btn').forEach(b => { b.classList.remove('bg-muji-accent', 'text-white', 'border-muji-accent'); b.classList.add('bg-white', 'text-gray-500', 'border-muji-border'); }); event.currentTarget.classList.remove('bg-white', 'text-gray-500', 'border-muji-border'); event.currentTarget.classList.add('bg-muji-accent', 'text-white', 'border-muji-accent'); document.querySelectorAll('.list-content').forEach(d => d.classList.add('hidden')); document.getElementById(`list-${tab}`).classList.remove('hidden'); }
@@ -673,7 +752,7 @@
         function renderMemo() { document.getElementById('memoContainer').innerHTML = memoList.map(m => `<div class="bg-yellow-50 p-3 rounded shadow-sm border border-yellow-100 text-sm relative"><button onclick="deleteMemo(${m.id})" class="absolute top-1 right-2 text-gray-400"><i class="fa-solid fa-xmark"></i></button><div class="whitespace-pre-wrap pr-4">${m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-500 underline">$1</a>')}</div></div>`).join(''); }
         function deleteMemo(id) { memoList = memoList.filter(m => m.id !== id); localStorage.setItem('trip_memos', JSON.stringify(memoList)); renderMemo(); }
         
-        // --- Shopping List Logic (Updated with Images) ---
+        // --- Shopping List Logic (Updated) ---
         function handleShopImagePreview(input) {
             if (input.files && input.files[0]) {
                 const r = new FileReader();
@@ -681,17 +760,13 @@
                     const img = new Image();
                     img.src = e.target.result;
                     img.onload = function() {
-                        // Resize Logic (Reuse same logic to save space)
                         const c = document.createElement('canvas');
                         const ctx = c.getContext('2d');
-                        const s = 400/img.width; // Limit width to 400px
-                        c.width = 400;
+                        const s = 600/img.width; 
+                        c.width = 600;
                         c.height = img.height * s;
                         ctx.drawImage(img, 0, 0, c.width, c.height);
-                        
-                        currentShopImg = c.toDataURL('image/jpeg', 0.6);
-                        
-                        // Show Preview
+                        currentShopImg = c.toDataURL('image/jpeg', 0.7);
                         const preview = document.getElementById('shopImgPreview');
                         preview.style.backgroundImage = `url(${currentShopImg})`;
                         document.getElementById('shopImgPreviewContainer').classList.remove('hidden');
@@ -706,12 +781,20 @@
             document.getElementById('shopImgPreviewContainer').classList.add('hidden');
         }
 
+        function switchShopFilter(cat) {
+            currentShopFilter = cat;
+            document.querySelectorAll('.pill-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`shop-filter-${cat}`).classList.add('active');
+            renderShop();
+        }
+
         function addShopItem() { 
             const txt = document.getElementById('shopInput').value; 
-            if(txt || currentShopImg) { // Allow adding if only image exists too
+            const cat = document.getElementById('shopCategoryInput').value;
+
+            if(txt || currentShopImg) { 
                 let type = 'text'; 
                 let meta = ''; 
-                // Detect link
                 if (txt) {
                     const match = txt.match(/(https?:\/\/[^\s]+)/g); 
                     if(match) { 
@@ -722,7 +805,8 @@
                 
                 shopList.push({ 
                     id: Date.now(), 
-                    text: txt || "圖片項目", // Default text if only image
+                    text: txt || "圖片項目",
+                    category: cat, 
                     bought: false, 
                     type: type, 
                     meta: meta,
@@ -731,11 +815,15 @@
                 
                 localStorage.setItem('trip_shop', JSON.stringify(shopList)); 
                 
-                // Reset UI
                 document.getElementById('shopInput').value = ''; 
                 clearShopImg();
                 
-                renderShop(); 
+                // If current filter is not all and not this category, switch to this category
+                if(currentShopFilter !== 'all' && currentShopFilter !== cat) {
+                    switchShopFilter(cat);
+                } else {
+                    renderShop(); 
+                }
             } 
         }
 
@@ -745,31 +833,36 @@
         function renderShop() {
             const container = document.getElementById('shopContainer');
             
-            // ★ 修改容器樣式：變成 3 欄的網格 (Grid) ★
-            container.className = 'grid grid-cols-3 gap-2 pb-20'; 
+            // Filter Items
+            let filteredList = shopList;
+            if (currentShopFilter !== 'all') {
+                filteredList = shopList.filter(item => {
+                    // Backwards compatibility: if no category, treat as 'misc'
+                    const cat = item.category || 'misc';
+                    return cat === currentShopFilter;
+                });
+            }
 
-            if (shopList.length === 0) {
-                container.innerHTML = '<div class="col-span-3 text-center text-gray-300 text-sm py-8">暫無購買清單<br>點擊上方新增</div>';
+            if (filteredList.length === 0) {
+                container.innerHTML = `<div class="col-span-3 text-center text-gray-300 text-sm py-8">此分類暫無項目</div>`;
                 return;
             }
 
-            container.innerHTML = shopList.map(item => {
-                // 1. 處理圖片顯示 (有圖顯示圖，沒圖顯示圖示)
+            container.innerHTML = filteredList.map(item => {
                 let imgContent = '';
                 if (item.img) {
-                    imgContent = `<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url(${item.img})"></div>`;
+                    // Added onclick with stopPropagation to avoid toggling 'bought' status
+                    imgContent = `<div onclick="showFullImg('${item.img}'); event.stopPropagation();" class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110 cursor-zoom-in" style="background-image: url(${item.img})"></div>`;
                 } else {
                     imgContent = `<div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-300"><i class="fa-solid fa-gift text-2xl"></i></div>`;
                 }
 
-                // 2. 處理「已購」遮罩
                 const boughtOverlay = item.bought 
-                    ? `<div class="absolute inset-0 bg-emerald-600/60 backdrop-blur-[1px] flex items-center justify-center z-10 animate-fade-in"><span class="text-white font-bold text-sm tracking-widest border-2 border-white px-2 py-1 rounded">已購</span></div>`
+                    ? `<div class="absolute inset-0 bg-emerald-600/60 backdrop-blur-[1px] flex items-center justify-center z-10 animate-fade-in pointer-events-none"><span class="text-white font-bold text-sm tracking-widest border-2 border-white px-2 py-1 rounded">已購</span></div>`
                     : '';
 
-                // 3. 處理文字/連結內容
                 let textContent = '';
-                let textAction = ''; // 點擊文字的動作
+                let textAction = '';
                 
                 if (item.type === 'link') {
                     const url = item.text.match(/(https?:\/\/[^\s]+)/)[0];
@@ -779,9 +872,8 @@
                     textContent = `<span class="truncate block text-gray-600">${item.text}</span>`;
                 }
 
-                // 4. 組合卡片 HTML
                 return `
-                    <div class="relative group bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm flex flex-col aspect-[3/4]">
+                    <div class="relative group bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm flex flex-col aspect-[3/4] animate-fade-in">
                         
                         <button onclick="deleteShopItem(${item.id})" class="absolute top-1 right-1 z-20 bg-white/80 hover:bg-red-500 hover:text-white text-gray-400 rounded-full w-6 h-6 flex items-center justify-center shadow-sm transition-colors">
                             <i class="fa-solid fa-xmark text-xs"></i>
@@ -809,42 +901,32 @@
         function renderHotels() { document.getElementById('hotelInfo').innerHTML = hotels.map(h => `<div class="pb-2 border-b border-gray-100 last:border-0"><div class="text-xs font-bold bg-gray-200 inline-block px-1 rounded text-gray-600 mb-1">${h.date}</div><div class="font-bold text-base text-muji-accent">${h.name}</div><div class="text-xs text-gray-500 mt-1">${h.address}</div><div class="flex gap-3 mt-2"><button onclick="openMap('${h.address}')" class="text-blue-500 text-xs underline">地圖</button>${h.tel ? `<a href="tel:${h.tel}" class="text-blue-500 text-xs underline">撥打電話</a>` : ''}</div></div>`).join(''); }
         function toggleAccordion(id) { document.getElementById(id).classList.toggle('hidden'); }
         function addQRCode(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function (e) { qrCodes.push(e.target.result); localStorage.setItem('trip_qrcodes', JSON.stringify(qrCodes)); renderQRs(); }; reader.readAsDataURL(input.files[0]); } }
-        function renderQRs() { document.getElementById('qrContainer').innerHTML = qrCodes.map((src, idx) => `<div class="relative group"><img src="${src}" class="w-full rounded border border-gray-200" onclick="showFullImg('${src}')"><button onclick="deleteQR(${idx})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80"><i class="fa-solid fa-xmark"></i></button></div>`).join(''); }
+        function renderQRs() { document.getElementById('qrContainer').innerHTML = qrCodes.map((src, idx) => `<div class="relative group"><img src="${src}" class="w-full rounded border border-gray-200 cursor-pointer" onclick="showFullImg('${src}')"><button onclick="deleteQR(${idx})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80"><i class="fa-solid fa-xmark"></i></button></div>`).join(''); }
         function deleteQR(idx) { if(confirm('刪除?')) { qrCodes.splice(idx, 1); localStorage.setItem('trip_qrcodes', JSON.stringify(qrCodes)); renderQRs(); } }
 
         // --- New Food Logic with Tabs ---
         let currentFoodTab = "d1-lunch";
 
         function initFood() { 
-            // 1. Render Tabs
             const tabsContainer = document.getElementById('foodTabsContainer');
             tabsContainer.innerHTML = foodData.map(group => `
                 <button onclick="switchFoodTab('${group.id}')" 
                         id="food-btn-${group.id}"
-                        class="food-tab-btn px-4 py-2 rounded-full text-sm font-bold border border-muji-border bg-white text-gray-500 mr-2 last:mr-0">
+                        class="pill-tab-btn mr-2 last:mr-0">
                     ${group.label}
                 </button>
             `).join('');
-
-            // 2. Initial Render
             switchFoodTab(currentFoodTab);
         }
 
         function switchFoodTab(id) {
             currentFoodTab = id;
-            
-            // Update Buttons State
-            document.querySelectorAll('.food-tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'border-muji-accent', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-500', 'border-muji-border');
+            document.querySelectorAll('#foodTabsContainer .pill-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
             const activeBtn = document.getElementById(`food-btn-${id}`);
-            if(activeBtn) {
-                activeBtn.classList.remove('bg-white', 'text-gray-500', 'border-muji-border');
-                activeBtn.classList.add('active', 'border-muji-accent', 'text-white');
-            }
+            if(activeBtn) activeBtn.classList.add('active');
 
-            // Render Content
             const selectedGroup = foodData.find(g => g.id === id);
             if(!selectedGroup) return;
 
@@ -856,10 +938,8 @@
             `;
             
             selectedGroup.spots.forEach(spot => {
-                 // Check if address is a link
                  const isLink = spot.address && spot.address.startsWith('http');
                  const displayAddress = isLink ? '📍 點擊右側導航' : spot.address;
-
                  html += `
                     <div class="muji-card p-0 flex flex-col">
                         <div class="p-4">
