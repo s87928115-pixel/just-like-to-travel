@@ -7,9 +7,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="沖繩慢旅">
-    <!-- 預設圖示，更換封面時會透過 JS 動態替換這裡的 href -->
-    <link id="apple-icon" rel="apple-touch-icon" href="https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=200&auto=format&fit=crop">
-    <link id="favicon" rel="icon" type="image/jpeg" href="https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=200&auto=format&fit=crop">
+    
+    <!-- 【核心修復】在瀏覽器解析 HTML 之前，同步讀取圖片並寫入 Meta Tag，確保捷徑圖示 100% 正確 -->
+    <script>
+        (function() {
+            var STORAGE_KEY = 'muji_v4_';
+            var savedCover = localStorage.getItem(STORAGE_KEY + 'cover');
+            var iconHref = savedCover ? savedCover : "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=200&auto=format&fit=crop";
+            document.write('<link id="apple-icon" rel="apple-touch-icon" href="' + iconHref + '">');
+            document.write('<link id="favicon" rel="icon" type="image/jpeg" href="' + iconHref + '">');
+        })();
+    </script>
 
     <title>沖繩夏日慢旅 - 精簡旅遊APP</title>
     <!-- Tailwind CSS CDN -->
@@ -48,12 +56,12 @@
     <!-- 全局圖片放大 Modal -->
     <div id="imageModal" class="fixed inset-0 bg-black/90 z-[60] hidden flex flex-col items-center justify-center p-4" onclick="closeImageModal()">
         <img id="modalTargetImg" src="" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain mb-4">
-        <button class="bg-white/20 text-white px-4 py-2 rounded-full text-xs font-bold backdrop-blur-md">關閉</button>
+        <button class="bg-white/20 text-white px-4 py-2 rounded-full text-xs font-bold backdrop-blur-md hover:bg-white/30">關閉</button>
     </div>
 
     <!-- 頂部封面與航班快訊 -->
     <header class="relative w-full h-52 bg-neutral-300 overflow-hidden group rounded-b-2xl shadow-sm">
-        <img id="coverImage" src="https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover">
+        <img id="coverImage" src="" class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-[#4A3E3D]/80 via-transparent to-transparent flex flex-col justify-end p-5">
             <div class="flex justify-between items-end">
                 <div>
@@ -88,24 +96,24 @@
     </nav>
 
     <script>
-        // 初始化資料 (使用新 key 確保資料乾淨)
-        const STORAGE_KEY = 'muji_v3_'; 
+        // 初始化資料庫設定
+        const STORAGE_KEY = 'muji_v4_'; 
 
         const defaultPlan = [
             { day: 1, date: "6/13", items: [
                 { time: "13:30", text: "✈️ 去程航班起飛 (13:30-15:55)", important: true, url: "" },
                 { time: "16:30", text: "🚗 辦理租車手續", important: false, url: "" },
                 { time: "17:30", text: "🏨 抵達民宿 Check-in", important: false, url: "https://maps.app.goo.gl/MeW62ReoSn7VCpN49" },
-                { time: "18:00", text: "🐈 貓之道找貓", important: false, url: "https://maps.app.goo.gl/EvJRi6NRJBw4ktMn6" },
-                { time: "18:45", text: "🎡 美國村散步(八點左右有煙火)", important: false, url: "https://maps.app.goo.gl/fKZUZkqhmxh1bvKu5" },
+                { time: "18:00", text: "🐈 貓的道散步", important: false, url: "https://maps.app.goo.gl/EvJRi6NRJBw4ktMn6" },
+                { time: "18:45", text: "🎡 美國村散策", important: false, url: "https://maps.app.goo.gl/fKZUZkqhmxh1bvKu5" },
                 { time: "20:00", text: "🍽️ 享用晚餐", important: false, url: "" }
             ]},
             { day: 2, date: "6/14", items: [
                 { time: "09:30", text: "🏝️ 古宇利島絕景", important: false, url: "https://maps.app.goo.gl/A6KbengUB6K2rRbg9" },
                 { time: "11:30", text: "🦈 沖繩美麗海水族館", important: false, url: "https://maps.app.goo.gl/fnjwVkwC1VzncTLW9" },
                 { time: "13:30", text: "🍽️ 午餐", important: false, url: "" },
-                { time: "15:30", text: "⛩️ 波上宮參拜 (❗需於五點前抵達)", important: true, url: "https://maps.app.goo.gl/W3QwpRtVXTqjSLLw5" },
-                { time: "16:30", text: "🌅 瀨長島 (Umikaji Terrace)", important: false, url: "https://maps.app.goo.gl/B5SxaRWn8Dw76rjZ9" },
+                { time: "15:30", text: "⛩️ 波上宮參拜 (❗需於四點前抵達)", important: true, url: "https://maps.app.goo.gl/W3QwpRtVXTqjSLLw5" },
+                { time: "16:30", text: "🌅 賴長島 (Umikaji Terrace)", important: false, url: "https://maps.app.goo.gl/B5SxaRWn8Dw76rjZ9" },
                 { time: "19:00", text: "🛍️ 國際通吃晚餐", important: false, url: "" }
             ]},
             { day: 3, date: "6/15", items: [
@@ -113,7 +121,7 @@
                 { time: "12:30", text: "🍽️ 午餐", important: false, url: "" },
                 { time: "14:00", text: "🚗 開車準備送機", important: false, url: "" },
                 { time: "15:00", text: "🛒 好市多採購", important: false, url: "https://maps.app.goo.gl/pepucERz8Zs2zqwH8" },
-                { time: "19:40", text: "🎒 準備搭機 (出發前保留一個半小時)", important: true, url: "" },
+                { time: "19:40", text: "🎒 準備搭機 (出發前保留半小時)", important: true, url: "" },
                 { time: "20:10", text: "✈️ 回程航班起飛 (20:10-20:50)", important: true, url: "" }
             ]}
         ];
@@ -131,10 +139,11 @@
             { day: 3, title: "Day 3 推薦美食", items: [] }
         ];
 
+        // 完全依照您的清單要求建立
         const defaultChecklist = [
-            { id: "c1", cat: "個人物品", text: "護照", checked: false }, { id: "c2", cat: "個人物品", text: "信用卡", checked: false }, { id: "c3", cat: "個人物品", text: "身分證", checked: false }, { id: "c4", cat: "個人物品", text: "現金", checked: false }, { id: "c5", cat: "個人物品", text: "身分證影本", checked: false }, { id: "c6", cat: "個人物品", text: "護照影本", checked: false }, { id: "c7", cat: "個人物品", text: "台灣駕照", checked: false }, { id: "c8", cat: "個人物品", text: "國際駕照", checked: false }, { id: "c9", cat: "個人物品", text: "駕照譯本", checked: false },
-            { id: "c10", cat: "雜物", text: "衣物、帽子", checked: false }, { id: "c11", cat: "雜物", text: "太陽眼鏡", checked: false }, { id: "c12", cat: "雜物", text: "隱形眼鏡、梳子", checked: false }, { id: "c13", cat: "雜物", text: "保養品(乳液/護手霜/洗臉)", checked: false }, { id: "c14", cat: "雜物", text: "常備藥品(感冒/暈車/過敏/腸胃)", checked: false },
-            { id: "c15", cat: "電子產品", text: "充電器、充電線", checked: false }, { id: "c16", cat: "電子產品", text: "行動電源", checked: false }, { id: "c17", cat: "電子產品", text: "萬國插座", checked: false }, { id: "c18", cat: "電子產品", text: "GoPro/相機", checked: false }, { id: "c19", cat: "電子產品", text: "相機充電器、電池", checked: false }, { id: "c20", cat: "電子產品", text: "記憶卡", checked: false }, { id: "c21", cat: "電子產品", text: "網卡、SIM卡針", checked: false }
+            { id: "c1", cat: "個人物品", text: "護照", checked: false }, { id: "c2", cat: "個人物品", text: "信用卡", checked: false }, { id: "c3", cat: "個人物品", text: "身分證", checked: false }, { id: "c4", cat: "個人物品", text: "現金", checked: false }, { id: "c5", cat: "個人物品", text: "身分證影本", checked: false }, { id: "c6", cat: "個人物品", text: "護照影本", checked: false }, { id: "c7", cat: "個人物品", text: "駕照", checked: false }, { id: "c8", cat: "個人物品", text: "國際駕照", checked: false }, { id: "c9", cat: "個人物品", text: "駕照譯本", checked: false },
+            { id: "c10", cat: "雜物", text: "衣物", checked: false }, { id: "c11", cat: "雜物", text: "帽子", checked: false }, { id: "c12", cat: "雜物", text: "太陽眼鏡", checked: false }, { id: "c13", cat: "雜物", text: "隱眼", checked: false }, { id: "c14", cat: "雜物", text: "梳子", checked: false }, { id: "c15", cat: "雜物", text: "保養品(乳液、護手霜、洗臉的)", checked: false }, { id: "c16", cat: "雜物", text: "藥品(感冒、暈車、過敏、腸胃)", checked: false },
+            { id: "c17", cat: "電子產品", text: "充電器", checked: false }, { id: "c18", cat: "電子產品", text: "充電線", checked: false }, { id: "c19", cat: "電子產品", text: "行動電源", checked: false }, { id: "c20", cat: "電子產品", text: "萬國插座", checked: false }, { id: "c21", cat: "電子產品", text: "GoPro/相機", checked: false }, { id: "c22", cat: "電子產品", text: "GoPro/相機充電器", checked: false }, { id: "c23", cat: "電子產品", text: "電池", checked: false }, { id: "c24", cat: "電子產品", text: "記憶卡", checked: false }, { id: "c25", cat: "電子產品", text: "網卡", checked: false }, { id: "c26", cat: "電子產品", text: "SIM卡針", checked: false }
         ];
 
         let appState = {
@@ -162,15 +171,8 @@
             localStorage.setItem(STORAGE_KEY+'info', JSON.stringify(appState.info));
         }
 
-        // 動態替換網頁 Icon (支援加到主畫面)
-        function updateAppIcons(base64Str) {
-            document.getElementById('apple-icon').href = base64Str;
-            document.getElementById('favicon').href = base64Str;
-        }
-
         window.onload = function() {
             document.getElementById('coverImage').src = appState.cover;
-            updateAppIcons(appState.cover); // 初始載入時替換 Icon
             switchTab(appState.currentTab);
         };
 
@@ -198,8 +200,10 @@
                     appState.cover = base64Str;
                     localStorage.setItem(STORAGE_KEY+'cover', base64Str);
                     document.getElementById('coverImage').src = base64Str;
-                    updateAppIcons(base64Str); // 上傳後同步替換 Icon
-                    alert("更換成功！\n若您使用手機，可點擊瀏覽器選單的「加入主畫面」，桌面圖示就會變成這張照片喔！");
+                    // 同步替換目前頁面的 Icon (用於即時顯示)
+                    document.getElementById('apple-icon').href = base64Str;
+                    document.getElementById('favicon').href = base64Str;
+                    alert("更換成功！\n【重要】請將這個網頁「重新整理（下拉更新）」一次，然後再點擊「加入主畫面」，捷徑圖示就會完美變成這張照片了！");
                 });
             }
         }
@@ -214,7 +218,6 @@
         function openImageModal(src) { if(!src) return; document.getElementById('modalTargetImg').src = src; document.getElementById('imageModal').classList.remove('hidden'); }
         function closeImageModal() { document.getElementById('imageModal').classList.add('hidden'); }
 
-        // 導航切換
         let activeDayPlan = 1;
         function switchTab(tabId) {
             appState.currentTab = tabId;
@@ -417,10 +420,10 @@
             let html = `<div class="mb-4"><h2 class="text-lg font-bold text-[#5C4A42] font-['Klee_One']"><i class="fa-solid fa-list-check mr-1"></i> 清單總覽</h2></div>`;
 
             // 行李
-            html += `<div class="muji-card p-4 mb-5"><h3 class="text-xs font-bold text-[#8C7667] mb-2 border-b border-dashed border-[#E6E1DA] pb-2">必備行李</h3><div class="max-h-52 overflow-y-auto pr-1">`;
+            html += `<div class="muji-card p-4 mb-5"><h3 class="text-xs font-bold text-[#8C7667] mb-2 border-b border-dashed border-[#E6E1DA] pb-2">必備行李</h3><div class="max-h-60 overflow-y-auto pr-1">`;
             let lastCat = "";
             appState.checklist.forEach((item, index) => {
-                if(item.cat !== lastCat) { lastCat = item.cat; html += `<div class="text-[11px] font-bold text-neutral-400 mt-2 mb-1">${lastCat}</div>`; }
+                if(item.cat !== lastCat) { lastCat = item.cat; html += `<div class="text-[11px] font-bold text-[#4B6E7D] mt-3 mb-1.5">${lastCat}</div>`; }
                 html += `<label class="flex items-center text-xs bg-neutral-50/50 p-2 rounded border border-neutral-100 mb-1 cursor-pointer"><input type="checkbox" ${item.checked?'checked':''} onchange="toggleCheck(${index})" class="mr-2 accent-[#8C7667] w-4 h-4"><span class="${item.checked?'line-through text-neutral-300':'text-neutral-700 font-medium'}">${item.text}</span></label>`;
             });
             html += `</div></div>`;
