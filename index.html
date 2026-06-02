@@ -3,48 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- PWA 與桌面圖示支援設定 -->
+    <!-- PWA 基礎設定 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="沖繩慢旅">
     
-    <!-- 【核心修復】在瀏覽器解析 HTML 之前，同步讀取圖片並寫入 Meta Tag，確保捷徑圖示 100% 正確 -->
+    <!-- 【圖示終極修復】利用 Blob 動態生成 Web Manifest，強制系統抓取 LocalStorage 內的圖片 -->
     <script>
         (function() {
-            var STORAGE_KEY = 'muji_v4_';
+            var STORAGE_KEY = 'muji_v5_';
             var savedCover = localStorage.getItem(STORAGE_KEY + 'cover');
             var iconHref = savedCover ? savedCover : "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=200&auto=format&fit=crop";
+            
+            // 強制寫入 apple-touch-icon
             document.write('<link id="apple-icon" rel="apple-touch-icon" href="' + iconHref + '">');
             document.write('<link id="favicon" rel="icon" type="image/jpeg" href="' + iconHref + '">');
+            
+            // 生成虛擬的 manifest.json
+            if(savedCover) {
+                var manifest = {
+                    "name": "沖繩慢旅", "short_name": "沖繩慢旅", "display": "standalone",
+                    "icons": [{"src": savedCover, "sizes": "512x512", "type": "image/jpeg"}]
+                };
+                var blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                document.write('<link rel="manifest" href="' + URL.createObjectURL(blob) + '">');
+            }
         })();
     </script>
 
     <title>沖繩夏日慢旅 - 精簡旅遊APP</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome CDN -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: 融入無印風與日系文青感 -->
+    <!-- Google Fonts: Klee One (無印手寫感) & Noto Sans TC -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
-            background-color: #F7F5F0; /* 無印經典米白 */
-            color: #4A3E3D; /* 深木褐 */
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F7F5F0; /* 無印米色 */
+            color: #4A3E3D; /* 無印咖啡色 */
             -webkit-tap-highlight-color: transparent;
         }
+        h1, h2, .muji-title { font-family: 'Klee One', sans-serif; }
         .muji-card {
             background-color: #FFFFFF;
             border: 1px solid #E6E1DA;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(74, 62, 61, 0.04);
+            box-shadow: 0 4px 10px rgba(74, 62, 61, 0.05);
         }
         .muji-btn-primary { background-color: #8C7667; color: #FFFFFF; }
         .muji-btn-primary:active { background-color: #735F52; }
-        .muji-btn-accent { background-color: #4B6E7D; color: #FFFFFF; }
+        .muji-btn-accent { background-color: #4B6E7D; color: #FFFFFF; } /* 無印藍 */
         .muji-btn-accent:active { background-color: #385563; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -53,67 +66,66 @@
 </head>
 <body class="pb-24 max-w-md mx-auto relative min-h-screen shadow-2xl bg-[#F7F5F0]">
 
-    <!-- 全局圖片放大 Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black/90 z-[60] hidden flex flex-col items-center justify-center p-4" onclick="closeImageModal()">
-        <img id="modalTargetImg" src="" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain mb-4">
-        <button class="bg-white/20 text-white px-4 py-2 rounded-full text-xs font-bold backdrop-blur-md hover:bg-white/30">關閉</button>
+    <!-- 圖片放大 Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-[#4A3E3D]/90 z-[60] hidden flex flex-col items-center justify-center p-4 backdrop-blur-sm" onclick="closeImageModal()">
+        <img id="modalTargetImg" src="" class="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain mb-4">
+        <button class="bg-white/20 text-white px-5 py-2 rounded-full text-sm tracking-widest backdrop-blur-md border border-white/30">關閉</button>
     </div>
 
-    <!-- 頂部封面與航班快訊 -->
-    <header class="relative w-full h-52 bg-neutral-300 overflow-hidden group rounded-b-2xl shadow-sm">
+    <!-- 頂部封面 -->
+    <header class="relative w-full h-52 bg-[#E6E1DA] overflow-hidden rounded-b-[20px] shadow-sm">
         <img id="coverImage" src="" class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-[#4A3E3D]/80 via-transparent to-transparent flex flex-col justify-end p-5">
             <div class="flex justify-between items-end">
                 <div>
-                    <h1 class="text-white text-2xl font-bold tracking-widest font-['Klee_One']">沖繩夏日慢旅</h1>
-                    <p class="text-neutral-200 text-xs mt-1.5"><i class="fa-regular fa-calendar-days mr-1"></i> 6/13 - 6/15</p>
+                    <h1 class="text-white text-2xl font-bold tracking-widest muji-title">沖繩夏日慢旅</h1>
+                    <p class="text-white/90 text-xs mt-1.5 tracking-wider"><i class="fa-regular fa-calendar-days mr-1"></i> 6/13 - 6/15</p>
                 </div>
-                <label class="bg-white/20 text-white text-xs px-2.5 py-1.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/30 transition shadow">
-                    <i class="fa-solid fa-camera mr-1"></i>換封面
+                <label class="bg-white/20 text-white text-xs px-3 py-1.5 rounded-full backdrop-blur-md cursor-pointer border border-white/30 shadow-sm flex items-center">
+                    <i class="fa-solid fa-camera mr-1.5"></i>更換封面
                     <input type="file" id="coverUpload" accept="image/*" class="hidden" onchange="uploadCover(this)">
                 </label>
             </div>
         </div>
     </header>
 
-    <!-- 快捷航班動態列 -->
-    <div class="bg-[#EADFC9] mx-4 -mt-4 relative z-10 rounded-xl px-4 py-3 text-xs flex justify-between items-center text-[#5C4A42] font-medium shadow-md border border-[#E6E1DA]">
-        <div class="flex flex-col items-center"><span class="text-[10px] text-[#8C7667] mb-0.5">去程 6/13</span><div class="font-bold text-sm">13:30 <i class="fa-solid fa-plane text-[10px] mx-1"></i> 15:55</div></div>
+    <!-- 航班快訊 -->
+    <div class="bg-[#EADFC9] mx-4 -mt-5 relative z-10 rounded-xl px-4 py-3 text-xs flex justify-between items-center text-[#5C4A42] font-medium shadow-md border border-[#D1C6B4]">
+        <div class="flex flex-col items-center"><span class="text-[10px] text-[#8C7667] mb-0.5">去程 6/13</span><div class="font-bold text-sm tracking-wider">13:30 <i class="fa-solid fa-plane text-[10px] mx-1"></i> 15:55</div></div>
         <div class="w-px h-8 bg-[#8C7667]/30 mx-2"></div>
-        <div class="flex flex-col items-center"><span class="text-[10px] text-[#8C7667] mb-0.5">回程 6/15</span><div class="font-bold text-sm">20:10 <i class="fa-solid fa-plane text-[10px] mx-1"></i> 20:50</div></div>
+        <div class="flex flex-col items-center"><span class="text-[10px] text-[#8C7667] mb-0.5">回程 6/15</span><div class="font-bold text-sm tracking-wider">20:10 <i class="fa-solid fa-plane text-[10px] mx-1"></i> 20:50</div></div>
     </div>
 
-    <!-- 主要內容抽換區 -->
-    <main class="p-4 mt-2" id="mainContent"></main>
+    <!-- 主要內容區 -->
+    <main class="p-4 mt-1" id="mainContent"></main>
 
-    <!-- 底部導航列 -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-[#E6E1DA] h-16 flex justify-around items-center z-40 px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] pb-safe">
+    <!-- 底部導航 -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-[#E6E1DA] h-[70px] flex justify-around items-center z-40 px-2 shadow-[0_-4px_20px_rgba(74,62,61,0.05)] pb-safe">
         <button onclick="switchTab('plan')" id="nav-plan" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-[#8C7667]"><i class="fa-regular fa-compass text-xl mb-1"></i><span>行程</span></button>
-        <button onclick="switchTab('food')" id="nav-food" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-neutral-400"><i class="fa-solid fa-utensils text-xl mb-1"></i><span>美食</span></button>
-        <button onclick="switchTab('wallet')" id="nav-wallet" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-neutral-400"><i class="fa-solid fa-wallet text-xl mb-1"></i><span>記帳</span></button>
-        <button onclick="switchTab('lists')" id="nav-lists" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-neutral-400"><i class="fa-solid fa-list-check text-xl mb-1"></i><span>清單</span></button>
-        <button onclick="switchTab('info')" id="nav-info" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-neutral-400"><i class="fa-solid fa-circle-info text-xl mb-1"></i><span>資訊</span></button>
+        <button onclick="switchTab('food')" id="nav-food" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-[#A89F91]"><i class="fa-solid fa-utensils text-xl mb-1"></i><span>美食</span></button>
+        <button onclick="switchTab('wallet')" id="nav-wallet" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-[#A89F91]"><i class="fa-solid fa-wallet text-xl mb-1"></i><span>記帳</span></button>
+        <button onclick="switchTab('lists')" id="nav-lists" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-[#A89F91]"><i class="fa-solid fa-list-check text-xl mb-1"></i><span>清單</span></button>
+        <button onclick="switchTab('info')" id="nav-info" class="flex flex-col items-center justify-center w-14 text-xs font-medium transition text-[#A89F91]"><i class="fa-solid fa-circle-info text-xl mb-1"></i><span>資訊</span></button>
     </nav>
 
     <script>
-        // 初始化資料庫設定
-        const STORAGE_KEY = 'muji_v4_'; 
+        const STORAGE_KEY = 'muji_v5_'; 
 
         const defaultPlan = [
             { day: 1, date: "6/13", items: [
-                { time: "13:30", text: "✈️ 去程航班起飛 (13:30-15:55)", important: true, url: "" },
+                { time: "13:30", text: "✈️ 星宇航空起飛 (13:30-15:55)", important: true, url: "" },
                 { time: "16:30", text: "🚗 辦理租車手續", important: false, url: "" },
                 { time: "17:30", text: "🏨 抵達民宿 Check-in", important: false, url: "https://maps.app.goo.gl/MeW62ReoSn7VCpN49" },
                 { time: "18:00", text: "🐈 貓之道找貓", important: false, url: "https://maps.app.goo.gl/EvJRi6NRJBw4ktMn6" },
-                { time: "18:45", text: "🎡 美國村散步", important: false, url: "https://maps.app.goo.gl/fKZUZkqhmxh1bvKu5" },
+                { time: "18:45", text: "🎡 美國村散步(八點有煙火)", important: false, url: "https://maps.app.goo.gl/fKZUZkqhmxh1bvKu5" },
                 { time: "20:00", text: "🍽️ 享用晚餐", important: false, url: "" }
             ]},
             { day: 2, date: "6/14", items: [
                 { time: "09:30", text: "🏝️ 古宇利島絕景", important: false, url: "https://maps.app.goo.gl/A6KbengUB6K2rRbg9" },
                 { time: "11:30", text: "🦈 沖繩美麗海水族館", important: false, url: "https://maps.app.goo.gl/fnjwVkwC1VzncTLW9" },
                 { time: "13:30", text: "🍽️ 午餐", important: false, url: "" },
-                { time: "15:30", text: "⛩️ 波上宮參拜 (❗需於四點前抵達)", important: true, url: "https://maps.app.goo.gl/W3QwpRtVXTqjSLLw5" },
-                { time: "16:30", text: "🌅 賴長島 (Umikaji Terrace)", important: false, url: "https://maps.app.goo.gl/B5SxaRWn8Dw76rjZ9" },
+                { time: "15:30", text: "⛩️ 波上宮參拜 (❗5點前抵達)", important: true, url: "https://maps.app.goo.gl/W3QwpRtVXTqjSLLw5" },
+                { time: "16:30", text: "🌅 瀨長島 (Umikaji Terrace)", important: false, url: "https://maps.app.goo.gl/B5SxaRWn8Dw76rjZ9" },
                 { time: "19:00", text: "🛍️ 國際通吃晚餐", important: false, url: "" }
             ]},
             { day: 3, date: "6/15", items: [
@@ -121,25 +133,24 @@
                 { time: "12:30", text: "🍽️ 午餐", important: false, url: "" },
                 { time: "14:00", text: "🚗 開車準備送機", important: false, url: "" },
                 { time: "15:00", text: "🛒 好市多採購", important: false, url: "https://maps.app.goo.gl/pepucERz8Zs2zqwH8" },
-                { time: "19:40", text: "🎒 準備搭機 (出發前保留一個半小時)", important: true, url: "" },
-                { time: "20:10", text: "✈️ 回程航班起飛 (20:10-20:50)", important: true, url: "" }
+                { time: "19:40", text: "🎒 準備搭機 (保留一個半小時)", important: true, url: "" },
+                { time: "20:10", text: "✈️ 星宇航空起飛 (20:10-20:50)", important: true, url: "" }
             ]}
         ];
 
         const defaultFood = [
             { day: 1, title: "Day 1 推薦美食", items: [] },
-            { day: 2, title: "Day 2 行程周邊美食特搜", items: [
+            { day: 2, title: "Day 2 行程周邊特搜", items: [
                 { name: "🍙 在地熱門飯糰", desc: "沖繩必吃人氣飯糰，份量厚實。", url: "https://maps.app.goo.gl/iCcXRwDSWE83Bpoa9" },
-                { name: "🦐 經典蝦蝦飯", desc: "古宇利島必訪名物，蒜香濃郁的絕佳滋味。", url: "https://maps.app.goo.gl/cyJTFsrKNi6TELP69" },
-                { name: "☕ 質感海景咖啡廳", desc: "適合午後休憩，享受沖繩海風與咖啡。", url: "https://maps.app.goo.gl/PmWr42B5LaVNHogj6" },
-                { name: "🍱 道地定食餐廳", desc: "充滿日本家庭風味的定食料理。", url: "https://maps.app.goo.gl/PmWr42B5LaVNHogj6" },
-                { name: "🥩 燒肉本部牧場 (總店)", desc: "頂級和牛與本部牛燒肉，肉質鮮甜！", url: "https://maps.app.goo.gl/opzRj1a1cBJWKRqX6" },
-                { name: "☕ 星巴克 (特色店)", desc: "絕佳海景或具備在地建築特色的星巴克門市。", url: "https://maps.app.goo.gl/3qVCPNcnvrUhmo756" }
+                { name: "🦐 經典蝦蝦飯", desc: "古宇利島名物，蒜香濃郁絕佳滋味。", url: "https://maps.app.goo.gl/cyJTFsrKNi6TELP69" },
+                { name: "☕ 質感海景咖啡廳", desc: "享受沖繩海風與咖啡。", url: "https://maps.app.goo.gl/PmWr42B5LaVNHogj6" },
+                { name: "🍱 道地定食餐廳", desc: "日本家庭風味定食料理。", url: "https://maps.app.goo.gl/PmWr42B5LaVNHogj6" },
+                { name: "🥩 燒肉本部牧場 (總店)", desc: "頂級和牛，肉質鮮甜！", url: "https://maps.app.goo.gl/opzRj1a1cBJWKRqX6" },
+                { name: "☕ 星巴克 (特色店)", desc: "絕佳海景或具備在地建築特色。", url: "https://maps.app.goo.gl/3qVCPNcnvrUhmo756" }
             ]},
             { day: 3, title: "Day 3 推薦美食", items: [] }
         ];
 
-        // 完全依照您的清單要求建立
         const defaultChecklist = [
             { id: "c1", cat: "個人物品", text: "護照", checked: false }, { id: "c2", cat: "個人物品", text: "信用卡", checked: false }, { id: "c3", cat: "個人物品", text: "身分證", checked: false }, { id: "c4", cat: "個人物品", text: "現金", checked: false }, { id: "c5", cat: "個人物品", text: "身分證影本", checked: false }, { id: "c6", cat: "個人物品", text: "護照影本", checked: false }, { id: "c7", cat: "個人物品", text: "駕照", checked: false }, { id: "c8", cat: "個人物品", text: "國際駕照", checked: false }, { id: "c9", cat: "個人物品", text: "駕照譯本", checked: false },
             { id: "c10", cat: "雜物", text: "衣物", checked: false }, { id: "c11", cat: "雜物", text: "帽子", checked: false }, { id: "c12", cat: "雜物", text: "太陽眼鏡", checked: false }, { id: "c13", cat: "雜物", text: "隱眼", checked: false }, { id: "c14", cat: "雜物", text: "梳子", checked: false }, { id: "c15", cat: "雜物", text: "保養品(乳液、護手霜、洗臉的)", checked: false }, { id: "c16", cat: "雜物", text: "藥品(感冒、暈車、過敏、腸胃)", checked: false },
@@ -156,7 +167,7 @@
             shopping: JSON.parse(localStorage.getItem(STORAGE_KEY+'shopping')) || [],
             wallet: JSON.parse(localStorage.getItem(STORAGE_KEY+'wallet')) || { rate: 0.215, history: [] },
             info: JSON.parse(localStorage.getItem(STORAGE_KEY+'info')) || {
-                hotel: "住宿資訊 (可編輯)\nURL: https://maps.app.goo.gl/WF7LqC5Ly8G5PkXx9",
+                hotel: "住宿資訊 (可點擊編輯)\nURL: https://maps.app.goo.gl/WF7LqC5Ly8G5PkXx9",
                 carRental: "取車/還車資訊", carAddress: "", carPhoto: ""
             }
         };
@@ -200,10 +211,10 @@
                     appState.cover = base64Str;
                     localStorage.setItem(STORAGE_KEY+'cover', base64Str);
                     document.getElementById('coverImage').src = base64Str;
-                    // 同步替換目前頁面的 Icon (用於即時顯示)
+                    // 同步修改網頁 icon 標籤
                     document.getElementById('apple-icon').href = base64Str;
                     document.getElementById('favicon').href = base64Str;
-                    alert("更換成功！\n【重要】請將這個網頁「重新整理（下拉更新）」一次，然後再點擊「加入主畫面」，捷徑圖示就會完美變成這張照片了！");
+                    alert("✅ 封面已更換！\n\n【關鍵步驟】請務必在瀏覽器將網頁「下拉重新整理」一次，然後再點擊「加入主畫面」，圖示就會順利更新了！");
                 });
             }
         }
@@ -211,7 +222,7 @@
         function linkify(text) {
             const urlRegex = /(https?:\/\/[^\s]+)/g;
             return text.replace(urlRegex, function(url) {
-                return `<a href="${url}" target="_blank" class="inline-block mt-1 text-[11px] font-bold text-[#4B6E7D] bg-[#4B6E7D]/5 border border-[#4B6E7D]/20 px-2 py-1 rounded-md shadow-sm transition hover:bg-[#4B6E7D]/10"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>開啟連結</a>`;
+                return `<a href="${url}" target="_blank" class="inline-block mt-1.5 text-[11px] font-bold text-[#4B6E7D] bg-[#4B6E7D]/10 border border-[#4B6E7D]/20 px-2.5 py-1 rounded-md shadow-sm transition hover:bg-[#4B6E7D]/20"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>開啟地圖/連結</a>`;
             });
         }
 
@@ -224,8 +235,8 @@
             const tabs = ['plan', 'food', 'wallet', 'lists', 'info'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`nav-${t}`);
-                if (t === tabId) { btn.classList.remove('text-neutral-400'); btn.classList.add('text-[#8C7667]'); } 
-                else { btn.classList.remove('text-[#8C7667]'); btn.classList.add('text-neutral-400'); }
+                if (t === tabId) { btn.classList.remove('text-[#A89F91]'); btn.classList.add('text-[#8C7667]'); } 
+                else { btn.classList.remove('text-[#8C7667]'); btn.classList.add('text-[#A89F91]'); }
             });
             const main = document.getElementById('mainContent');
             if (tabId === 'plan') renderPlanTab(main);
@@ -242,45 +253,45 @@
         function renderPlanTab(container) {
             let html = `
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold text-[#5C4A42] font-['Klee_One']"><i class="fa-regular fa-compass mr-1"></i> 日程表</h2>
+                    <h2 class="text-xl font-bold text-[#5C4A42] muji-title"><i class="fa-regular fa-compass mr-1.5"></i>日程表</h2>
                     <div class="inline-flex bg-white rounded-lg border border-[#E6E1DA] p-1 shadow-sm text-xs font-bold">
             `;
             appState.plan.forEach(d => {
-                const activeClass = d.day === activeDayPlan ? 'bg-[#8C7667] text-white' : 'text-neutral-500 hover:text-neutral-800';
-                html += `<button onclick="activeDayPlan=${d.day}; switchTab('plan')" class="px-3 py-1.5 rounded-md transition ${activeClass}">D${d.day}</button>`;
+                const activeClass = d.day === activeDayPlan ? 'bg-[#8C7667] text-white shadow-sm' : 'text-[#A89F91] hover:text-[#5C4A42]';
+                html += `<button onclick="activeDayPlan=${d.day}; switchTab('plan')" class="px-3.5 py-1.5 rounded-md transition ${activeClass}">D${d.day}</button>`;
             });
             html += `</div></div>`;
 
             const currentDay = appState.plan.find(d => d.day === activeDayPlan);
-            html += `<div class="text-xs text-[#8C7667] mb-4 font-bold bg-[#EADFC9]/30 border border-[#EADFC9] rounded-lg px-3 py-2"><i class="fa-regular fa-clock mr-1"></i> 第 ${activeDayPlan} 天 — ${currentDay.date}</div>`;
-            html += `<div class="relative pl-5 border-l-2 border-[#EADFC9] ml-2 space-y-5">`;
+            html += `<div class="text-xs text-[#8C7667] mb-5 font-bold bg-[#EADFC9]/40 border border-[#D1C6B4]/50 rounded-lg px-3 py-2.5 tracking-wider"><i class="fa-regular fa-clock mr-1.5"></i>第 ${activeDayPlan} 天 — ${currentDay.date}</div>`;
+            html += `<div class="relative pl-6 border-l-2 border-[#EADFC9] ml-2.5 space-y-5">`;
             currentDay.items.forEach((item, idx) => {
-                const timeColor = item.important ? 'bg-[#D9534F] text-white shadow-md ring-4 ring-red-50' : 'bg-[#EADFC9] text-[#5C4A42]';
-                const textColor = item.important ? 'font-bold text-[#D9534F]' : 'font-medium text-neutral-700';
+                const timeColor = item.important ? 'bg-[#D9534F] text-white shadow-md ring-4 ring-red-50' : 'bg-[#F5F2EB] text-[#5C4A42] border border-[#EADFC9]';
+                const textColor = item.important ? 'font-bold text-[#D9534F]' : 'font-medium text-[#4A3E3D]';
                 html += `
                     <div class="relative group">
-                        <span class="absolute -left-[35px] top-1 px-1.5 py-0.5 text-[10px] rounded font-bold ${timeColor}">${item.time}</span>
-                        <div class="muji-card p-3.5">
-                            <p class="text-[13px] ${textColor} leading-relaxed whitespace-pre-wrap">${item.text}</p>
-                            <div class="mt-2 flex flex-wrap gap-2 items-center justify-between">
-                                <div>${item.url ? `<a href="${item.url}" target="_blank" class="text-[11px] font-bold text-[#4B6E7D] bg-[#4B6E7D]/5 border border-[#4B6E7D]/20 px-2 py-1 rounded-md shadow-sm"><i class="fa-solid fa-map-location-dot mr-1"></i>Map</a>` : ''}</div>
-                                <button onclick="deletePlanItem(${activeDayPlan}, ${idx})" class="text-[11px] text-neutral-300 hover:text-red-400"><i class="fa-regular fa-trash-can"></i></button>
+                        <span class="absolute -left-[40px] top-1 px-1.5 py-0.5 text-[10px] rounded font-bold tracking-wider ${timeColor}">${item.time}</span>
+                        <div class="muji-card p-4 hover:border-[#D1C6B4] transition-colors">
+                            <p class="text-[14px] ${textColor} leading-relaxed whitespace-pre-wrap">${item.text}</p>
+                            <div class="mt-2.5 flex flex-wrap gap-2 items-center justify-between">
+                                <div>${item.url ? linkify(item.url) : ''}</div>
+                                <button onclick="deletePlanItem(${activeDayPlan}, ${idx})" class="text-[11px] text-neutral-300 hover:text-[#D9534F] bg-neutral-50 px-2 py-1 rounded"><i class="fa-regular fa-trash-can"></i></button>
                             </div>
                         </div>
                     </div>
                 `;
             });
             html += `</div>
-                <div class="muji-card p-4 mt-6 bg-neutral-50/50">
-                    <h3 class="text-xs font-bold text-[#8C7667] mb-2"><i class="fa-solid fa-plus mr-1"></i>新增 D${activeDayPlan} 行程</h3>
-                    <div class="grid grid-cols-4 gap-2 mb-2">
-                        <input type="text" id="newPlanTime" placeholder="12:00" class="col-span-1 border border-[#E6E1DA] rounded text-xs p-2.5 bg-white">
-                        <input type="text" id="newPlanText" placeholder="行程描述..." class="col-span-3 border border-[#E6E1DA] rounded text-xs p-2.5 bg-white">
+                <div class="muji-card p-4 mt-8 bg-neutral-50/50 border-dashed border-[#D1C6B4]">
+                    <h3 class="text-xs font-bold text-[#8C7667] mb-3"><i class="fa-solid fa-plus mr-1"></i>新增行程 (D${activeDayPlan})</h3>
+                    <div class="grid grid-cols-4 gap-2.5 mb-2.5">
+                        <input type="text" id="newPlanTime" placeholder="時間" class="col-span-1 border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
+                        <input type="text" id="newPlanText" placeholder="行程描述..." class="col-span-3 border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
                     </div>
-                    <input type="text" id="newPlanUrl" placeholder="Google Maps 網址 (選填)" class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 mb-3 bg-white">
+                    <input type="text" id="newPlanUrl" placeholder="Google Maps 網址 (選填)" class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 mb-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
                     <div class="flex items-center justify-between">
-                        <label class="text-xs text-neutral-500 font-bold flex items-center"><input type="checkbox" id="newPlanImportant" class="mr-1.5 w-3.5 h-3.5 accent-[#D9534F]"> 醒目標示</label>
-                        <button onclick="addPlanItem(${activeDayPlan})" class="muji-btn-primary text-xs font-bold px-4 py-1.5 rounded-lg shadow-sm"><i class="fa-solid fa-check mr-1"></i>加入</button>
+                        <label class="text-xs text-[#8C7667] font-bold flex items-center cursor-pointer"><input type="checkbox" id="newPlanImportant" class="mr-1.5 w-3.5 h-3.5 accent-[#D9534F]"> 紅色醒目標示</label>
+                        <button onclick="addPlanItem(${activeDayPlan})" class="muji-btn-primary text-xs font-bold px-5 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-check mr-1"></i>新增</button>
                     </div>
                 </div>`;
             container.innerHTML = html;
@@ -292,44 +303,44 @@
             const d = appState.plan.find(p => p.day === day);
             d.items.push({time, text, url, important:imp}); d.items.sort((a,b)=>a.time.localeCompare(b.time)); saveState(); switchTab('plan');
         }
-        function deletePlanItem(day, idx) { if(confirm('刪除？')){ appState.plan.find(p=>p.day===day).items.splice(idx,1); saveState(); switchTab('plan'); } }
+        function deletePlanItem(day, idx) { if(confirm('確定要刪除？')){ appState.plan.find(p=>p.day===day).items.splice(idx,1); saveState(); switchTab('plan'); } }
 
         // ==========================================
         // 2. FOOD GUIDE 美食誌
         // ==========================================
         function renderFoodTab(container) {
-            let html = `<div class="mb-4"><h2 class="text-lg font-bold text-[#5C4A42] font-['Klee_One']"><i class="fa-solid fa-utensils mr-1"></i> 美食誌</h2></div><div class="space-y-6">`;
+            let html = `<div class="mb-4"><h2 class="text-xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-utensils mr-1.5"></i>美食誌</h2></div><div class="space-y-6">`;
             appState.food.forEach((dayData, dIdx) => {
-                html += `<div><div class="flex items-center mb-3"><span class="w-1.5 h-4 bg-[#8C7667] inline-block mr-2 rounded-full"></span><h3 class="font-bold text-sm text-[#8C7667]">${dayData.title}</h3></div><div class="grid grid-cols-1 gap-3">`;
+                html += `<div><div class="flex items-center mb-3.5"><span class="w-1.5 h-4 bg-[#8C7667] inline-block mr-2 rounded-full"></span><h3 class="font-bold text-sm text-[#8C7667] tracking-wider">${dayData.title}</h3></div><div class="grid grid-cols-1 gap-3.5">`;
                 dayData.items.forEach((fItem, fIdx) => {
                     html += `
-                        <div class="muji-card p-4">
-                            <h4 class="font-bold text-sm text-neutral-800">${fItem.name}</h4>
-                            <p class="text-xs text-neutral-500 mt-1.5 leading-relaxed">${fItem.desc}</p>
-                            <div class="mt-3 flex items-center justify-between border-t border-dashed border-[#E6E1DA] pt-2.5">
-                                ${fItem.url ? `<a href="${fItem.url}" target="_blank" class="text-[11px] font-bold text-[#4B6E7D] bg-[#4B6E7D]/5 border border-[#4B6E7D]/20 px-2.5 py-1 rounded-md"><i class="fa-solid fa-location-dot mr-1"></i>Map</a>` : '<span></span>'}
-                                <button onclick="deleteFood(${dIdx}, ${fIdx})" class="text-[11px] text-neutral-300 hover:text-red-400"><i class="fa-regular fa-trash-can"></i></button>
+                        <div class="muji-card p-4 hover:shadow-md transition">
+                            <h4 class="font-bold text-sm text-[#4A3E3D]">${fItem.name}</h4>
+                            <p class="text-xs text-[#5C4A42] mt-1.5 leading-relaxed font-light">${fItem.desc}</p>
+                            <div class="mt-3.5 flex items-center justify-between border-t border-dashed border-[#E6E1DA] pt-3">
+                                <div>${fItem.url ? linkify(fItem.url) : ''}</div>
+                                <button onclick="deleteFood(${dIdx}, ${fIdx})" class="text-[11px] text-neutral-300 hover:text-[#D9534F] bg-neutral-50 px-2 py-1 rounded"><i class="fa-regular fa-trash-can"></i></button>
                             </div>
                         </div>`;
                 });
                 html += `</div></div>`;
             });
             html += `</div>
-                <div class="muji-card p-4 mt-6 bg-neutral-50/50">
-                    <h3 class="text-xs font-bold text-[#8C7667] mb-3"><i class="fa-solid fa-plus mr-1"></i>新增美食</h3>
-                    <select id="fDay" class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 mb-2 bg-white">${appState.food.map((d,i)=>`<option value="${i}">${d.title}</option>`).join('')}</select>
-                    <input type="text" id="fName" placeholder="店家名稱" class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 mb-2 bg-white">
-                    <textarea id="fDesc" rows="2" placeholder="介紹..." class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 mb-2 bg-white"></textarea>
-                    <input type="text" id="fUrl" placeholder="網址(選填)" class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 mb-3 bg-white">
-                    <button onclick="addFood()" class="w-full muji-btn-primary text-xs font-bold py-2.5 rounded-lg shadow-sm">新增至美食誌</button>
+                <div class="muji-card p-4 mt-8 bg-neutral-50/50 border-dashed border-[#D1C6B4]">
+                    <h3 class="text-xs font-bold text-[#8C7667] mb-3"><i class="fa-solid fa-plus mr-1"></i>增補美食地圖</h3>
+                    <select id="fDay" class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 mb-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667] text-[#5C4A42] font-medium">${appState.food.map((d,i)=>`<option value="${i}">${d.title}</option>`).join('')}</select>
+                    <input type="text" id="fName" placeholder="店家名稱" class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 mb-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
+                    <textarea id="fDesc" rows="2" placeholder="推薦原因 / 必點菜色..." class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 mb-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]"></textarea>
+                    <input type="text" id="fUrl" placeholder="Google Maps 網址 (選填)" class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 mb-4 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
+                    <button onclick="addFood()" class="w-full muji-btn-primary text-xs font-bold py-3 rounded-lg shadow-sm tracking-widest">新增至美食誌</button>
                 </div>`;
             container.innerHTML = html;
         }
         function addFood() {
             const day=document.getElementById('fDay').value, name=document.getElementById('fName').value.trim(), desc=document.getElementById('fDesc').value.trim(), url=document.getElementById('fUrl').value.trim();
-            if(!name||!desc)return alert('必填！'); appState.food[day].items.push({name,desc,url}); saveState(); switchTab('food');
+            if(!name||!desc)return alert('請填寫店家名稱與介紹！'); appState.food[day].items.push({name,desc,url}); saveState(); switchTab('food');
         }
-        function deleteFood(d,i){ if(confirm('刪除？')){ appState.food[d].items.splice(i,1); saveState(); switchTab('food'); } }
+        function deleteFood(d,i){ if(confirm('確定刪除這家餐廳？')){ appState.food[d].items.splice(i,1); saveState(); switchTab('food'); } }
 
         // ==========================================
         // 3. WALLET 記帳
@@ -338,57 +349,58 @@
         function renderWalletTab(container) {
             const totalTWD = appState.wallet.history.reduce((s, i) => s + parseFloat(i.twd), 0);
             let html = `
-                <div class="mb-4"><h2 class="text-lg font-bold text-[#5C4A42] font-['Klee_One']"><i class="fa-solid fa-wallet mr-1"></i> 記帳本</h2></div>
-                <div class="muji-card p-4 bg-[#F5F2EB] mb-4 border border-[#EADFC9]">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-[#5C4A42]"><i class="fa-solid fa-calculator mr-1"></i>匯率計算機</span>
+                <div class="mb-4"><h2 class="text-xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-wallet mr-1.5"></i>記帳與匯率</h2></div>
+                <div class="muji-card p-4 bg-[#F5F2EB] mb-5 border border-[#D1C6B4]">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold text-[#5C4A42] tracking-wider"><i class="fa-solid fa-calculator mr-1"></i>匯率計算機</span>
                         <div class="flex items-center text-xs font-bold">
-                            <span class="mr-1 text-neutral-500">1 JPY =</span>
-                            <input type="number" step="0.001" value="${appState.wallet.rate}" onchange="appState.wallet.rate=this.value;saveState();" class="w-16 bg-white border border-[#EADFC9] rounded text-center p-1 text-[#8C7667]">
-                            <span class="ml-1 text-neutral-500">TWD</span>
+                            <span class="mr-1 text-[#8C7667]">1 JPY =</span>
+                            <input type="number" step="0.001" value="${appState.wallet.rate}" onchange="appState.wallet.rate=this.value;saveState();" class="w-16 bg-white border border-[#D1C6B4] rounded text-center p-1 text-[#8C7667] shadow-inner focus:outline-none focus:border-[#8C7667]">
+                            <span class="ml-1 text-[#8C7667]">TWD</span>
                         </div>
                     </div>
-                    <div class="bg-white border border-[#EADFC9] rounded-lg p-2.5 mb-3 text-right shadow-inner">
-                        <div class="text-[11px] text-neutral-400 min-h-[16px]" id="calcExpDisplay">0</div>
-                        <div class="text-lg font-bold text-neutral-800" id="calcResultDisplay">0</div>
-                        <div class="text-[11px] font-bold text-[#8C7667] mt-0.5" id="calcTwdDisplay">≈ NT$ 0</div>
+                    <div class="bg-white border border-[#D1C6B4] rounded-lg p-3 mb-4 text-right shadow-inner">
+                        <div class="text-[11px] text-[#A89F91] min-h-[16px] tracking-widest font-mono" id="calcExpDisplay">0</div>
+                        <div class="text-xl font-bold text-[#4A3E3D] font-mono mt-0.5" id="calcResultDisplay">0</div>
+                        <div class="text-[11px] font-bold text-[#4B6E7D] mt-1" id="calcTwdDisplay">≈ NT$ 0</div>
                     </div>
-                    <div class="grid grid-cols-4 gap-1.5 text-xs font-bold">
+                    <div class="grid grid-cols-4 gap-2 text-[13px] font-bold">
                         ${['C','/','*','-','7','8','9','+','4','5','6','1','2','3','=','0','.'].map(k => {
-                            let cls = "bg-white text-neutral-700 py-2.5 rounded shadow-sm";
-                            if(k==='C'||k==='/'||k==='*'||k==='-') cls = "bg-neutral-200 text-neutral-700 py-2.5 rounded shadow-sm";
-                            if(k==='+') cls = "bg-neutral-200 text-neutral-700 py-2.5 row-span-2 rounded shadow-sm flex items-center justify-center";
-                            if(k==='=') cls = "bg-[#8C7667] text-white py-2.5 row-span-2 rounded shadow-sm flex items-center justify-center text-sm";
-                            if(k==='0') cls = "bg-white text-neutral-700 py-2.5 col-span-2 rounded shadow-sm";
+                            let cls = "bg-white text-[#5C4A42] py-2.5 rounded-lg shadow-sm border border-[#E6E1DA] active:bg-neutral-50";
+                            if(k==='C'||k==='/'||k==='*'||k==='-') cls = "bg-[#E6E1DA] text-[#4A3E3D] py-2.5 rounded-lg shadow-sm active:bg-[#D1C6B4]";
+                            if(k==='+') cls = "bg-[#E6E1DA] text-[#4A3E3D] py-2.5 row-span-2 rounded-lg shadow-sm flex items-center justify-center active:bg-[#D1C6B4]";
+                            if(k==='=') cls = "bg-[#8C7667] text-white py-2.5 row-span-2 rounded-lg shadow-sm flex items-center justify-center text-sm active:bg-[#735F52]";
+                            if(k==='0') cls = "bg-white text-[#5C4A42] py-2.5 col-span-2 rounded-lg shadow-sm border border-[#E6E1DA] active:bg-neutral-50";
                             return `<button onclick="calcKey('${k}')" class="${cls}">${k}</button>`;
                         }).join('')}
                     </div>
                 </div>
-                <div class="muji-card p-4 mb-5">
-                    <h3 class="text-xs font-bold text-[#8C7667] mb-3"><i class="fa-solid fa-plus mr-1"></i>新增花費</h3>
-                    <div class="grid grid-cols-3 gap-2 mb-2">
-                        <input type="text" id="expItem" placeholder="品項" class="col-span-2 border border-[#E6E1DA] rounded text-xs p-2.5 bg-white">
-                        <select id="expCurrency" class="col-span-1 border border-[#E6E1DA] rounded text-xs p-2 bg-white font-bold"><option value="JPY">JPY ¥</option><option value="TWD">TWD $</option></select>
+                <div class="muji-card p-4 mb-5 border-dashed border-[#D1C6B4]">
+                    <h3 class="text-xs font-bold text-[#8C7667] mb-3"><i class="fa-solid fa-plus mr-1"></i>新增消費</h3>
+                    <div class="grid grid-cols-3 gap-2.5 mb-2.5">
+                        <input type="text" id="expItem" placeholder="品項名稱" class="col-span-2 border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
+                        <select id="expCurrency" class="col-span-1 border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white font-bold text-[#5C4A42] shadow-inner focus:outline-none focus:border-[#8C7667]"><option value="JPY">JPY ¥</option><option value="TWD">TWD $</option></select>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-                        <input type="number" id="expAmount" placeholder="金額" class="col-span-2 border border-[#E6E1DA] rounded text-xs p-2.5 bg-white">
-                        <label class="col-span-1 border border-[#E6E1DA] bg-neutral-50 rounded flex flex-col justify-center items-center text-[10px] text-neutral-500 cursor-pointer font-bold"><i class="fa-solid fa-camera text-sm mb-0.5 text-[#8C7667]"></i><span id="photoStatus">拍收據</span><input type="file" id="expPhoto" accept="image/*" class="hidden" onchange="document.getElementById('photoStatus').innerText='已載入'; document.getElementById('photoStatus').classList.add('text-green-600')"></label>
+                    <div class="grid grid-cols-3 gap-2.5 mb-4">
+                        <input type="number" id="expAmount" placeholder="輸入金額" class="col-span-2 border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
+                        <label class="col-span-1 border border-[#E6E1DA] bg-[#F5F2EB] rounded-md flex flex-col justify-center items-center text-[10px] text-[#8C7667] cursor-pointer font-bold hover:bg-[#EADFC9] transition"><i class="fa-solid fa-camera text-sm mb-0.5"></i><span id="photoStatus">拍收據</span><input type="file" id="expPhoto" accept="image/*" class="hidden" onchange="document.getElementById('photoStatus').innerText='相片已載入'; document.getElementById('photoStatus').classList.add('text-[#4B6E7D]')"></label>
                     </div>
-                    <button onclick="addExpense()" class="w-full muji-btn-accent text-xs font-bold py-2.5 rounded-lg shadow-sm">記入</button>
+                    <button onclick="addExpense()" class="w-full muji-btn-accent text-xs font-bold py-3 rounded-lg shadow-sm tracking-widest">寫入帳本</button>
                 </div>
-                <div class="flex justify-between items-center mb-2 px-1"><h3 class="text-xs font-bold text-neutral-500">消費明細</h3><span class="text-xs font-bold text-[#D9534F] bg-red-50 px-2 py-1 rounded border border-red-100">累計：NT$ ${Math.round(totalTWD)}</span></div>
-                <div class="space-y-2.5">
+                <div class="flex justify-between items-center mb-3 px-1"><h3 class="text-xs font-bold text-[#A89F91] tracking-wider">消費明細</h3><span class="text-[11px] font-bold text-[#D9534F] bg-red-50/50 px-2.5 py-1 rounded-full border border-red-100">累計：NT$ ${Math.round(totalTWD)}</span></div>
+                <div class="space-y-3">
             `;
+            if(appState.wallet.history.length === 0) html += `<div class="text-center py-8 text-[11px] text-[#A89F91] bg-white border border-[#E6E1DA] rounded-lg">尚無消費紀錄</div>`;
             appState.wallet.history.forEach((h, idx) => {
                 html += `
-                    <div class="muji-card p-3 flex justify-between items-center">
-                        <div class="flex items-center space-x-3 w-3/4">
-                            ${h.photo ? `<img src="${h.photo}" class="w-10 h-10 object-cover rounded-md border" onclick="openImageModal('${h.photo}')">` : `<div class="w-10 h-10 bg-neutral-50 border rounded-md flex items-center justify-center text-neutral-300"><i class="fa-solid fa-receipt"></i></div>`}
-                            <div class="w-full"><h4 class="text-xs font-bold text-neutral-800 truncate">${h.item}</h4><p class="text-[10px] text-neutral-400 mt-1">${h.time}</p></div>
+                    <div class="muji-card p-3.5 flex justify-between items-center">
+                        <div class="flex items-center space-x-3.5 w-3/4">
+                            ${h.photo ? `<img src="${h.photo}" class="w-11 h-11 object-cover rounded-md border border-[#E6E1DA] shadow-sm" onclick="openImageModal('${h.photo}')">` : `<div class="w-11 h-11 bg-[#F5F2EB] border border-[#E6E1DA] rounded-md flex items-center justify-center text-[#D1C6B4]"><i class="fa-solid fa-receipt"></i></div>`}
+                            <div class="w-full"><h4 class="text-[13px] font-bold text-[#4A3E3D] truncate">${h.item}</h4><p class="text-[10px] text-[#A89F91] mt-1 tracking-wider">${h.time}</p></div>
                         </div>
                         <div class="text-right flex items-center">
-                            <div><div class="text-[11px] font-bold text-neutral-700">${h.origStr}</div><div class="text-[9px] text-[#8C7667] font-bold">NT$ ${Math.round(h.twd)}</div></div>
-                            <button onclick="deleteExpense(${idx})" class="text-neutral-300 hover:text-red-500 text-xs pl-2"><i class="fa-regular fa-trash-can"></i></button>
+                            <div><div class="text-[12px] font-bold text-[#5C4A42] font-mono">${h.origStr}</div><div class="text-[10px] text-[#4B6E7D] font-bold mt-0.5">NT$ ${Math.round(h.twd)}</div></div>
+                            <button onclick="deleteExpense(${idx})" class="text-neutral-300 hover:text-[#D9534F] text-xs pl-3"><i class="fa-regular fa-trash-can"></i></button>
                         </div>
                     </div>`;
             });
@@ -405,62 +417,64 @@
         }
         function addExpense() {
             const item=document.getElementById('expItem').value, curr=document.getElementById('expCurrency').value, amount=parseFloat(document.getElementById('expAmount').value), photo=document.getElementById('expPhoto').files[0];
-            if(!item||isNaN(amount))return alert('請輸入完整！');
+            if(!item||isNaN(amount))return alert('請完整輸入消費品項與金額！');
             const now=new Date(), timeStr=`${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             let twd=curr==='JPY'?amount*appState.wallet.rate:amount, origStr=curr==='JPY'?`¥ ${amount}`:`NT$ ${amount}`;
             const finish=(b="")=>{ appState.wallet.history.unshift({item,time:timeStr,twd,origStr,photo:b}); saveState(); switchTab('wallet'); };
             if(photo) compressImage(photo,300,0.5,finish); else finish("");
         }
-        function deleteExpense(i){ if(confirm('刪除？')){ appState.wallet.history.splice(i,1); saveState(); switchTab('wallet'); } }
+        function deleteExpense(i){ if(confirm('確定刪除這筆紀錄？')){ appState.wallet.history.splice(i,1); saveState(); switchTab('wallet'); } }
 
         // ==========================================
-        // 4. LISTS 清單 (加入 1排3個 購物車網格)
+        // 4. LISTS 清單 (1排3個 購物車)
         // ==========================================
         function renderListsTab(container) {
-            let html = `<div class="mb-4"><h2 class="text-lg font-bold text-[#5C4A42] font-['Klee_One']"><i class="fa-solid fa-list-check mr-1"></i> 清單總覽</h2></div>`;
+            let html = `<div class="mb-4"><h2 class="text-xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-list-check mr-1.5"></i>清單總覽</h2></div>`;
 
-            // 行李
-            html += `<div class="muji-card p-4 mb-5"><h3 class="text-xs font-bold text-[#8C7667] mb-2 border-b border-dashed border-[#E6E1DA] pb-2">必備行李</h3><div class="max-h-60 overflow-y-auto pr-1">`;
+            // 行李清單
+            html += `<div class="muji-card p-4 mb-5"><h3 class="text-xs font-bold text-[#8C7667] mb-3 border-b border-dashed border-[#E6E1DA] pb-2 tracking-wider"><i class="fa-solid fa-suitcase mr-1"></i>必備行李</h3><div class="max-h-64 overflow-y-auto pr-1">`;
             let lastCat = "";
             appState.checklist.forEach((item, index) => {
-                if(item.cat !== lastCat) { lastCat = item.cat; html += `<div class="text-[11px] font-bold text-[#4B6E7D] mt-3 mb-1.5">${lastCat}</div>`; }
-                html += `<label class="flex items-center text-xs bg-neutral-50/50 p-2 rounded border border-neutral-100 mb-1 cursor-pointer"><input type="checkbox" ${item.checked?'checked':''} onchange="toggleCheck(${index})" class="mr-2 accent-[#8C7667] w-4 h-4"><span class="${item.checked?'line-through text-neutral-300':'text-neutral-700 font-medium'}">${item.text}</span></label>`;
+                if(item.cat !== lastCat) { lastCat = item.cat; html += `<div class="text-[11px] font-bold text-[#4B6E7D] mt-4 mb-2 tracking-widest">${lastCat}</div>`; }
+                html += `<label class="flex items-center text-xs bg-[#F7F5F0] p-2.5 rounded border border-[#E6E1DA] mb-1.5 cursor-pointer hover:bg-white transition"><input type="checkbox" ${item.checked?'checked':''} onchange="toggleCheck(${index})" class="mr-2.5 accent-[#8C7667] w-4 h-4"><span class="${item.checked?'line-through text-[#A89F91]':'text-[#5C4A42] font-medium'}">${item.text}</span></label>`;
             });
             html += `</div></div>`;
 
-            // 備忘
-            html += `<div class="muji-card p-4 mb-5"><h3 class="text-xs font-bold text-[#8C7667] mb-2 border-b border-dashed border-[#E6E1DA] pb-2">個人備忘錄</h3><div class="space-y-2 mb-3">`;
-            appState.memos.forEach(m => html += `<div class="bg-[#F5F2EB] border border-[#EADFC9] rounded-lg p-2.5 text-xs flex justify-between items-start"><div class="text-neutral-700 font-medium break-all w-11/12">${linkify(m.text)}</div><button onclick="deleteMemo('${m.id}')" class="text-neutral-400 hover:text-red-500 pl-2"><i class="fa-regular fa-trash-can"></i></button></div>`);
-            html += `</div><div class="flex gap-2"><input type="text" id="newMemoText" placeholder="備忘或網址..." class="flex-1 border border-[#E6E1DA] rounded text-xs p-2.5 bg-white"><button onclick="addMemo()" class="muji-btn-primary text-xs font-bold px-3 py-2 rounded-lg">新增</button></div></div>`;
+            // 備忘錄
+            html += `<div class="muji-card p-4 mb-5"><h3 class="text-xs font-bold text-[#8C7667] mb-3 border-b border-dashed border-[#E6E1DA] pb-2 tracking-wider"><i class="fa-regular fa-note-sticky mr-1"></i>個人備忘錄</h3><div class="space-y-2.5 mb-4">`;
+            if(appState.memos.length === 0) html += `<div class="text-center py-4 text-[11px] text-[#A89F91]">尚無備忘錄</div>`;
+            appState.memos.forEach(m => html += `<div class="bg-[#F5F2EB] border border-[#D1C6B4] rounded-lg p-3 text-[13px] flex justify-between items-start"><div class="text-[#4A3E3D] font-medium break-all w-11/12 leading-relaxed">${linkify(m.text)}</div><button onclick="deleteMemo('${m.id}')" class="text-[#A89F91] hover:text-[#D9534F] pl-3"><i class="fa-regular fa-trash-can"></i></button></div>`);
+            html += `</div><div class="flex gap-2"><input type="text" id="newMemoText" placeholder="輸入備忘事項或貼上網址..." class="flex-1 border border-[#E6E1DA] rounded-md text-xs p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]"><button onclick="addMemo()" class="muji-btn-primary text-xs font-bold px-4 py-2 rounded-lg shadow-sm">新增</button></div></div>`;
 
-            // 購物 (一排三個)
+            // 購物型錄 (1排3個)
             html += `<div class="muji-card p-4 mb-2">
-                        <h3 class="text-xs font-bold text-[#8C7667] mb-3 border-b border-dashed border-[#E6E1DA] pb-2"><i class="fa-solid fa-bag-shopping mr-1"></i>採購型錄</h3>
-                        <div class="grid grid-cols-3 gap-2 mb-4">`;
+                        <h3 class="text-xs font-bold text-[#8C7667] mb-4 border-b border-dashed border-[#E6E1DA] pb-2 tracking-wider"><i class="fa-solid fa-bag-shopping mr-1"></i>採購型錄</h3>
+                        <div class="grid grid-cols-3 gap-2.5 mb-5">`;
+            if(appState.shopping.length === 0) html += `<div class="col-span-3 text-center py-4 text-[11px] text-[#A89F91]">尚無採購商品</div>`;
             appState.shopping.forEach((shop, sIdx) => {
-                const buyStyle = shop.purchased ? 'bg-neutral-50 border-neutral-200 opacity-60 grayscale' : 'bg-white border-[#EADFC9]';
-                const imgHolder = shop.img ? `<img src="${shop.img}" class="object-cover w-full h-full" onclick="openImageModal('${shop.img}')">` : `<div class="flex h-full items-center justify-center text-neutral-300 text-lg bg-neutral-100"><i class="fa-solid fa-gift"></i></div>`;
+                const buyStyle = shop.purchased ? 'bg-neutral-50 border-[#E6E1DA] opacity-60 grayscale' : 'bg-white border-[#D1C6B4]';
+                const imgHolder = shop.img ? `<img src="${shop.img}" class="object-cover w-full h-full" onclick="openImageModal('${shop.img}')">` : `<div class="flex h-full items-center justify-center text-[#D1C6B4] text-xl bg-[#F5F2EB]"><i class="fa-solid fa-gift"></i></div>`;
                 html += `
-                    <div class="border rounded p-1.5 flex flex-col relative shadow-sm ${buyStyle}">
-                        <div class="w-full aspect-square rounded overflow-hidden mb-1.5 border border-neutral-100">${imgHolder}</div>
-                        <div class="text-[10px] font-bold text-neutral-800 line-clamp-2 leading-tight mb-1 h-7">${shop.text}</div>
-                        ${shop.url ? `<a href="${shop.url}" target="_blank" class="text-[9px] text-[#4B6E7D] bg-[#4B6E7D]/5 px-1.5 py-0.5 rounded border border-[#4B6E7D]/20 mb-1 block text-center"><i class="fa-solid fa-link mr-1"></i>看網頁</a>` : '<div class="h-[18px] mb-1"></div>'}
-                        <div class="flex justify-between items-center mt-auto pt-1 border-t border-dashed border-neutral-200">
-                            <button onclick="toggleShop(${sIdx})" class="text-[9px] font-bold px-1.5 py-0.5 rounded ${shop.purchased?'bg-neutral-300 text-white':'bg-[#EADFC9] text-[#5C4A42]'}">${shop.purchased?'已購':'未購'}</button>
-                            <button onclick="deleteShop(${sIdx})" class="text-neutral-400 hover:text-red-500 text-[10px] p-1"><i class="fa-regular fa-trash-can"></i></button>
+                    <div class="border rounded-md p-1.5 flex flex-col relative shadow-sm ${buyStyle}">
+                        <div class="w-full aspect-square rounded-[4px] overflow-hidden mb-2 border border-[#E6E1DA]">${imgHolder}</div>
+                        <div class="text-[10px] font-bold text-[#4A3E3D] line-clamp-2 leading-tight mb-1 h-[28px]">${shop.text}</div>
+                        ${shop.url ? `<a href="${shop.url}" target="_blank" class="text-[9px] text-[#4B6E7D] bg-[#4B6E7D]/5 px-1.5 py-1 rounded border border-[#4B6E7D]/20 mb-1.5 block text-center font-bold tracking-wider hover:bg-[#4B6E7D]/10">看網頁</a>` : '<div class="h-[21px] mb-1.5"></div>'}
+                        <div class="flex justify-between items-center mt-auto pt-1.5 border-t border-dashed border-[#E6E1DA]">
+                            <button onclick="toggleShop(${sIdx})" class="text-[9px] font-bold px-2 py-1 rounded ${shop.purchased?'bg-[#A89F91] text-white':'bg-[#EADFC9] text-[#5C4A42] hover:bg-[#D1C6B4] transition'}">${shop.purchased?'已購':'未購'}</button>
+                            <button onclick="deleteShop(${sIdx})" class="text-[#A89F91] hover:text-[#D9534F] text-[10px] p-1"><i class="fa-regular fa-trash-can"></i></button>
                         </div>
                     </div>`;
             });
             html += `</div>
-                <div class="bg-neutral-50/50 p-3 rounded-lg border border-[#E6E1DA] space-y-2">
-                    <input type="text" id="sText" placeholder="商品名稱" class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 bg-white">
-                    <input type="text" id="sUrl" placeholder="網址 (選填)" class="w-full border border-[#E6E1DA] rounded text-xs p-2.5 bg-white">
+                <div class="bg-[#F5F2EB] p-3.5 rounded-lg border border-[#D1C6B4] space-y-2.5">
+                    <input type="text" id="sText" placeholder="想買的商品名稱" class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
+                    <input type="text" id="sUrl" placeholder="商品網址 (選填)" class="w-full border border-[#E6E1DA] rounded-md text-xs p-2.5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
                     <div class="flex items-center justify-between pt-1">
-                        <label class="border border-[#E6E1DA] bg-white rounded-md px-3 py-1.5 text-xs text-neutral-500 font-bold cursor-pointer flex items-center shadow-sm">
-                            <i class="fa-solid fa-camera mr-1.5 text-[#8C7667]"></i><span id="sPhotoText">附商品圖</span>
-                            <input type="file" id="sPhoto" accept="image/*" class="hidden" onchange="document.getElementById('sPhotoText').innerText='圖片已載入'; document.getElementById('sPhotoText').classList.add('text-green-600')">
+                        <label class="border border-[#E6E1DA] bg-white rounded-md px-3 py-2 text-xs text-[#8C7667] font-bold cursor-pointer flex items-center shadow-sm hover:bg-neutral-50">
+                            <i class="fa-solid fa-camera mr-1.5"></i><span id="sPhotoText">附商品圖</span>
+                            <input type="file" id="sPhoto" accept="image/*" class="hidden" onchange="document.getElementById('sPhotoText').innerText='圖片已載入'; document.getElementById('sPhotoText').classList.add('text-[#4B6E7D]')">
                         </label>
-                        <button onclick="addShop()" class="muji-btn-accent text-xs font-bold px-4 py-1.5 rounded-md shadow-sm">加入</button>
+                        <button onclick="addShop()" class="muji-btn-accent text-xs font-bold px-5 py-2 rounded-md shadow-sm">加入</button>
                     </div>
                 </div></div>`;
             container.innerHTML = html;
@@ -471,46 +485,46 @@
         function deleteMemo(id) { appState.memos=appState.memos.filter(m=>m.id!==id); saveState(); switchTab('lists'); }
         function addShop() {
             const t=document.getElementById('sText').value.trim(), u=document.getElementById('sUrl').value.trim(), f=document.getElementById('sPhoto').files[0];
-            if(!t)return alert('請填名稱'); const done=(img="")=>{appState.shopping.push({id:'s_'+Date.now(),text:t,url:u,img,purchased:false});saveState();switchTab('lists');};
+            if(!t)return alert('請填寫商品名稱！'); const done=(img="")=>{appState.shopping.push({id:'s_'+Date.now(),text:t,url:u,img,purchased:false});saveState();switchTab('lists');};
             if(f) compressImage(f,300,0.6,done); else done("");
         }
         function toggleShop(i) { appState.shopping[i].purchased=!appState.shopping[i].purchased; saveState(); switchTab('lists'); }
-        function deleteShop(i) { if(confirm('刪除？')){ appState.shopping.splice(i,1); saveState(); switchTab('lists'); } }
+        function deleteShop(i) { if(confirm('確定刪除此購物項目？')){ appState.shopping.splice(i,1); saveState(); switchTab('lists'); } }
 
         // ==========================================
         // 5. INFO 資訊
         // ==========================================
         function renderInfoTab(container) {
-            let html = `<div class="mb-4"><h2 class="text-lg font-bold text-[#5C4A42] font-['Klee_One']"><i class="fa-solid fa-circle-info mr-1"></i> 實用資訊</h2></div>`;
+            let html = `<div class="mb-4"><h2 class="text-xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-circle-info mr-1.5"></i>實用資訊</h2></div>`;
             ['hotel', 'car'].forEach(type => {
-                const isCar = type==='car', title = isCar?'<i class="fa-solid fa-car mr-1"></i>租車資訊':'<i class="fa-solid fa-hotel mr-1"></i>住宿資訊', text = isCar?appState.info.carRental:appState.info.hotel;
+                const isCar = type==='car', title = isCar?'<i class="fa-solid fa-car mr-1.5"></i>租車資訊':'<i class="fa-solid fa-hotel mr-1.5"></i>住宿資訊', text = isCar?appState.info.carRental:appState.info.hotel;
                 html += `
-                    <div class="muji-card p-4 mb-4">
-                        <div class="flex justify-between items-center mb-3"><h3 class="text-xs font-bold text-[#8C7667]">${title}</h3><button onclick="toggleEdit('${type}')" id="btn-edit-${type}" class="text-[11px] font-bold text-neutral-400 bg-neutral-50 px-2 py-1 rounded border"><i class="fa-regular fa-pen-to-square mr-1"></i>編輯</button></div>
-                        <div id="view-${type}" class="space-y-3">
-                            <div class="text-[13px] text-neutral-700 leading-relaxed font-medium whitespace-pre-wrap">${linkify(text)}</div>
-                            ${isCar&&appState.info.carAddress ? `<a href="${appState.info.carAddress}" target="_blank" class="inline-block text-[11px] font-bold text-[#4B6E7D] bg-[#4B6E7D]/5 border border-[#4B6E7D]/20 px-3 py-1.5 rounded-md"><i class="fa-solid fa-location-arrow mr-1"></i>地圖</a>` : ''}
-                            ${isCar ? `<label class="inline-block ml-2 text-[11px] bg-[#EADFC9]/50 border border-[#EADFC9] font-bold px-3 py-1.5 rounded-md cursor-pointer text-[#8C7667]"><i class="fa-solid fa-camera mr-1"></i>附加照片<input type="file" accept="image/*" class="hidden" onchange="uploadInfo(this)"></label>` : ''}
-                            ${isCar&&appState.info.carPhoto ? `<div class="mt-2"><img src="${appState.info.carPhoto}" class="w-full h-40 object-cover rounded-lg shadow-sm" onclick="openImageModal('${appState.info.carPhoto}')"></div>` : ''}
+                    <div class="muji-card p-4 mb-5">
+                        <div class="flex justify-between items-center mb-3.5"><h3 class="text-xs font-bold text-[#8C7667] tracking-wider">${title}</h3><button onclick="toggleEdit('${type}')" id="btn-edit-${type}" class="text-[11px] font-bold text-[#A89F91] bg-neutral-50 px-2.5 py-1 rounded border border-[#E6E1DA] hover:bg-neutral-100"><i class="fa-regular fa-pen-to-square mr-1"></i>編輯</button></div>
+                        <div id="view-${type}" class="space-y-3.5">
+                            <div class="text-[13px] text-[#4A3E3D] leading-relaxed font-medium whitespace-pre-wrap">${linkify(text)}</div>
+                            ${isCar&&appState.info.carAddress ? `<a href="${appState.info.carAddress}" target="_blank" class="inline-block text-[11px] font-bold text-white bg-[#4B6E7D] px-3.5 py-1.5 rounded-md shadow-sm"><i class="fa-solid fa-location-arrow mr-1.5"></i>地圖導航</a>` : ''}
+                            ${isCar ? `<label class="inline-block ml-2 text-[11px] bg-[#F5F2EB] border border-[#D1C6B4] font-bold px-3.5 py-1.5 rounded-md cursor-pointer text-[#8C7667] hover:bg-[#EADFC9] transition"><i class="fa-solid fa-camera mr-1.5"></i>附加照片/合約<input type="file" accept="image/*" class="hidden" onchange="uploadInfo(this)"></label>` : ''}
+                            ${isCar&&appState.info.carPhoto ? `<div class="mt-3"><img src="${appState.info.carPhoto}" class="w-full h-44 object-cover rounded-lg shadow-sm border border-[#E6E1DA]" onclick="openImageModal('${appState.info.carPhoto}')"></div>` : ''}
                         </div>
-                        <div id="edit-${type}" class="hidden space-y-2 mt-2">
-                            <textarea id="e-${type}-text" class="w-full text-xs p-2.5 border rounded-lg bg-neutral-50" rows="3">${text}</textarea>
-                            ${isCar ? `<input type="text" id="e-car-url" value="${appState.info.carAddress}" placeholder="Google Map 網址" class="w-full text-xs p-2.5 border rounded-lg bg-neutral-50">` : ''}
+                        <div id="edit-${type}" class="hidden space-y-2.5 mt-2">
+                            <textarea id="e-${type}-text" class="w-full text-xs p-3 border border-[#E6E1DA] rounded-lg bg-[#F7F5F0] focus:outline-none focus:border-[#8C7667]" rows="3">${text}</textarea>
+                            ${isCar ? `<input type="text" id="e-car-url" value="${appState.info.carAddress}" placeholder="Google Maps 地址連結" class="w-full text-xs p-3 border border-[#E6E1DA] rounded-lg bg-[#F7F5F0] focus:outline-none focus:border-[#8C7667]">` : ''}
                         </div>
                     </div>`;
             });
             html += `
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <a href="https://www.jma.go.jp/bosai/map.html" target="_blank" class="muji-card p-3 flex flex-col items-center h-20 justify-center"><i class="fa-solid fa-cloud-sun-rain text-amber-500 text-xl mb-1.5"></i><div class="text-xs font-bold text-neutral-700">日本氣象廳</div></a>
-                    <a href="https://www.boca.gov.tw" target="_blank" class="muji-card p-3 flex flex-col items-center h-20 justify-center"><i class="fa-solid fa-passport text-[#4B6E7D] text-xl mb-1.5"></i><div class="text-xs font-bold text-neutral-700">領務局違禁品</div></a>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <a href="https://www.jma.go.jp/bosai/map.html" target="_blank" class="muji-card p-3 flex flex-col items-center h-20 justify-center hover:bg-neutral-50 transition"><i class="fa-solid fa-cloud-sun-rain text-amber-500 text-2xl mb-1.5"></i><div class="text-[11px] font-bold text-[#5C4A42] tracking-widest">日本氣象廳</div></a>
+                    <a href="https://www.boca.gov.tw" target="_blank" class="muji-card p-3 flex flex-col items-center h-20 justify-center hover:bg-neutral-50 transition"><i class="fa-solid fa-passport text-[#4B6E7D] text-2xl mb-1.5"></i><div class="text-[11px] font-bold text-[#5C4A42] tracking-widest">領務局違禁品</div></a>
                 </div>
-                <div class="muji-card p-4 mb-2 bg-red-50/30 border-red-100">
-                    <h3 class="text-xs font-bold text-[#D9534F] mb-3"><i class="fa-solid fa-triangle-exclamation mr-1"></i>緊急與注意事項</h3>
-                    <ul class="text-[11px] text-neutral-700 space-y-2 list-disc pl-4 font-medium">
-                        <li>日本緊急：警察局 <span class="text-red-500 font-bold">110</span>，救護車 <span class="text-red-500 font-bold">119</span></li>
-                        <li>駐那霸辦事處：+81 98-862-7008</li>
-                        <li>自駕法規：日本為<span class="text-red-600 font-bold">右駕左行</span>，行人路權絕對優先。</li>
-                        <li>免稅拆封：裝入日本免稅專用密封袋之商品出境前勿拆。</li>
+                <div class="muji-card p-4 mb-2 bg-[#D9534F]/5 border-[#D9534F]/20">
+                    <h3 class="text-xs font-bold text-[#D9534F] mb-3"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>緊急與注意事項</h3>
+                    <ul class="text-[11px] text-[#4A3E3D] space-y-2.5 list-disc pl-4 font-medium leading-relaxed">
+                        <li>日本緊急求助：警察局 <span class="text-[#D9534F] font-bold">110</span>，救護車 <span class="text-[#D9534F] font-bold">119</span></li>
+                        <li>駐那霸辦事處急難救助：+81 98-862-7008</li>
+                        <li>自駕法規：日本為<span class="text-[#D9534F] font-bold">右駕左行</span>，行人路權絕對優先，切勿隨意右轉。</li>
+                        <li>免稅規定：裝入免稅專用密封袋之商品出境前請勿拆封。</li>
                     </ul>
                 </div>`;
             container.innerHTML = html;
@@ -518,7 +532,7 @@
 
         function toggleEdit(type) {
             const v = document.getElementById(`view-${type}`), e = document.getElementById(`edit-${type}`), b = document.getElementById(`btn-edit-${type}`);
-            if(e.classList.contains('hidden')){ v.classList.add('hidden'); e.classList.remove('hidden'); b.innerHTML=`<i class="fa-solid fa-check mr-1 text-green-600"></i>儲存`; }
+            if(e.classList.contains('hidden')){ v.classList.add('hidden'); e.classList.remove('hidden'); b.innerHTML=`<i class="fa-solid fa-check mr-1 text-green-600"></i>完成`; }
             else { 
                 if(type==='hotel')appState.info.hotel=document.getElementById('e-hotel-text').value; 
                 else{appState.info.carRental=document.getElementById('e-car-text').value;appState.info.carAddress=document.getElementById('e-car-url').value;}
