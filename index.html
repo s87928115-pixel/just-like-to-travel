@@ -153,7 +153,7 @@
 
         let appState = {
             currentTab: 'plan',
-            currentListSubTab: 'checklist', // 預設子清單為行李
+            currentListSubTab: 'checklist',
             cover: localStorage.getItem(STORAGE_KEY+'cover') || "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=600&auto=format&fit=crop",
             plan: JSON.parse(localStorage.getItem(STORAGE_KEY+'plan')) || defaultPlan,
             food: JSON.parse(localStorage.getItem(STORAGE_KEY+'food')) || defaultFood,
@@ -224,7 +224,8 @@
         function closeImageModal() { document.getElementById('imageModal').classList.add('hidden'); }
 
         let activeDayPlan = 1;
-        function switchTab(tabId) {
+        // 【核心修改】加入 preventScroll 參數，為 true 時不會強制滾動到頂部
+        function switchTab(tabId, preventScroll = false) {
             appState.currentTab = tabId;
             const tabs = ['plan', 'food', 'wallet', 'lists', 'info'];
             tabs.forEach(t => {
@@ -238,7 +239,11 @@
             else if (tabId === 'wallet') renderWalletTab(main);
             else if (tabId === 'lists') renderListsTab(main);
             else if (tabId === 'info') renderInfoTab(main);
-            window.scrollTo(0, 0);
+            
+            // 只有在防滾動標記為 false 時（例如點擊底部導覽列切換大分頁時），才回到最上面
+            if (!preventScroll) {
+                window.scrollTo(0, 0);
+            }
         }
 
         // ==========================================
@@ -252,7 +257,8 @@
             `;
             appState.plan.forEach(d => {
                 const activeClass = d.day === activeDayPlan ? 'bg-[#8C7667] text-white shadow-sm' : 'text-[#A89F91] hover:text-[#5C4A42]';
-                html += `<button onclick="activeDayPlan=${d.day}; switchTab('plan')" class="px-4 py-2 rounded-md transition ${activeClass}">D${d.day}</button>`;
+                // 切換日期時保持在原位會比較順暢
+                html += `<button onclick="activeDayPlan=${d.day}; switchTab('plan', true)" class="px-4 py-2 rounded-md transition ${activeClass}">D${d.day}</button>`;
             });
             html += `</div></div>`;
 
@@ -310,7 +316,7 @@
                 compressImage(input.files[0], 600, 0.7, function(base64Str) {
                     appState.plan.find(p => p.day === day).items[idx].photo = base64Str;
                     saveState();
-                    switchTab('plan');
+                    switchTab('plan', true);
                 });
             }
         }
@@ -319,9 +325,9 @@
             const time = document.getElementById('newPlanTime').value.trim() || "00:00", text = document.getElementById('newPlanText').value.trim(), url = document.getElementById('newPlanUrl').value.trim(), imp = document.getElementById('newPlanImportant').checked;
             if(!text) return alert('請輸入內容！');
             const d = appState.plan.find(p => p.day === day);
-            d.items.push({time, text, url, important:imp, photo:""}); d.items.sort((a,b)=>a.time.localeCompare(b.time)); saveState(); switchTab('plan');
+            d.items.push({time, text, url, important:imp, photo:""}); d.items.sort((a,b)=>a.time.localeCompare(b.time)); saveState(); switchTab('plan', true);
         }
-        function deletePlanItem(day, idx) { if(confirm('確定要刪除？')){ appState.plan.find(p=>p.day===day).items.splice(idx,1); saveState(); switchTab('plan'); } }
+        function deletePlanItem(day, idx) { if(confirm('確定要刪除？')){ appState.plan.find(p=>p.day===day).items.splice(idx,1); saveState(); switchTab('plan', true); } }
 
         // ==========================================
         // 2. FOOD GUIDE 美食誌
@@ -356,9 +362,9 @@
         }
         function addFood() {
             const day=document.getElementById('fDay').value, name=document.getElementById('fName').value.trim(), desc=document.getElementById('fDesc').value.trim(), url=document.getElementById('fUrl').value.trim();
-            if(!name||!desc)return alert('請填寫店家名稱與介紹！'); appState.food[day].items.push({name,desc,url}); saveState(); switchTab('food');
+            if(!name||!desc)return alert('請填寫店家名稱與介紹！'); appState.food[day].items.push({name,desc,url}); saveState(); switchTab('food', true);
         }
-        function deleteFood(d,i){ if(confirm('確定刪除這家餐廳？')){ appState.food[d].items.splice(i,1); saveState(); switchTab('food'); } }
+        function deleteFood(d,i){ if(confirm('確定刪除這家餐廳？')){ appState.food[d].items.splice(i,1); saveState(); switchTab('food', true); } }
 
         // ==========================================
         // 3. WALLET 記帳
@@ -438,17 +444,17 @@
             if(!item||isNaN(amount))return alert('請完整輸入消費品項與金額！');
             const now=new Date(), timeStr=`${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             let twd=curr==='JPY'?amount*appState.wallet.rate:amount, origStr=curr==='JPY'?`¥ ${amount}`:`NT$ ${amount}`;
-            const finish=(b="")=>{ appState.wallet.history.unshift({item,time:timeStr,twd,origStr,photo:b}); saveState(); switchTab('wallet'); };
+            const finish=(b="")=>{ appState.wallet.history.unshift({item,time:timeStr,twd,origStr,photo:b}); saveState(); switchTab('wallet', true); };
             if(photo) compressImage(photo,400,0.6,finish); else finish("");
         }
-        function deleteExpense(i){ if(confirm('確定刪除這筆紀錄？')){ appState.wallet.history.splice(i,1); saveState(); switchTab('wallet'); } }
+        function deleteExpense(i){ if(confirm('確定刪除這筆紀錄？')){ appState.wallet.history.splice(i,1); saveState(); switchTab('wallet', true); } }
 
         // ==========================================
         // 4. LISTS 清單 (翻頁標籤模式)
         // ==========================================
         function switchListSubTab(tab) {
             appState.currentListSubTab = tab;
-            switchTab('lists');
+            switchTab('lists', true); // 切換子分類時保持原位不跳動
         }
 
         function renderListsTab(container) {
@@ -538,22 +544,23 @@
             container.innerHTML = html;
         }
 
-        function toggleCheck(i) { appState.checklist[i].checked=!appState.checklist[i].checked; saveState(); switchTab('lists'); }
+        // 修改所有列表內部的操作，加入 preventScroll = true 參數
+        function toggleCheck(i) { appState.checklist[i].checked=!appState.checklist[i].checked; saveState(); switchTab('lists', true); }
         function addMemo() { 
             const t = document.getElementById('newMemoText').value.trim(); 
             const f = document.getElementById('newMemoPhoto').files[0];
             if(!t && !f) return alert('請輸入備忘事項或上傳照片！');
-            const done = (img="") => { appState.memos.push({id:'m_'+Date.now(), text:t, photo:img}); saveState(); switchTab('lists'); };
+            const done = (img="") => { appState.memos.push({id:'m_'+Date.now(), text:t, photo:img}); saveState(); switchTab('lists', true); };
             if(f) compressImage(f, 500, 0.7, done); else done("");
         }
-        function deleteMemo(id) { appState.memos=appState.memos.filter(m=>m.id!==id); saveState(); switchTab('lists'); }
+        function deleteMemo(id) { appState.memos=appState.memos.filter(m=>m.id!==id); saveState(); switchTab('lists', true); }
         function addShop() {
             const t=document.getElementById('sText').value.trim(), u=document.getElementById('sUrl').value.trim(), f=document.getElementById('sPhoto').files[0];
-            if(!t)return alert('請填寫商品名稱！'); const done=(img="")=>{appState.shopping.push({id:'s_'+Date.now(),text:t,url:u,img,purchased:false});saveState();switchTab('lists');};
+            if(!t)return alert('請填寫商品名稱！'); const done=(img="")=>{appState.shopping.push({id:'s_'+Date.now(),text:t,url:u,img,purchased:false});saveState();switchTab('lists', true);};
             if(f) compressImage(f,400,0.6,done); else done("");
         }
-        function toggleShop(i) { appState.shopping[i].purchased=!appState.shopping[i].purchased; saveState(); switchTab('lists'); }
-        function deleteShop(i) { if(confirm('確定刪除此購物項目？')){ appState.shopping.splice(i,1); saveState(); switchTab('lists'); } }
+        function toggleShop(i) { appState.shopping[i].purchased=!appState.shopping[i].purchased; saveState(); switchTab('lists', true); }
+        function deleteShop(i) { if(confirm('確定刪除此購物項目？')){ appState.shopping.splice(i,1); saveState(); switchTab('lists', true); } }
 
         // ==========================================
         // 5. INFO 資訊
@@ -600,10 +607,10 @@
             else { 
                 if(type==='hotel')appState.info.hotel=document.getElementById('e-hotel-text').value; 
                 else{appState.info.carRental=document.getElementById('e-car-text').value;appState.info.carAddress=document.getElementById('e-car-url').value;}
-                saveState(); switchTab('info');
+                saveState(); switchTab('info', true);
             }
         }
-        function uploadInfo(i) { if(i.files&&i.files[0]){compressImage(i.files[0],600,0.7,(b)=>{appState.info.carPhoto=b;saveState();switchTab('info');});} }
+        function uploadInfo(i) { if(i.files&&i.files[0]){compressImage(i.files[0],600,0.7,(b)=>{appState.info.carPhoto=b;saveState();switchTab('info', true);});} }
     </script>
 </body>
 </html>
