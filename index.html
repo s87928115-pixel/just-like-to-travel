@@ -9,8 +9,8 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe'));
-                const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=192&q=80';
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final'));
+                const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 const link = document.createElement('link');
                 link.rel = 'apple-touch-icon';
                 link.href = iconUrl;
@@ -70,7 +70,7 @@
 <div class="max-w-md mx-auto min-h-screen relative shadow-2xl bg-beige overflow-hidden flex flex-col">
     <!-- Header -->
     <header class="relative w-full h-48 bg-gray-200 shrink-0">
-        <img id="headerCoverImg" src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Cover">
+        <img id="headerCoverImg" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Cover">
         <div class="absolute inset-0 bg-gradient-to-t from-darkwood/70 to-transparent"></div>
         <div class="absolute bottom-4 left-4 right-4">
             <h1 class="text-3xl font-klee font-bold text-white tracking-widest drop-shadow-md">泰飽了要走走</h1>
@@ -108,9 +108,9 @@
                 </div>
 
                 <!-- 每日照片預覽 -->
-                <div id="planImageContainer" class="mt-4 hidden">
+                <div id="planImageContainer" class="mt-4 hidden relative">
                     <img id="planImagePreview" src="" class="w-full rounded-lg shadow-sm object-cover max-h-60">
-                    <button onclick="removePlanImage()" class="absolute bottom-6 right-6 bg-white/80 text-highlight p-2 rounded-full shadow backdrop-blur text-sm"><i class="fas fa-trash"></i></button>
+                    <button onclick="removePlanImage()" class="absolute bottom-4 right-4 bg-white/80 text-highlight p-2 rounded-full shadow backdrop-blur text-sm"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         </section>
@@ -228,6 +228,20 @@
                 <button onclick="toggleInfoEdit()" id="infoEditBtn" class="text-sm bg-warmbrown text-white px-3 py-1 rounded-full"><i class="fas fa-pen mr-1"></i>編輯</button>
             </div>
 
+            <!-- 入境 QR Code 專區 -->
+            <div class="muji-card p-5 mb-4">
+                <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-2 mb-3"><i class="fas fa-qrcode mr-2"></i>入境 QR Code (截圖)</h3>
+                <div class="flex flex-col items-center">
+                    <img id="infoQrCodePreview" src="" class="w-full max-w-[250px] rounded-lg shadow-sm mb-3 hidden object-contain">
+                    <label id="qrCodeUploadLabel" class="bg-calmblue text-white px-4 py-2 rounded-lg cursor-pointer text-sm shadow-sm transition hover:bg-calmblue/80">
+                        <i class="fas fa-upload mr-1"></i>上傳 QR Code
+                        <input type="file" accept="image/*" onchange="handleQrCodeUpload(event)">
+                    </label>
+                    <button id="removeQrBtn" onclick="removeQrCode()" class="mt-2 text-highlight text-sm hidden"><i class="fas fa-trash mr-1"></i>移除重新上傳</button>
+                </div>
+            </div>
+
+            <!-- 住宿與航班 -->
             <div class="space-y-4" id="infoContainer">
                 <!-- 內容由 JS 渲染 -->
             </div>
@@ -269,39 +283,39 @@
 </div>
 
 <script>
-    /* ================= 預設資料 (依照 prompt 需求) ================= */
+    /* ================= 預設資料 ================= */
     const initialData = {
-        coverImg: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80",
+        coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
-            flight: "【去程】\n09:25 班次JX741 到達BKK時間12:35\n\n【阿姨回程】\n13:45 班次JX742 到達TPE時間18:25\n\n【其他人回程】\n17:40 班次JX746 到達TPE時間22:30",
+            flight: "【去程】\n09:25 班次JX741 到達BKK時間 12:35\n\n【阿姨回程】\n13:45 班次JX742 到達TPE時間 18:25\n\n【其他人回程】\n17:40 班次JX746 到達TPE時間 22:30",
             acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
-            docImg: ""
+            qrCodeImg: "" // 用於存放入境 QR Code 圖片的 Base64
         },
         plan: [
             {
                 day: "DAY 1", date: "11/19", img: "",
-                text: "出發：早上6:05高鐵  6:47到桃園，機捷7:02/7:17\n第二航廈JX741\n09:25 飛機到泰國 12:35\n13:30 先到機場 B層換匯區換錢\n(備註：旁邊就是機場快線乘車處，再搭曼谷機場快線 Airport Rail Link到旅館，若人太多可到捷運終點站 PHAYA THAI站，出站前往 BTS的路上，就有一間 SuperRich。)\n\n住宿在淺綠線捷運的Ekkamai站，機捷的最終站可以跟他直接連接\n16:30 出門到喬德夜市(https://maps.app.goo.gl/koPMjyKzWQdtdSYF9) 或是 新夜市Save One Go Night Market (https://maps.app.goo.gl/djUgooXf2RUcwgwX6)\n逛完回旅館休息"
+                text: "出發：早上 6:05 高鐵，6:47 到桃園，機捷 7:02 / 7:17\n第二航廈 JX741\n09:25 飛機到泰國 12:35\n13:30 先到機場 B層換匯區換錢\n16:00 到旅館\n16:30 出門到喬德夜市(https://maps.app.goo.gl/koPMjyKzWQdtdSYF9)\n或新夜市Save One Go Night Market (https://maps.app.goo.gl/djUgooXf2RUcwgwX6)\n21:00 逛完回旅館休息"
             },
             {
                 day: "DAY 2", date: "11/20", img: "",
-                text: "07:30 在Ekkamai Wat That Thong\n(https://maps.app.goo.gl/E2bPMt9qLvkamNR87)\n集合坐園方的車子到大象保護區，體驗大概四小時(午餐在裡面吃)，回程時間 14:30 從園區出發，路程大約都各1.5小時\n\n16:30 在市區的centralwOrld逛逛或是班嘉奇蒂公園（Benjakitti Forest Park）的森林天空步道走走\n18:30 - 19:00 晚餐吃泰式料理"
+                text: "07:30 在 Ekkamai Wat That Thong\n(https://maps.app.goo.gl/E2bPMt9qLvkamNR87)\n集合坐園方的車子到大象保護區，體驗大概四小時(午餐在裡面吃)，回程時間 14:30 從園區出發，路程大約都各1.5小時\n16:30 在市區的centralwOrld逛逛或是班嘉奇蒂公園（Benjakitti Forest Park）的森林天空步道走走\n18:30 - 19:00 晚餐吃泰式料理"
             },
             {
-                day: "DAY 3", date: "11/21 (包車)", img: "",
+                day: "DAY 3", date: "包車", img: "",
                 text: "08:00 出門到丹嫩莎朵水上市場 + 美功鐵道市場 (Maeklong Railway Market)\n14:00 回市區的朱拉大學美食街吃午餐或是紅大哥水門雞飯\n晚上去按摩"
             },
             {
-                day: "DAY 4", date: "11/22 (包車)", img: "",
+                day: "DAY 4", date: "包車", img: "",
                 text: "09:00 - 12:00 恰圖恰市集 (BTS Mo Chit 站)\n12:30 - 13:30 勝利紀念碑吃船麵 (BTS Victory Monument 站)\n14:00 - 15:30 鄭王廟行程 (從勝利紀念碑搭 BTS 到 Saphan Taksin 站轉搭交通船過去)\n15:40 - 16:50 從鄭王廟離開，準備前往商場 (要預留將近 1 小時的等船、搭船與轉乘捷運時間)\n19:30 準時享用 Copper Beyond Buffet\n飯後 步行前往對面 Big C 補貨，開心回飯店！"
             },
             {
-                day: "DAY 5", date: "11/23", img: "",
+                day: "DAY 5", date: "賦歸", img: "",
                 text: "自由行動\n15:30 前到 BKK 機場準備搭機"
             }
         ],
         food: [
             {
-                category: "住宿區周邊 (Ekkamai / Thong Lo / Phrom Phong)",
+                category: "住宿區周邊 (Ekkamai / Thong Lo)",
                 items: [
                     { name: "Tamnak Isan Ekamai", url: "https://maps.app.goo.gl/Uehp1Gs2uWMHpz2d9" },
                     { name: "Mother May I Kitchen", url: "https://maps.app.goo.gl/D5qKigaLM29DcnYT7" },
@@ -355,16 +369,16 @@
                 { text: "護照 (效期6個月以上)", done: false },
                 { text: "泰銖現金 & 信用卡", done: false },
                 { text: "網卡 / eSIM", done: false },
-                { text: "行動電源", done: false },
+                { text: "行動電源 / 充電線", done: false },
                 { text: "防曬乳 / 太陽眼鏡", done: false }
             ],
-            memo: { text: "記得去Big C買海苔跟手標泰奶！", img: "" },
+            memo: { text: "出發前可以把想買的東西寫在這裡！", img: "" },
             shop: []
         }
     };
 
     /* ================= 核心工具函數 ================= */
-    const STORAGE_KEY = 'travelApp_TaiBaoLe';
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final';
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -415,10 +429,9 @@
     // 文字解析：自動轉換連結與時間標示
     function parseText(text) {
         if (!text) return "";
-        // 跳脫 HTML 防止 XSS
         let parsed = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         
-        // 標記時間 (例如 09:25, 14:00) 變為紅色
+        // 標記時間 (例如 09:25, 14:00, 6:05) 變為紅色
         parsed = parsed.replace(/(\b\d{1,2}:\d{2}\b)/g, '<span class="text-highlight font-bold font-zen">$1</span>');
         
         // 標記連結
@@ -429,7 +442,6 @@
         
         return parsed;
     }
-
 
     /* ================= UI 切換 ================= */
     function switchTab(tabId, btnElement) {
@@ -461,7 +473,6 @@
         activeBtn.classList.add('bg-warmbrown', 'text-white');
     }
 
-
     /* ================= 1. PLAN 模組 ================= */
     function renderPlan() {
         const selector = document.getElementById('planDaySelector');
@@ -485,7 +496,6 @@
             imgContainer.classList.add('hidden');
         }
         
-        // 確保非編輯模式
         document.getElementById('planViewMode').classList.remove('hidden');
         document.getElementById('planEditMode').classList.add('hidden');
         document.getElementById('planEditBtn').innerHTML = '<i class="fas fa-pen mr-1"></i>編輯';
@@ -513,7 +523,7 @@
             editMode.classList.add('hidden');
             btn.innerHTML = '<i class="fas fa-pen mr-1"></i>編輯';
             btn.classList.replace('bg-gray-400', 'bg-warmbrown');
-            document.getElementById('planTextarea').value = appData.plan[currentPlanIndex].text; // 重置
+            document.getElementById('planTextarea').value = appData.plan[currentPlanIndex].text; 
         }
     }
 
@@ -621,7 +631,6 @@
         appData.wallet.expenses.unshift({ name, cost, img: tempExpenseImg });
         saveData(appData);
         
-        // Reset
         document.getElementById('expenseName').value = '';
         document.getElementById('expenseCost').value = '';
         document.getElementById('expenseReceiptPreview').classList.add('hidden');
@@ -640,7 +649,6 @@
 
 
     /* ================= 4. LISTS 模組 ================= */
-    // 行李
     function renderBaggage() {
         const list = document.getElementById('baggageList');
         list.innerHTML = appData.lists.baggage.map((item, idx) => `
@@ -673,7 +681,6 @@
         renderBaggage();
     }
 
-    // 備忘錄
     let isMemoEditing = false;
     function renderMemo() {
         const data = appData.lists.memo;
@@ -709,7 +716,7 @@
             btn.innerHTML = '<i class="fas fa-times mr-1"></i>取消';
             btn.classList.replace('bg-warmbrown', 'bg-gray-400');
         } else {
-            renderMemo(); // 取消時重置
+            renderMemo();
         }
     }
 
@@ -726,7 +733,6 @@
             appData.lists.memo.img = base64;
             saveData(appData);
             renderMemo();
-            // 保持在編輯模式
             document.getElementById('memoViewMode').classList.add('hidden');
             document.getElementById('memoEditMode').classList.remove('hidden');
             document.getElementById('memoEditBtn').innerHTML = '<i class="fas fa-times mr-1"></i>取消';
@@ -743,7 +749,6 @@
         }
     }
 
-    // 採購
     function renderShop() {
         const grid = document.getElementById('shopGrid');
         if(appData.lists.shop.length === 0) {
@@ -803,8 +808,24 @@
     /* ================= 5. INFO 模組 ================= */
     let isInfoEditing = false;
     function renderInfo() {
+        // 處理 QR Code 顯示
+        const qrPreview = document.getElementById('infoQrCodePreview');
+        const removeBtn = document.getElementById('removeQrBtn');
+        const uploadLabel = document.getElementById('qrCodeUploadLabel');
+
+        if (appData.info.qrCodeImg) {
+            qrPreview.src = appData.info.qrCodeImg;
+            qrPreview.classList.remove('hidden');
+            removeBtn.classList.remove('hidden');
+            uploadLabel.classList.add('hidden');
+        } else {
+            qrPreview.classList.add('hidden');
+            removeBtn.classList.add('hidden');
+            uploadLabel.classList.remove('hidden');
+        }
+
+        // 處理文字資訊
         const container = document.getElementById('infoContainer');
-        
         if (isInfoEditing) {
             container.innerHTML = `
                 <div class="muji-card p-4">
@@ -831,19 +852,35 @@
             document.getElementById('infoEditBtn').innerHTML = '<i class="fas fa-pen mr-1"></i>編輯';
         }
         
-        // 更新封面圖
         document.getElementById('headerCoverImg').src = appData.info.coverImg;
     }
 
     function toggleInfoEdit() {
         if (isInfoEditing) {
-            // Save
             appData.info.flight = document.getElementById('editInfoFlight').value;
             appData.info.acc = document.getElementById('editInfoAcc').value;
             saveData(appData);
         }
         isInfoEditing = !isInfoEditing;
         renderInfo();
+    }
+
+    function handleQrCodeUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            appData.info.qrCodeImg = base64;
+            saveData(appData);
+            renderInfo();
+        });
+    }
+
+    function removeQrCode() {
+        if(confirm('確定要移除此 QR Code 嗎？')) {
+            appData.info.qrCodeImg = "";
+            saveData(appData);
+            renderInfo();
+        }
     }
 
     function updateCoverImage(event) {
@@ -853,8 +890,7 @@
             appData.info.coverImg = base64;
             saveData(appData);
             document.getElementById('headerCoverImg').src = base64;
-            alert('封面已更新！加入主畫面捷徑圖示也將同步更新。');
-            // 更新目前 document head 的 icon
+            alert('封面已更新！如果網頁已加入主畫面，捷徑圖示也將同步更新。');
             let link = document.querySelector("link[rel~='apple-touch-icon']");
             if (!link) {
                 link = document.createElement('link');
@@ -875,7 +911,6 @@
         renderMemo();
         renderShop();
         renderInfo();
-        document.getElementById('headerCoverImg').src = appData.info.coverImg;
     };
 
 </script>
