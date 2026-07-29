@@ -3,614 +3,674 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="沖繩慢旅">
+    <title>曼谷泰好玩 11/19-11/23</title>
     
-    <script>
-        (function() {
-            var STORAGE_KEY = 'muji_v5_';
-            var savedCover = localStorage.getItem(STORAGE_KEY + 'cover');
-            var iconHref = savedCover ? savedCover : "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=200&auto=format&fit=crop";
-            
-            document.write('<link id="apple-icon" rel="apple-touch-icon" href="' + iconHref + '">');
-            document.write('<link id="favicon" rel="icon" type="image/jpeg" href="' + iconHref + '">');
-            
-            if(savedCover) {
-                var manifest = {
-                    "name": "沖繩慢旅", "short_name": "沖繩慢旅", "display": "standalone",
-                    "icons": [{"src": savedCover, "sizes": "512x512", "type": "image/jpeg"}]
-                };
-                var blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-                document.write('<link rel="manifest" href="' + URL.createObjectURL(blob) + '">');
-            }
-        })();
-    </script>
-
-    <title>沖繩夏日慢旅 - 精簡旅遊APP</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#F7F5F0">
+    
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Noto+Sans+TC:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: '#F7F5F0',
+                        textMain: '#4A3E3D',
+                        accentBtn: '#8C7667',
+                        accentBlue: '#4B6E7D'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                        klee: ['Klee One', 'cursive'],
+                        zen: ['Zen Maru Gothic', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #F7F5F0;
-            color: #4A3E3D;
-            -webkit-tap-highlight-color: transparent;
-        }
-        h1, h2, .muji-title { font-family: 'Klee One', sans-serif; }
-        .muji-card {
-            background-color: #FFFFFF;
-            border: 1px solid #E6E1DA;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(74, 62, 61, 0.05);
-        }
-        .muji-btn-primary { background-color: #8C7667; color: #FFFFFF; }
-        .muji-btn-primary:active { background-color: #735F52; }
-        .muji-btn-accent { background-color: #4B6E7D; color: #FFFFFF; }
-        .muji-btn-accent:active { background-color: #385563; }
+        /* Hide scrollbar for Chrome, Safari and Opera */
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Hide scrollbar for IE, Edge and Firefox */
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        [contenteditable="true"]:focus { outline: none; background-color: #F9F8F6; padding: 4px; border-radius: 4px; border: 1px dashed #D1C6B4; }
+        
+        body { background-color: #F7F5F0; color: #4A3E3D; -webkit-tap-highlight-color: transparent; font-size: 17px;}
+        
+        .muji-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(74, 62, 61, 0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        /* Auto-Link Button Style */
+        .auto-link-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            background-color: #eaf1f4; color: #4B6E7D;
+            padding: 6px 12px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: 500; margin: 4px 0;
+            text-decoration: none; word-break: break-all;
+        }
+        .time-highlight { color: #8C7667; font-weight: bold; font-family: 'Zen Maru Gothic', sans-serif;}
     </style>
+
+    <!-- PWA Dynamic Icon Script -->
+    <script>
+        (function() {
+            try {
+                const data = JSON.parse(localStorage.getItem('travelAppData_BKK')) || {};
+                if(data.images && data.images.cover) {
+                    const link = document.createElement('link');
+                    link.rel = 'apple-touch-icon';
+                    link.href = data.images.cover;
+                    document.head.appendChild(link);
+                }
+            } catch(e) {}
+        })();
+    </script>
 </head>
-<body class="pb-28 max-w-md mx-auto relative min-h-screen shadow-2xl bg-[#F7F5F0]">
+<body class="antialiased">
 
-    <!-- 圖片放大 Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-[#4A3E3D]/90 z-[60] hidden flex flex-col items-center justify-center p-4 backdrop-blur-sm" onclick="closeImageModal()">
-        <img id="modalTargetImg" src="" class="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain mb-4">
-        <button class="bg-white/20 text-white px-6 py-2.5 rounded-full text-sm tracking-widest backdrop-blur-md border border-white/30">關閉</button>
-    </div>
-
-    <!-- 頂部封面 -->
-    <header class="relative w-full h-56 bg-[#E6E1DA] overflow-hidden rounded-b-[20px] shadow-sm">
-        <img id="coverImage" src="" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#4A3E3D]/80 via-transparent to-transparent flex flex-col justify-end p-5">
-            <div class="flex justify-between items-end">
-                <div>
-                    <h1 class="text-white text-3xl font-bold tracking-widest muji-title">沖繩夏日慢旅</h1>
-                    <p class="text-white/90 text-sm mt-1.5 tracking-wider"><i class="fa-regular fa-calendar-days mr-1"></i> 6/13 - 6/15</p>
-                </div>
-                <label class="bg-white/20 text-white text-sm px-4 py-2 rounded-full backdrop-blur-md cursor-pointer border border-white/30 shadow-sm flex items-center">
-                    <i class="fa-solid fa-camera mr-1.5"></i>更換封面
-                    <input type="file" id="coverUpload" accept="image/*" class="hidden" onchange="uploadCover(this)">
-                </label>
-            </div>
-        </div>
+<div class="max-w-md mx-auto min-h-screen relative pb-20 flex flex-col">
+    <!-- Header -->
+    <header class="pt-8 pb-4 px-5 sticky top-0 bg-base/90 backdrop-blur-md z-40">
+        <h1 class="font-klee text-2xl font-bold text-accentBtn text-center tracking-wider" id="headerTitle">曼谷行 🇹🇭</h1>
     </header>
 
-    <!-- 航班快訊 -->
-    <div class="bg-[#EADFC9] mx-4 -mt-5 relative z-10 rounded-xl px-4 py-3 text-sm flex justify-between items-center text-[#5C4A42] font-medium shadow-md border border-[#D1C6B4]">
-        <div class="flex flex-col items-center"><span class="text-xs text-[#8C7667] mb-0.5">去程 6/13</span><div class="font-bold text-base tracking-wider">13:30 <i class="fa-solid fa-plane text-xs mx-1"></i> 15:55</div></div>
-        <div class="w-px h-8 bg-[#8C7667]/30 mx-2"></div>
-        <div class="flex flex-col items-center"><span class="text-xs text-[#8C7667] mb-0.5">回程 6/15</span><div class="font-bold text-base tracking-wider">20:10 <i class="fa-solid fa-plane text-xs mx-1"></i> 20:50</div></div>
-    </div>
-
-    <!-- 主要內容區 -->
-    <main class="p-4 mt-2" id="mainContent"></main>
-
-    <!-- 底部導航 -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-[#E6E1DA] h-[80px] flex justify-around items-center z-40 px-2 shadow-[0_-4px_20px_rgba(74,62,61,0.05)] pb-safe">
-        <button onclick="switchTab('plan')" id="nav-plan" class="flex flex-col items-center justify-center w-16 text-sm font-medium transition text-[#8C7667]"><i class="fa-regular fa-compass text-2xl mb-1"></i><span>行程</span></button>
-        <button onclick="switchTab('food')" id="nav-food" class="flex flex-col items-center justify-center w-16 text-sm font-medium transition text-[#A89F91]"><i class="fa-solid fa-utensils text-2xl mb-1"></i><span>美食</span></button>
-        <button onclick="switchTab('wallet')" id="nav-wallet" class="flex flex-col items-center justify-center w-16 text-sm font-medium transition text-[#A89F91]"><i class="fa-solid fa-wallet text-2xl mb-1"></i><span>記帳</span></button>
-        <button onclick="switchTab('lists')" id="nav-lists" class="flex flex-col items-center justify-center w-16 text-sm font-medium transition text-[#A89F91]"><i class="fa-solid fa-list-check text-2xl mb-1"></i><span>清單</span></button>
-        <button onclick="switchTab('info')" id="nav-info" class="flex flex-col items-center justify-center w-16 text-sm font-medium transition text-[#A89F91]"><i class="fa-solid fa-circle-info text-2xl mb-1"></i><span>資訊</span></button>
-    </nav>
-
-    <script>
-        const STORAGE_KEY = 'muji_v5_'; 
-
-        const defaultPlan = [
-            { day: 1, date: "6/13", items: [
-                { time: "13:30", text: "✈️ 星宇航空起飛 (13:30-15:55)", important: true, url: "", photo: "" },
-                { time: "16:30", text: "🚗 辦理租車手續", important: false, url: "", photo: "" },
-                { time: "17:30", text: "🏨 抵達民宿 Check-in", important: false, url: "https://maps.app.goo.gl/MeW62ReoSn7VCpN49", photo: "" },
-                { time: "18:00", text: "🐈 貓之道找貓", important: false, url: "https://maps.app.goo.gl/EvJRi6NRJBw4ktMn6", photo: "" },
-                { time: "18:45", text: "🎡 美國村散步(八點有煙火)", important: false, url: "https://maps.app.goo.gl/fKZUZkqhmxh1bvKu5", photo: "" },
-                { time: "20:00", text: "🍽️ 享用晚餐", important: false, url: "", photo: "" }
-            ]},
-            { day: 2, date: "6/14", items: [
-                { time: "09:30", text: "🏝️ 古宇利島絕景", important: false, url: "https://maps.app.goo.gl/A6KbengUB6K2rRbg9", photo: "" },
-                { time: "11:30", text: "🦈 沖繩美麗海水族館", important: false, url: "https://maps.app.goo.gl/fnjwVkwC1VzncTLW9", photo: "" },
-                { time: "13:30", text: "🍽️ 午餐", important: false, url: "", photo: "" },
-                { time: "15:30", text: "⛩️ 波上宮參拜 (❗5點前抵達)", important: true, url: "https://maps.app.goo.gl/W3QwpRtVXTqjSLLw5", photo: "" },
-                { time: "16:30", text: "🌅 瀨長島 (Umikaji Terrace)", important: false, url: "https://maps.app.goo.gl/B5SxaRWn8Dw76rjZ9", photo: "" },
-                { time: "19:00", text: "🛍️ 國際通吃晚餐", important: false, url: "", photo: "" }
-            ]},
-            { day: 3, date: "6/15", items: [
-                { time: "10:00", text: "🛍️ PARCO CITY 商場", important: false, url: "https://maps.app.goo.gl/5WQcTJTFEtC8THjB8", photo: "" },
-                { time: "12:30", text: "🍽️ 午餐", important: false, url: "", photo: "" },
-                { time: "14:00", text: "🚗 開車準備送機", important: false, url: "", photo: "" },
-                { time: "15:00", text: "🛒 好市多採購", important: false, url: "https://maps.app.goo.gl/pepucERz8Zs2zqwH8", photo: "" },
-                { time: "19:40", text: "🎒 準備搭機 (保留一個半小時)", important: true, url: "", photo: "" },
-                { time: "20:10", text: "✈️ 星宇航空起飛 (20:10-20:50)", important: true, url: "", photo: "" }
-            ]}
-        ];
-
-        const defaultFood = [
-            { day: 1, title: "Day 1 推薦美食", items: [] },
-            { day: 2, title: "Day 2 行程周邊特搜", items: [
-                { name: "🍙 在地熱門飯糰", desc: "沖繩必吃人氣飯糰，份量厚實。", url: "https://maps.app.goo.gl/iCcXRwDSWE83Bpoa9" },
-                { name: "🦐 經典蝦蝦飯", desc: "古宇利島名物，蒜香濃郁絕佳滋味。", url: "https://maps.app.goo.gl/cyJTFsrKNi6TELP69" },
-                { name: "☕ 質感海景咖啡廳", desc: "享受沖繩海風與咖啡。", url: "https://maps.app.goo.gl/PmWr42B5LaVNHogj6" },
-                { name: "🍱 道地定食餐廳", desc: "日本家庭風味定食料理。", url: "https://maps.app.goo.gl/PmWr42B5LaVNHogj6" },
-                { name: "🥩 燒肉本部牧場 (總店)", desc: "頂級和牛，肉質鮮甜！", url: "https://maps.app.goo.gl/opzRj1a1cBJWKRqX6" },
-                { name: "☕ 星巴克 (特色店)", desc: "絕佳海景或具備在地建築特色。", url: "https://maps.app.goo.gl/3qVCPNcnvrUhmo756" }
-            ]},
-            { day: 3, title: "Day 3 推薦美食", items: [] }
-        ];
-
-        const defaultChecklist = [
-            { id: "c1", cat: "個人物品", text: "護照", checked: false }, { id: "c2", cat: "個人物品", text: "信用卡", checked: false }, { id: "c3", cat: "個人物品", text: "身分證", checked: false }, { id: "c4", cat: "個人物品", text: "現金", checked: false }, { id: "c5", cat: "個人物品", text: "身分證影本", checked: false }, { id: "c6", cat: "個人物品", text: "護照影本", checked: false }, { id: "c7", cat: "個人物品", text: "駕照", checked: false }, { id: "c8", cat: "個人物品", text: "國際駕照", checked: false }, { id: "c9", cat: "個人物品", text: "駕照譯本", checked: false },
-            { id: "c10", cat: "雜物", text: "衣物", checked: false }, { id: "c11", cat: "雜物", text: "帽子", checked: false }, { id: "c12", cat: "雜物", text: "太陽眼鏡", checked: false }, { id: "c13", cat: "雜物", text: "隱眼", checked: false }, { id: "c14", cat: "雜物", text: "梳子", checked: false }, { id: "c15", cat: "雜物", text: "保養品", checked: false }, { id: "c16", cat: "雜物", text: "藥品", checked: false },
-            { id: "c17", cat: "電子產品", text: "充電器", checked: false }, { id: "c18", cat: "電子產品", text: "充電線", checked: false }, { id: "c19", cat: "電子產品", text: "行動電源", checked: false }, { id: "c20", cat: "電子產品", text: "萬國插座", checked: false }, { id: "c21", cat: "電子產品", text: "相機", checked: false }, { id: "c25", cat: "電子產品", text: "網卡", checked: false }
-        ];
-
-        let appState = {
-            currentTab: 'plan',
-            currentListSubTab: 'checklist',
-            cover: localStorage.getItem(STORAGE_KEY+'cover') || "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?q=80&w=600&auto=format&fit=crop",
-            plan: JSON.parse(localStorage.getItem(STORAGE_KEY+'plan')) || defaultPlan,
-            food: JSON.parse(localStorage.getItem(STORAGE_KEY+'food')) || defaultFood,
-            checklist: JSON.parse(localStorage.getItem(STORAGE_KEY+'checklist')) || defaultChecklist,
-            memos: JSON.parse(localStorage.getItem(STORAGE_KEY+'memos')) || [{ id: "m1", text: "Visit Japan Web：https://vjw-lp.digital.go.jp/", photo: "" }],
-            shopping: JSON.parse(localStorage.getItem(STORAGE_KEY+'shopping')) || [],
-            wallet: JSON.parse(localStorage.getItem(STORAGE_KEY+'wallet')) || { rate: 0.215, history: [] },
-            info: JSON.parse(localStorage.getItem(STORAGE_KEY+'info')) || {
-                hotel: "住宿資訊 (可點擊編輯)\nURL: https://maps.app.goo.gl/WF7LqC5Ly8G5PkXx9",
-                carRental: "取車/還車資訊", carAddress: "", carPhoto: ""
-            }
-        };
-
-        function saveState() {
-            localStorage.setItem(STORAGE_KEY+'plan', JSON.stringify(appState.plan));
-            localStorage.setItem(STORAGE_KEY+'food', JSON.stringify(appState.food));
-            localStorage.setItem(STORAGE_KEY+'checklist', JSON.stringify(appState.checklist));
-            localStorage.setItem(STORAGE_KEY+'memos', JSON.stringify(appState.memos));
-            localStorage.setItem(STORAGE_KEY+'shopping', JSON.stringify(appState.shopping));
-            localStorage.setItem(STORAGE_KEY+'wallet', JSON.stringify(appState.wallet));
-            localStorage.setItem(STORAGE_KEY+'info', JSON.stringify(appState.info));
-        }
-
-        window.onload = function() {
-            document.getElementById('coverImage').src = appState.cover;
-            switchTab(appState.currentTab);
-        };
-
-        function compressImage(file, maxWidth, quality, callback) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width, height = img.height;
-                    if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL('image/jpeg', quality));
-                };
-            };
-        }
-
-        function uploadCover(input) {
-            if (input.files && input.files[0]) {
-                compressImage(input.files[0], 600, 0.7, function(base64Str) {
-                    appState.cover = base64Str;
-                    localStorage.setItem(STORAGE_KEY+'cover', base64Str);
-                    document.getElementById('coverImage').src = base64Str;
-                    document.getElementById('apple-icon').href = base64Str;
-                    document.getElementById('favicon').href = base64Str;
-                    alert("✅ 封面已更換！\n\n【關鍵步驟】請務必在瀏覽器將網頁「下拉重新整理」一次，然後再點擊「加入主畫面」，圖示就會順利更新了！");
-                });
-            }
-        }
-
-        function linkify(text) {
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            return text.replace(urlRegex, function(url) {
-                return `<a href="${url}" target="_blank" class="inline-block mt-2 text-[12px] font-bold text-[#4B6E7D] bg-[#4B6E7D]/10 border border-[#4B6E7D]/20 px-3 py-1.5 rounded-md shadow-sm transition hover:bg-[#4B6E7D]/20"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>開啟地圖/連結</a>`;
-            });
-        }
-
-        function openImageModal(src) { if(!src) return; document.getElementById('modalTargetImg').src = src; document.getElementById('imageModal').classList.remove('hidden'); }
-        function closeImageModal() { document.getElementById('imageModal').classList.add('hidden'); }
-
-        let activeDayPlan = 1;
-        // 【核心修改】加入 preventScroll 參數，為 true 時不會強制滾動到頂部
-        function switchTab(tabId, preventScroll = false) {
-            appState.currentTab = tabId;
-            const tabs = ['plan', 'food', 'wallet', 'lists', 'info'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`nav-${t}`);
-                if (t === tabId) { btn.classList.remove('text-[#A89F91]'); btn.classList.add('text-[#8C7667]'); } 
-                else { btn.classList.remove('text-[#8C7667]'); btn.classList.add('text-[#A89F91]'); }
-            });
-            const main = document.getElementById('mainContent');
-            if (tabId === 'plan') renderPlanTab(main);
-            else if (tabId === 'food') renderFoodTab(main);
-            else if (tabId === 'wallet') renderWalletTab(main);
-            else if (tabId === 'lists') renderListsTab(main);
-            else if (tabId === 'info') renderInfoTab(main);
+    <!-- Main Content Area -->
+    <main class="flex-1 px-5 overflow-y-auto no-scrollbar" id="mainContainer">
+        
+        <!-- ================= PLAN VIEW ================= -->
+        <div id="view-plan" class="view-section hidden">
+            <!-- Day Tabs -->
+            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-3 mb-4 snap-x" id="planTabs">
+                <!-- Tabs rendered by JS -->
+            </div>
             
-            // 只有在防滾動標記為 false 時（例如點擊底部導覽列切換大分頁時），才回到最上面
-            if (!preventScroll) {
-                window.scrollTo(0, 0);
+            <div class="muji-card relative">
+                <button onclick="toggleEdit('plan')" class="absolute top-4 right-4 text-accentBtn/60 hover:text-accentBtn">
+                    <i class="fa-solid fa-pen-to-square text-xl"></i>
+                </button>
+                <h2 class="font-zen text-xl font-bold mb-4 text-accentBlue" id="planDayTitle">DAY 1</h2>
+                
+                <div id="planContentDisplay" class="leading-relaxed mb-4"></div>
+                
+                <textarea id="planContentEdit" class="w-full h-64 bg-base/30 rounded-lg p-3 hidden focus:outline-none focus:ring-2 focus:ring-accentBtn/50 mb-4 text-base" placeholder="輸入行程..."></textarea>
+                <button id="planSaveBtn" onclick="savePlan()" class="hidden w-full bg-accentBtn text-white font-bold py-2 rounded-lg mb-4">儲存行程</button>
+
+                <!-- Day Image -->
+                <div class="mt-4 border-t border-gray-100 pt-4">
+                    <label class="block text-sm font-bold text-accentBtn mb-2"><i class="fa-solid fa-image"></i> 附圖 / 票券</label>
+                    <img id="planImgDisplay" class="w-full rounded-lg mb-2 hidden object-cover max-h-48">
+                    <input type="file" accept="image/*" class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accentBtn/10 file:text-accentBtn hover:file:bg-accentBtn/20" onchange="uploadImage(this, 'plan')">
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= FOOD VIEW ================= -->
+        <div id="view-food" class="view-section hidden">
+            <p class="text-sm text-center mb-4 text-accentBlue font-zen">點擊卡片一鍵開啟 Google Maps 導航</p>
+            <div id="foodList" class="space-y-4">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+
+        <!-- ================= WALLET VIEW ================= -->
+        <div id="view-wallet" class="view-section hidden">
+            <!-- Calculator -->
+            <div class="muji-card bg-accentBtn text-white">
+                <h2 class="font-zen text-lg mb-2"><i class="fa-solid fa-calculator"></i> 匯率換算器</h2>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-sm">匯率:</span>
+                    <input type="number" id="exRate" class="w-20 bg-white/20 px-2 py-1 rounded text-white outline-none" step="0.01" onchange="calcExchange()">
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="number" id="calcInput" class="w-1/2 bg-white text-textMain px-3 py-2 rounded-lg outline-none font-bold" placeholder="輸入泰銖..." oninput="calcExchange()">
+                    <span class="font-bold text-xl">=</span>
+                    <div class="w-1/2 bg-white/20 px-3 py-2 rounded-lg font-bold">NT$ <span id="calcResult">0</span></div>
+                </div>
+            </div>
+
+            <!-- Add Expense -->
+            <div class="muji-card">
+                <h3 class="font-bold text-accentBlue mb-3">新增記帳</h3>
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <input type="text" id="expName" placeholder="項目" class="bg-base px-3 py-2 rounded-lg outline-none">
+                    <input type="number" id="expAmount" placeholder="泰銖金額" class="bg-base px-3 py-2 rounded-lg outline-none">
+                </div>
+                <div class="mb-3">
+                    <input type="file" id="expReceipt" accept="image/*" class="text-xs file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-base file:text-accentBtn">
+                </div>
+                <button onclick="addExpense()" class="w-full bg-accentBlue text-white font-bold py-2 rounded-lg">記上一筆</button>
+            </div>
+
+            <!-- Expense List -->
+            <h3 class="font-klee text-xl font-bold mb-3 mt-6">花費紀錄 (Total: <span id="totalExp">0</span> ฿)</h3>
+            <div id="expenseList" class="space-y-3 pb-4"></div>
+        </div>
+
+        <!-- ================= LISTS VIEW ================= -->
+        <div id="view-lists" class="view-section hidden">
+            <div class="flex border-b-2 border-accentBtn/20 mb-4 font-zen">
+                <button class="flex-1 pb-2 text-center font-bold text-accentBtn border-b-2 border-accentBtn" id="tabLuggage" onclick="switchListTab('luggage')">行李</button>
+                <button class="flex-1 pb-2 text-center font-bold text-textMain/50" id="tabShopping" onclick="switchListTab('shopping')">採購</button>
+                <button class="flex-1 pb-2 text-center font-bold text-textMain/50" id="tabMemo" onclick="switchListTab('memo')">備忘錄</button>
+            </div>
+
+            <!-- Luggage -->
+            <div id="listLuggage" class="list-content">
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="newLuggage" placeholder="新增行李..." class="flex-1 bg-white px-4 py-2 rounded-full outline-none shadow-sm">
+                    <button onclick="addLuggage()" class="bg-accentBtn text-white w-10 h-10 rounded-full flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <div id="luggageItems" class="space-y-2"></div>
+            </div>
+
+            <!-- Shopping -->
+            <div id="listShopping" class="list-content hidden">
+                <div class="muji-card mb-4">
+                    <input type="text" id="newShopName" placeholder="商品名稱" class="w-full bg-base px-3 py-2 rounded-lg mb-2 outline-none">
+                    <input type="file" id="newShopImg" accept="image/*" class="mb-2 text-sm">
+                    <button onclick="addShopping()" class="w-full bg-accentBlue text-white py-2 rounded-lg font-bold">加入購物車</button>
+                </div>
+                <div id="shoppingGrid" class="grid grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Memo -->
+            <div id="listMemo" class="list-content hidden">
+                <div class="muji-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-accentBlue">旅遊備忘錄</h3>
+                        <button onclick="toggleEdit('memo')" class="text-accentBtn"><i class="fa-solid fa-pen-to-square"></i></button>
+                    </div>
+                    <div id="memoContentDisplay" class="leading-relaxed mb-4 min-h-[100px]"></div>
+                    <textarea id="memoContentEdit" class="w-full h-40 bg-base/30 rounded-lg p-3 hidden mb-2" placeholder="可貼上網址，會自動轉成按鈕..."></textarea>
+                    <button id="memoSaveBtn" onclick="saveMemo()" class="hidden w-full bg-accentBtn text-white font-bold py-2 rounded-lg mb-4">儲存</button>
+                    
+                    <div class="border-t border-gray-100 pt-4 mt-2">
+                        <label class="block text-sm font-bold text-accentBtn mb-2"><i class="fa-solid fa-image"></i> 備忘錄圖片</label>
+                        <img id="memoImgDisplay" class="w-full rounded-lg mb-2 hidden object-cover">
+                        <input type="file" accept="image/*" class="text-sm" onchange="uploadImage(this, 'memo')">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= INFO VIEW ================= -->
+        <div id="view-info" class="view-section hidden">
+            <div class="muji-card text-center mb-6 relative overflow-hidden group">
+                <div id="coverImgContainer" class="h-40 bg-accentBtn/10 rounded-lg flex items-center justify-center mb-3 bg-cover bg-center">
+                    <span class="text-accentBtn/50 font-bold"><i class="fa-solid fa-camera text-2xl"></i><br>設定封面照</span>
+                </div>
+                <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="uploadImage(this, 'cover')">
+                <h2 class="font-klee text-xl font-bold text-textMain">曼谷自由行</h2>
+                <p class="text-sm text-textMain/70 font-zen mt-1">2026/11/19 - 11/23</p>
+            </div>
+
+            <div class="muji-card relative">
+                <button onclick="toggleEdit('info')" class="absolute top-4 right-4 text-accentBtn/60 hover:text-accentBtn">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <h3 class="font-bold text-accentBlue mb-3 font-zen text-lg"><i class="fa-solid fa-plane"></i> 航班與住宿資訊</h3>
+                
+                <div id="infoContentDisplay" class="leading-relaxed mb-2"></div>
+                <textarea id="infoContentEdit" class="w-full h-64 bg-base/30 rounded-lg p-3 hidden focus:outline-none mb-3 text-base"></textarea>
+                <button id="infoSaveBtn" onclick="saveInfo()" class="hidden w-full bg-accentBtn text-white font-bold py-2 rounded-lg">儲存資訊</button>
+            </div>
+
+            <div class="muji-card">
+                <h3 class="font-bold text-accentBlue mb-3 font-zen"><i class="fa-solid fa-file-contract"></i> 重要合約 / 截圖</h3>
+                <img id="contractImgDisplay" class="w-full rounded-lg mb-2 hidden object-cover">
+                <input type="file" accept="image/*" class="text-sm file:bg-base file:text-accentBtn file:border-0 file:rounded-full file:px-4 file:py-2" onchange="uploadImage(this, 'contract')">
+            </div>
+            
+            <button onclick="clearAllData()" class="w-full text-center text-red-400 text-sm mt-8 opacity-60 font-zen">⚠ 清除所有本機資料 (重置)</button>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-100 flex justify-around items-center pb-safe pt-2 pb-4 shadow-[0_-5px_15px_rgba(0,0,0,0.03)] z-50 rounded-t-2xl">
+        <button class="nav-btn flex flex-col items-center text-textMain/40 active-nav" onclick="switchMainTab('plan', this)">
+            <i class="fa-solid fa-route text-xl mb-1"></i>
+            <span class="text-[10px] font-bold font-zen">行程</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center text-textMain/40" onclick="switchMainTab('food', this)">
+            <i class="fa-solid fa-utensils text-xl mb-1"></i>
+            <span class="text-[10px] font-bold font-zen">美食</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center text-textMain/40" onclick="switchMainTab('wallet', this)">
+            <i class="fa-solid fa-wallet text-xl mb-1"></i>
+            <span class="text-[10px] font-bold font-zen">記帳</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center text-textMain/40" onclick="switchMainTab('lists', this)">
+            <i class="fa-solid fa-list-check text-xl mb-1"></i>
+            <span class="text-[10px] font-bold font-zen">清單</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center text-textMain/40" onclick="switchMainTab('info', this)">
+            <i class="fa-solid fa-circle-info text-xl mb-1"></i>
+            <span class="text-[10px] font-bold font-zen">資訊</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    // ================= DATA INITIALIZATION =================
+    const STORAGE_KEY = 'travelAppData_BKK';
+    let appData = {
+        plan: {
+            "11/19": "出發：早上6:05高鐵 6:47到桃園，機捷7:02/7:17\n第二航廈JX741\n09:25 飛機到泰國 12:35\n先到機場 B層換匯區換錢，旁邊就是機場快線乘車處，再搭曼谷機場快線 Airport Rail Link到旅館，若人太多可到捷運終點站 PHAYA THAI站，出站前往 BTS的路上，就有一間 SuperRich。\n住宿在淺綠線捷運的Ekkamai站，機捷的最終站可以跟他直接連接\n16:30 出門到喬德夜市(https://maps.app.goo.gl/koPMjyKzWQdtdSYF9) 或是新夜市Save One Go Night Market (https://maps.app.goo.gl/djUgooXf2RUcwgwX6)\n逛完回旅館休息",
+            "11/20": "07:30 在Ekkamai Wat That Thong (https://maps.app.goo.gl/E2bPMt9qLvkamNR87) 集合坐園方的車子到大象保護區，體驗大概四小時(午餐在裡面吃)，回程時間 14:30 從園區出發，路程大約都各1.5小時\n16:30 在市區的centralwOrld逛逛或是班嘉奇蒂公園的森林天空步道走走\n18:30-19:00 晚餐吃泰式料理",
+            "11/21": "DAY3 (包車)\n08:00 出門到丹嫩莎朵水上市場+美功鐵道市場\n14:00 回市區的朱拉大學美食街吃午餐或是紅大哥水門雞飯\n晚上去按摩",
+            "11/22": "DAY4 (包車)\n09:00 - 12:00 恰圖恰市集 (BTS Mo Chit 站)\n12:30 - 13:30 勝利紀念碑吃船麵 (BTS Victory Monument 站)\n14:00 - 15:30 鄭王廟行程 (到 Saphan Taksin 站轉搭交通船)\n15:40 - 16:50 從鄭王廟離開，準備前往商場\n19:30 準時享用 Copper Beyond Buffet\n飯後 步行前往對面 Big C 補貨，開心回飯店！",
+            "11/23": "DAY5\n準備回程\n阿姨回程 13:45 班次JX742\n其他人回程 17:40 班次JX746"
+        },
+        food: [
+            { cat: "📍 住宿區周邊 (Ekkamai/Thong Lo)", items: [
+                {n: "Tamnak Isan Ekamai", url: "https://maps.app.goo.gl/Uehp1Gs2uWMHpz2d9"},
+                {n: "Mother May I Kitchen", url: "https://maps.app.goo.gl/D5qKigaLM29DcnYT7"},
+                {n: "Hereduan (段哥街頭美食)", url: "https://maps.app.goo.gl/W1bgvDwFzHQaXgRcA"},
+                {n: "Mae Varee 芒果糯米飯", url: "https://maps.app.goo.gl/rMihuDup2LsVBcZD8"},
+                {n: "Goji Kitchen+Bar", url: "https://maps.app.goo.gl/3YN1YaU9cYUcnMhd9"}
+            ]},
+            { cat: "📍 購物市中心與水門區", items: [
+                {n: "中央世界購物商場", url: "https://maps.app.goo.gl/qryGjwxrZSRR4zWd6"},
+                {n: "Copper Beyond Buffet", url: "https://maps.app.goo.gl/SayZdEX69gTLshWe8"},
+                {n: "紅大哥水門雞飯店", url: "https://maps.app.goo.gl/vqSep8wiTSvx9cRu8"},
+                {n: "Thong Smith 船麵", url: "https://maps.app.goo.gl/d7yGmXAK78QMx2De8"}
+            ]},
+            { cat: "📍 朱拉隆功大學商圈", items: [
+                {n: "Kampang ISAN", url: "https://maps.app.goo.gl/P4DGn5JhFD3jJFS67"},
+                {n: "Nueng Nom Nua 牛奶小子", url: "https://maps.app.goo.gl/ToQgo4q54G5QFauv6"},
+                {n: "朱拉50巷廚房", url: "https://maps.app.goo.gl/pbSx2tyqFEDSsz717"}
+            ]},
+            { cat: "📍 老城區與其他", items: [
+                {n: "唐人街夜市", url: "https://maps.app.goo.gl/wdUhsNYcvksixmPf9"},
+                {n: "拍那空船麵(勝利紀念碑)", url: "https://maps.app.goo.gl/d5axyjMX5GHiQisQ7"},
+                {n: "Save One Go 夜市", url: "https://maps.app.goo.gl/jDgaMVq4yfC2aqDz7"}
+            ]}
+        ],
+        info: "【班機時刻】\n去程：09:25 JX741 -> 12:35 BKK\n阿姨回程：13:45 JX742 -> 18:25 TPE\n其他人回程：17:40 JX746 -> 22:30 TPE\n\n【住宿地址】\n民宿：House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n飯店：Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
+        wallet: { rate: 0.93, expenses: [] },
+        lists: {
+            luggage: [{text: "護照與簽證", checked: false}, {text: "泰銖現金", checked: false}, {text: "網卡", checked: false}],
+            memo: "記得帶防蚊液跟腸胃藥！",
+            shopping: []
+        },
+        images: {} // 'plan_11/19', 'cover', 'contract', 'memo'
+    };
+
+    let currentPlanDay = Object.keys(appData.plan)[0];
+
+    // ================= CORE FUNCTIONS =================
+    function init() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            // merge data to avoid missing structure
+            const parsed = JSON.parse(stored);
+            appData = { ...appData, ...parsed, lists: { ...appData.lists, ...parsed.lists } };
+        }
+        
+        renderPlanTabs();
+        renderPlanContent();
+        renderFood();
+        renderWallet();
+        renderLuggage();
+        renderShopping();
+        renderMemo();
+        renderInfo();
+        
+        // Initial View
+        document.getElementById('view-plan').classList.remove('hidden');
+        document.querySelector('.nav-btn').style.color = '#8C7667';
+    }
+
+    function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+
+    function clearAllData() {
+        if(confirm("確定要刪除所有紀錄(包含照片、記帳)並重置嗎？")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
+    // Text formatting (Auto-link & Time Highlight)
+    function formatText(text) {
+        if(!text) return "";
+        let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // Auto-link https://...
+        html = html.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="auto-link-btn shadow-sm"><i class="fa-solid fa-map-location-dot"></i> 點擊開啟地圖</a>');
+        // Time Highlight
+        html = html.replace(/\b([01]?[0-9]|2[0-3]):([0-5][0-9])\b/g, '<span class="time-highlight"><i class="fa-regular fa-clock text-sm"></i> $1:$2</span>');
+        return html.replace(/\n/g, '<br>');
+    }
+
+    // Image Compression
+    function compressImage(file, callback) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800;
+                let width = img.width;
+                let height = img.height;
+                if (width > MAX_WIDTH) {
+                    height = height * (MAX_WIDTH / width);
+                    width = MAX_WIDTH;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                // Compress quality to 0.6
+                callback(canvas.toDataURL('image/jpeg', 0.6));
             }
         }
+    }
 
-        // ==========================================
-        // 1. PLAN 行程表
-        // ==========================================
-        function renderPlanTab(container) {
-            let html = `
-                <div class="flex justify-between items-center mb-5">
-                    <h2 class="text-2xl font-bold text-[#5C4A42] muji-title"><i class="fa-regular fa-compass mr-2"></i>日程表</h2>
-                    <div class="inline-flex bg-white rounded-lg border border-[#E6E1DA] p-1 shadow-sm text-sm font-bold">
-            `;
-            appState.plan.forEach(d => {
-                const activeClass = d.day === activeDayPlan ? 'bg-[#8C7667] text-white shadow-sm' : 'text-[#A89F91] hover:text-[#5C4A42]';
-                // 切換日期時保持在原位會比較順暢
-                html += `<button onclick="activeDayPlan=${d.day}; switchTab('plan', true)" class="px-4 py-2 rounded-md transition ${activeClass}">D${d.day}</button>`;
+    function uploadImage(input, type) {
+        const file = input.files[0];
+        if(!file) return;
+        compressImage(file, base64 => {
+            let key = type;
+            if(type === 'plan') key = `plan_${currentPlanDay}`;
+            appData.images[key] = base64;
+            saveData();
+            
+            // Re-render specific part
+            if(type === 'plan') renderPlanContent();
+            if(type === 'cover' || type === 'contract') renderInfo();
+            if(type === 'memo') renderMemo();
+        });
+    }
+
+    // ================= NAVIGATION =================
+    function switchMainTab(tabId, btnElement) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`view-${tabId}`).classList.remove('hidden');
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.style.color = 'rgba(74, 62, 61, 0.4)'; // textMain/40
+        });
+        btnElement.style.color = '#8C7667'; // accentBtn
+        document.getElementById('headerTitle').innerText = 
+            tabId==='plan'?'行程 📅' : tabId==='food'?'美食地圖 🍜' : tabId==='wallet'?'記帳與算式 💰' : tabId==='lists'?'清單 📝' : '行程資訊 ℹ️';
+    }
+
+    // ================= PLAN LOGIC =================
+    function renderPlanTabs() {
+        const container = document.getElementById('planTabs');
+        container.innerHTML = '';
+        Object.keys(appData.plan).forEach((day, index) => {
+            const btn = document.createElement('button');
+            const isSelected = day === currentPlanDay;
+            btn.className = `flex-shrink-0 px-4 py-2 rounded-full font-bold font-zen text-sm transition-colors ${isSelected ? 'bg-accentBtn text-white shadow-md' : 'bg-white text-textMain/60 border border-gray-200'}`;
+            btn.innerText = `Day ${index+1} (${day})`;
+            btn.onclick = () => { currentPlanDay = day; renderPlanTabs(); renderPlanContent(); };
+            container.appendChild(btn);
+        });
+    }
+
+    function renderPlanContent() {
+        const content = appData.plan[currentPlanDay] || "";
+        const imgBase64 = appData.images[`plan_${currentPlanDay}`];
+        
+        document.getElementById('planDayTitle').innerText = `📍 ${currentPlanDay} 行程`;
+        document.getElementById('planContentDisplay').innerHTML = formatText(content);
+        document.getElementById('planContentEdit').value = content;
+        
+        const imgEl = document.getElementById('planImgDisplay');
+        if(imgBase64) {
+            imgEl.src = imgBase64;
+            imgEl.classList.remove('hidden');
+        } else {
+            imgEl.classList.add('hidden');
+        }
+    }
+
+    function toggleEdit(type) {
+        const display = document.getElementById(`${type}ContentDisplay`);
+        const edit = document.getElementById(`${type}ContentEdit`);
+        const btn = document.getElementById(`${type}SaveBtn`);
+        
+        if (edit.classList.contains('hidden')) {
+            display.classList.add('hidden');
+            edit.classList.remove('hidden');
+            btn.classList.remove('hidden');
+            edit.focus();
+        }
+    }
+
+    function savePlan() {
+        appData.plan[currentPlanDay] = document.getElementById('planContentEdit').value;
+        saveData();
+        document.getElementById('planContentDisplay').classList.remove('hidden');
+        document.getElementById('planContentEdit').classList.add('hidden');
+        document.getElementById('planSaveBtn').classList.add('hidden');
+        renderPlanContent();
+    }
+
+    // ================= FOOD LOGIC =================
+    function renderFood() {
+        const container = document.getElementById('foodList');
+        container.innerHTML = '';
+        appData.food.forEach(section => {
+            let html = `<div class="muji-card"><h3 class="font-bold text-accentBlue mb-3 font-zen">${section.cat}</h3><div class="space-y-2">`;
+            section.items.forEach(item => {
+                html += `
+                    <a href="${item.url}" target="_blank" class="block bg-base hover:bg-[#eaf1f4] p-3 rounded-lg flex justify-between items-center transition-colors">
+                        <span class="font-bold text-textMain">${item.n}</span>
+                        <i class="fa-solid fa-diamond-turn-right text-accentBtn"></i>
+                    </a>`;
             });
             html += `</div></div>`;
+            container.innerHTML += html;
+        });
+    }
 
-            const currentDay = appState.plan.find(d => d.day === activeDayPlan);
-            html += `<div class="text-sm text-[#8C7667] mb-6 font-bold bg-[#EADFC9]/40 border border-[#D1C6B4]/50 rounded-lg px-4 py-3 tracking-wider"><i class="fa-regular fa-clock mr-1.5"></i>第 ${activeDayPlan} 天 — ${currentDay.date}</div>`;
-            html += `<div class="relative pl-7 border-l-[3px] border-[#EADFC9] ml-3 space-y-6">`;
-            currentDay.items.forEach((item, idx) => {
-                const timeColor = item.important ? 'bg-[#D9534F] text-white shadow-md ring-4 ring-red-50' : 'bg-[#F5F2EB] text-[#5C4A42] border border-[#EADFC9]';
-                const textColor = item.important ? 'font-bold text-[#D9534F]' : 'font-medium text-[#4A3E3D]';
-                html += `
-                    <div class="relative group">
-                        <span class="absolute -left-[50px] top-1 px-1.5 py-0.5 text-xs rounded font-bold tracking-wider ${timeColor}">${item.time}</span>
-                        <div class="muji-card p-4 hover:border-[#D1C6B4] transition-colors">
-                            <p class="text-base ${textColor} leading-relaxed whitespace-pre-wrap" contenteditable="true" onblur="updatePlanText(${activeDayPlan}, ${idx}, this.innerText)">${item.text}</p>
-                            
-                            ${item.photo ? `<img src="${item.photo}" class="mt-3 w-full h-36 object-cover rounded-lg shadow-sm border border-[#E6E1DA]" onclick="openImageModal('${item.photo}')">` : ''}
+    // ================= WALLET LOGIC =================
+    function calcExchange() {
+        const rate = parseFloat(document.getElementById('exRate').value) || 0.93;
+        appData.wallet.rate = rate;
+        saveData();
+        const input = parseFloat(document.getElementById('calcInput').value) || 0;
+        document.getElementById('calcResult').innerText = Math.round(input * rate);
+    }
 
-                            <div class="mt-3 flex flex-wrap gap-2 items-center justify-between">
-                                <div>${item.url ? linkify(item.url) : ''}</div>
-                                <div class="flex gap-2">
-                                    <label class="text-sm text-neutral-400 hover:text-[#4B6E7D] bg-neutral-50 px-3 py-1.5 rounded cursor-pointer border border-[#E6E1DA]">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="uploadPlanPhoto(${activeDayPlan}, ${idx}, this)">
-                                    </label>
-                                    <button onclick="deletePlanItem(${activeDayPlan}, ${idx})" class="text-sm text-neutral-400 hover:text-[#D9534F] bg-neutral-50 px-3 py-1.5 rounded border border-[#E6E1DA]"><i class="fa-regular fa-trash-can"></i></button>
-                                </div>
-                            </div>
-                        </div>
+    function renderWallet() {
+        document.getElementById('exRate').value = appData.wallet.rate;
+        const list = document.getElementById('expenseList');
+        list.innerHTML = '';
+        let total = 0;
+        
+        [...appData.wallet.expenses].reverse().forEach((exp, idx) => {
+            total += Number(exp.amount);
+            const actualIdx = appData.wallet.expenses.length - 1 - idx;
+            list.innerHTML += `
+                <div class="muji-card !mb-0 !p-3 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-lg">${exp.name}</div>
+                        <div class="text-xs text-textMain/50">${exp.date}</div>
+                        ${exp.img ? `<img src="${exp.img}" class="w-12 h-12 object-cover rounded mt-1" onclick="alert('收據已儲存')">` : ''}
                     </div>
-                `;
-            });
-            html += `</div>
-                <div class="muji-card p-5 mt-8 bg-neutral-50/50 border-dashed border-[#D1C6B4]">
-                    <h3 class="text-sm font-bold text-[#8C7667] mb-4"><i class="fa-solid fa-plus mr-1"></i>新增行程 (D${activeDayPlan})</h3>
-                    <div class="grid grid-cols-4 gap-3 mb-3">
-                        <input type="text" id="newPlanTime" placeholder="時間" class="col-span-1 border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                        <input type="text" id="newPlanText" placeholder="行程描述..." class="col-span-3 border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                    </div>
-                    <input type="text" id="newPlanUrl" placeholder="Google Maps 網址 (選填)" class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 mb-4 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm text-[#8C7667] font-bold flex items-center cursor-pointer"><input type="checkbox" id="newPlanImportant" class="mr-2 w-4 h-4 accent-[#D9534F]"> 紅色醒目標示</label>
-                        <button onclick="addPlanItem(${activeDayPlan})" class="muji-btn-primary text-sm font-bold px-6 py-2.5 rounded-lg shadow-sm"><i class="fa-solid fa-check mr-1"></i>新增</button>
+                    <div class="text-right">
+                        <div class="font-bold text-accentBtn text-xl">${exp.amount} ฿</div>
+                        <button onclick="delExpense(${actualIdx})" class="text-xs text-red-400 mt-1"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`;
-            container.innerHTML = html;
-        }
+        });
+        document.getElementById('totalExp').innerText = total;
+    }
 
-        function updatePlanText(day, idx, newText) {
-            appState.plan.find(p => p.day === day).items[idx].text = newText;
-            saveState();
-        }
+    function addExpense() {
+        const name = document.getElementById('expName').value;
+        const amount = document.getElementById('expAmount').value;
+        const file = document.getElementById('expReceipt').files[0];
+        
+        if(!name || !amount) return alert('請輸入項目與金額');
+        
+        const saveExp = (imgBase64) => {
+            const date = new Date().toLocaleDateString('zh-TW', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+            appData.wallet.expenses.push({ name, amount, date, img: imgBase64 });
+            saveData();
+            document.getElementById('expName').value = '';
+            document.getElementById('expAmount').value = '';
+            document.getElementById('expReceipt').value = '';
+            renderWallet();
+        };
 
-        function uploadPlanPhoto(day, idx, input) {
-            if (input.files && input.files[0]) {
-                compressImage(input.files[0], 600, 0.7, function(base64Str) {
-                    appState.plan.find(p => p.day === day).items[idx].photo = base64Str;
-                    saveState();
-                    switchTab('plan', true);
-                });
+        if(file) compressImage(file, saveExp);
+        else saveExp(null);
+    }
+
+    function delExpense(idx) {
+        if(confirm('確定刪除此筆記帳？')) {
+            appData.wallet.expenses.splice(idx, 1);
+            saveData();
+            renderWallet();
+        }
+    }
+
+    // ================= LISTS LOGIC =================
+    function switchListTab(tab) {
+        document.querySelectorAll('.list-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`list${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+        
+        ['Luggage', 'Shopping', 'Memo'].forEach(t => {
+            const btn = document.getElementById(`tab${t}`);
+            if(t.toLowerCase() === tab) {
+                btn.className = "flex-1 pb-2 text-center font-bold text-accentBtn border-b-2 border-accentBtn";
+            } else {
+                btn.className = "flex-1 pb-2 text-center font-bold text-textMain/50";
             }
-        }
+        });
+    }
 
-        function addPlanItem(day) {
-            const time = document.getElementById('newPlanTime').value.trim() || "00:00", text = document.getElementById('newPlanText').value.trim(), url = document.getElementById('newPlanUrl').value.trim(), imp = document.getElementById('newPlanImportant').checked;
-            if(!text) return alert('請輸入內容！');
-            const d = appState.plan.find(p => p.day === day);
-            d.items.push({time, text, url, important:imp, photo:""}); d.items.sort((a,b)=>a.time.localeCompare(b.time)); saveState(); switchTab('plan', true);
-        }
-        function deletePlanItem(day, idx) { if(confirm('確定要刪除？')){ appState.plan.find(p=>p.day===day).items.splice(idx,1); saveState(); switchTab('plan', true); } }
-
-        // ==========================================
-        // 2. FOOD GUIDE 美食誌
-        // ==========================================
-        function renderFoodTab(container) {
-            let html = `<div class="mb-5"><h2 class="text-2xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-utensils mr-2"></i>美食誌</h2></div><div class="space-y-8">`;
-            appState.food.forEach((dayData, dIdx) => {
-                html += `<div><div class="flex items-center mb-4"><span class="w-1.5 h-5 bg-[#8C7667] inline-block mr-2.5 rounded-full"></span><h3 class="font-bold text-base text-[#8C7667] tracking-wider">${dayData.title}</h3></div><div class="grid grid-cols-1 gap-4">`;
-                dayData.items.forEach((fItem, fIdx) => {
-                    html += `
-                        <div class="muji-card p-5 hover:shadow-md transition">
-                            <h4 class="font-bold text-base text-[#4A3E3D]">${fItem.name}</h4>
-                            <p class="text-sm text-[#5C4A42] mt-2 leading-relaxed font-light">${fItem.desc}</p>
-                            <div class="mt-4 flex items-center justify-between border-t border-dashed border-[#E6E1DA] pt-3">
-                                <div>${fItem.url ? linkify(fItem.url) : ''}</div>
-                                <button onclick="deleteFood(${dIdx}, ${fIdx})" class="text-sm text-neutral-400 hover:text-[#D9534F] bg-neutral-50 px-3 py-1.5 rounded"><i class="fa-regular fa-trash-can"></i></button>
-                            </div>
-                        </div>`;
-                });
-                html += `</div></div>`;
-            });
-            html += `</div>
-                <div class="muji-card p-5 mt-8 bg-neutral-50/50 border-dashed border-[#D1C6B4]">
-                    <h3 class="text-sm font-bold text-[#8C7667] mb-4"><i class="fa-solid fa-plus mr-1"></i>增補美食地圖</h3>
-                    <select id="fDay" class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 mb-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667] text-[#5C4A42] font-medium">${appState.food.map((d,i)=>`<option value="${i}">${d.title}</option>`).join('')}</select>
-                    <input type="text" id="fName" placeholder="店家名稱" class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 mb-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                    <textarea id="fDesc" rows="3" placeholder="推薦原因 / 必點菜色..." class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 mb-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]"></textarea>
-                    <input type="text" id="fUrl" placeholder="Google Maps 網址 (選填)" class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 mb-5 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                    <button onclick="addFood()" class="w-full muji-btn-primary text-sm font-bold py-3.5 rounded-lg shadow-sm tracking-widest">新增至美食誌</button>
+    function renderLuggage() {
+        const container = document.getElementById('luggageItems');
+        container.innerHTML = '';
+        appData.lists.luggage.forEach((item, idx) => {
+            container.innerHTML += `
+                <div class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm" onclick="toggleLuggage(${idx})">
+                    <div class="w-6 h-6 rounded-full border-2 ${item.checked ? 'bg-accentBlue border-accentBlue text-white' : 'border-gray-300'} flex items-center justify-center">
+                        ${item.checked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                    </div>
+                    <span class="flex-1 ${item.checked ? 'line-through text-gray-400' : 'font-bold'}">${item.text}</span>
+                    <button onclick="event.stopPropagation(); delLuggage(${idx})" class="text-gray-300 hover:text-red-400"><i class="fa-solid fa-times"></i></button>
                 </div>`;
-            container.innerHTML = html;
-        }
-        function addFood() {
-            const day=document.getElementById('fDay').value, name=document.getElementById('fName').value.trim(), desc=document.getElementById('fDesc').value.trim(), url=document.getElementById('fUrl').value.trim();
-            if(!name||!desc)return alert('請填寫店家名稱與介紹！'); appState.food[day].items.push({name,desc,url}); saveState(); switchTab('food', true);
-        }
-        function deleteFood(d,i){ if(confirm('確定刪除這家餐廳？')){ appState.food[d].items.splice(i,1); saveState(); switchTab('food', true); } }
+        });
+    }
 
-        // ==========================================
-        // 3. WALLET 記帳
-        // ==========================================
-        let calcExp = "";
-        function renderWalletTab(container) {
-            const totalTWD = appState.wallet.history.reduce((s, i) => s + parseFloat(i.twd), 0);
-            let html = `
-                <div class="mb-5"><h2 class="text-2xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-wallet mr-2"></i>記帳與匯率</h2></div>
-                <div class="muji-card p-5 bg-[#F5F2EB] mb-6 border border-[#D1C6B4]">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm font-bold text-[#5C4A42] tracking-wider"><i class="fa-solid fa-calculator mr-1"></i>匯率計算機</span>
-                        <div class="flex items-center text-sm font-bold">
-                            <span class="mr-1.5 text-[#8C7667]">1 JPY =</span>
-                            <input type="number" step="0.001" value="${appState.wallet.rate}" onchange="appState.wallet.rate=this.value;saveState();" class="w-20 bg-white border border-[#D1C6B4] rounded text-center p-1.5 text-[#8C7667] shadow-inner focus:outline-none focus:border-[#8C7667]">
-                            <span class="ml-1.5 text-[#8C7667]">TWD</span>
-                        </div>
+    function toggleLuggage(idx) {
+        appData.lists.luggage[idx].checked = !appData.lists.luggage[idx].checked;
+        saveData(); renderLuggage();
+    }
+    function addLuggage() {
+        const v = document.getElementById('newLuggage').value;
+        if(v) { appData.lists.luggage.push({text:v, checked:false}); saveData(); document.getElementById('newLuggage').value=''; renderLuggage(); }
+    }
+    function delLuggage(idx) {
+        appData.lists.luggage.splice(idx, 1); saveData(); renderLuggage();
+    }
+
+    function renderShopping() {
+        const container = document.getElementById('shoppingGrid');
+        container.innerHTML = '';
+        appData.lists.shopping.forEach((item, idx) => {
+            container.innerHTML += `
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col relative" onclick="toggleShopping(${idx})">
+                    <div class="absolute top-1 right-1 z-10 w-6 h-6 rounded-full bg-white shadow flex items-center justify-center">
+                        ${item.checked ? '<i class="fa-solid fa-check text-accentBlue"></i>' : '<i class="fa-solid fa-circle text-gray-200"></i>'}
                     </div>
-                    <div class="bg-white border border-[#D1C6B4] rounded-lg p-4 mb-5 text-right shadow-inner">
-                        <div class="text-xs text-[#A89F91] min-h-[16px] tracking-widest font-mono" id="calcExpDisplay">0</div>
-                        <div class="text-2xl font-bold text-[#4A3E3D] font-mono mt-1" id="calcResultDisplay">0</div>
-                        <div class="text-sm font-bold text-[#4B6E7D] mt-1.5" id="calcTwdDisplay">≈ NT$ 0</div>
+                    <div class="h-24 bg-gray-100 flex items-center justify-center relative">
+                        ${item.img ? `<img src="${item.img}" class="w-full h-full object-cover ${item.checked ? 'opacity-50' : ''}">` : '<i class="fa-solid fa-bag-shopping text-gray-300 text-2xl"></i>'}
+                        ${item.checked ? '<div class="absolute inset-0 bg-black/10"></div>' : ''}
                     </div>
-                    <div class="grid grid-cols-4 gap-3 text-[15px] font-bold">
-                        ${['C','/','*','-','7','8','9','+','4','5','6','1','2','3','=','0','.'].map(k => {
-                            let cls = "bg-white text-[#5C4A42] py-3 rounded-lg shadow-sm border border-[#E6E1DA] active:bg-neutral-50";
-                            if(k==='C'||k==='/'||k==='*'||k==='-') cls = "bg-[#E6E1DA] text-[#4A3E3D] py-3 rounded-lg shadow-sm active:bg-[#D1C6B4]";
-                            if(k==='+') cls = "bg-[#E6E1DA] text-[#4A3E3D] py-3 row-span-2 rounded-lg shadow-sm flex items-center justify-center active:bg-[#D1C6B4]";
-                            if(k==='=') cls = "bg-[#8C7667] text-white py-3 row-span-2 rounded-lg shadow-sm flex items-center justify-center text-base active:bg-[#735F52]";
-                            if(k==='0') cls = "bg-white text-[#5C4A42] py-3 col-span-2 rounded-lg shadow-sm border border-[#E6E1DA] active:bg-neutral-50";
-                            return `<button onclick="calcKey('${k}')" class="${cls}">${k}</button>`;
-                        }).join('')}
-                    </div>
-                </div>
-                <div class="muji-card p-5 mb-6 border-dashed border-[#D1C6B4]">
-                    <h3 class="text-sm font-bold text-[#8C7667] mb-4"><i class="fa-solid fa-plus mr-1"></i>新增消費</h3>
-                    <div class="grid grid-cols-3 gap-3 mb-3">
-                        <input type="text" id="expItem" placeholder="品項名稱" class="col-span-2 border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                        <select id="expCurrency" class="col-span-1 border border-[#E6E1DA] rounded-md text-sm p-3 bg-white font-bold text-[#5C4A42] shadow-inner focus:outline-none focus:border-[#8C7667]"><option value="JPY">JPY ¥</option><option value="TWD">TWD $</option></select>
-                    </div>
-                    <div class="grid grid-cols-3 gap-3 mb-5">
-                        <input type="number" id="expAmount" placeholder="輸入金額" class="col-span-2 border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                        <label class="col-span-1 border border-[#E6E1DA] bg-[#F5F2EB] rounded-md flex flex-col justify-center items-center text-xs text-[#8C7667] cursor-pointer font-bold hover:bg-[#EADFC9] transition"><i class="fa-solid fa-camera text-base mb-1"></i><span id="photoStatus">拍收據</span><input type="file" id="expPhoto" accept="image/*" class="hidden" onchange="document.getElementById('photoStatus').innerText='相片已載入'; document.getElementById('photoStatus').classList.add('text-[#4B6E7D]')"></label>
-                    </div>
-                    <button onclick="addExpense()" class="w-full muji-btn-accent text-sm font-bold py-3.5 rounded-lg shadow-sm tracking-widest">寫入帳本</button>
-                </div>
-                <div class="flex justify-between items-center mb-4 px-1"><h3 class="text-sm font-bold text-[#A89F91] tracking-wider">消費明細</h3><span class="text-xs font-bold text-[#D9534F] bg-red-50/50 px-3 py-1.5 rounded-full border border-red-100">累計：NT$ ${Math.round(totalTWD)}</span></div>
-                <div class="space-y-4">
-            `;
-            if(appState.wallet.history.length === 0) html += `<div class="text-center py-8 text-sm text-[#A89F91] bg-white border border-[#E6E1DA] rounded-lg">尚無消費紀錄</div>`;
-            appState.wallet.history.forEach((h, idx) => {
-                html += `
-                    <div class="muji-card p-4 flex justify-between items-center">
-                        <div class="flex items-center space-x-4 w-3/4">
-                            ${h.photo ? `<img src="${h.photo}" class="w-14 h-14 object-cover rounded-md border border-[#E6E1DA] shadow-sm" onclick="openImageModal('${h.photo}')">` : `<div class="w-14 h-14 bg-[#F5F2EB] border border-[#E6E1DA] rounded-md flex items-center justify-center text-[#D1C6B4] text-xl"><i class="fa-solid fa-receipt"></i></div>`}
-                            <div class="w-full"><h4 class="text-[15px] font-bold text-[#4A3E3D] truncate">${h.item}</h4><p class="text-xs text-[#A89F91] mt-1.5 tracking-wider">${h.time}</p></div>
-                        </div>
-                        <div class="text-right flex items-center">
-                            <div><div class="text-[14px] font-bold text-[#5C4A42] font-mono">${h.origStr}</div><div class="text-xs text-[#4B6E7D] font-bold mt-1">NT$ ${Math.round(h.twd)}</div></div>
-                            <button onclick="deleteExpense(${idx})" class="text-neutral-400 hover:text-[#D9534F] text-sm pl-4"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
-                    </div>`;
-            });
-            container.innerHTML = html + `</div>`; calcExp = "";
-        }
-        function calcKey(key) {
-            const expD=document.getElementById('calcExpDisplay'), resD=document.getElementById('calcResultDisplay'), twdD=document.getElementById('calcTwdDisplay');
-            if(key==='C'){ calcExp=""; expD.innerText="0"; resD.innerText="0"; twdD.innerText="≈ NT$ 0"; }
-            else if(key==='='){
-                try{ if(!calcExp)return; let v=eval(calcExp.replace(/[^0-9+\-*/().]/g,'')); expD.innerText=calcExp+" ="; resD.innerText=Math.round(v*100)/100; twdD.innerText="≈ NT$ "+Math.round(v*appState.wallet.rate);
-                if(document.getElementById('expAmount')){ document.getElementById('expAmount').value=Math.round(v*100)/100; document.getElementById('expCurrency').value="JPY"; }
-                }catch(e){resD.innerText="錯誤";}
-            }else{ calcExp+=key; expD.innerText=calcExp; }
-        }
-        function addExpense() {
-            const item=document.getElementById('expItem').value, curr=document.getElementById('expCurrency').value, amount=parseFloat(document.getElementById('expAmount').value), photo=document.getElementById('expPhoto').files[0];
-            if(!item||isNaN(amount))return alert('請完整輸入消費品項與金額！');
-            const now=new Date(), timeStr=`${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-            let twd=curr==='JPY'?amount*appState.wallet.rate:amount, origStr=curr==='JPY'?`¥ ${amount}`:`NT$ ${amount}`;
-            const finish=(b="")=>{ appState.wallet.history.unshift({item,time:timeStr,twd,origStr,photo:b}); saveState(); switchTab('wallet', true); };
-            if(photo) compressImage(photo,400,0.6,finish); else finish("");
-        }
-        function deleteExpense(i){ if(confirm('確定刪除這筆紀錄？')){ appState.wallet.history.splice(i,1); saveState(); switchTab('wallet', true); } }
-
-        // ==========================================
-        // 4. LISTS 清單 (翻頁標籤模式)
-        // ==========================================
-        function switchListSubTab(tab) {
-            appState.currentListSubTab = tab;
-            switchTab('lists', true); // 切換子分類時保持原位不跳動
-        }
-
-        function renderListsTab(container) {
-            const activeSub = appState.currentListSubTab || 'checklist';
-            
-            let html = `<div class="mb-5"><h2 class="text-2xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-list-check mr-2"></i>清單分類</h2></div>`;
-
-            // 頂部導航子選單
-            html += `
-            <div class="flex bg-white rounded-lg p-1.5 border border-[#E6E1DA] mb-6 shadow-sm">
-                <button onclick="switchListSubTab('checklist')" class="flex-1 text-sm py-2.5 rounded-md font-bold transition ${activeSub==='checklist'?'bg-[#8C7667] text-white shadow':'text-[#A89F91] hover:text-[#5C4A42]'}">行李</button>
-                <button onclick="switchListSubTab('memos')" class="flex-1 text-sm py-2.5 rounded-md font-bold transition ${activeSub==='memos'?'bg-[#8C7667] text-white shadow':'text-[#A89F91] hover:text-[#5C4A42]'}">備忘</button>
-                <button onclick="switchListSubTab('shopping')" class="flex-1 text-sm py-2.5 rounded-md font-bold transition ${activeSub==='shopping'?'bg-[#8C7667] text-white shadow':'text-[#A89F91] hover:text-[#5C4A42]'}">採購</button>
-            </div>
-            `;
-
-            // 【行李清單頁面】
-            if (activeSub === 'checklist') {
-                html += `<div class="muji-card p-5 mb-6"><h3 class="text-sm font-bold text-[#8C7667] mb-4 border-b border-dashed border-[#E6E1DA] pb-2.5 tracking-wider"><i class="fa-solid fa-suitcase mr-1"></i>必備行李</h3><div>`;
-                let lastCat = "";
-                appState.checklist.forEach((item, index) => {
-                    if(item.cat !== lastCat) { lastCat = item.cat; html += `<div class="text-xs font-bold text-[#4B6E7D] mt-5 mb-2.5 tracking-widest">${lastCat}</div>`; }
-                    html += `<label class="flex items-center text-sm bg-[#F7F5F0] p-3 rounded-lg border border-[#E6E1DA] mb-2 cursor-pointer hover:bg-white transition"><input type="checkbox" ${item.checked?'checked':''} onchange="toggleCheck(${index})" class="mr-3 accent-[#8C7667] w-5 h-5"><span class="${item.checked?'line-through text-[#A89F91]':'text-[#5C4A42] font-medium'}">${item.text}</span></label>`;
-                });
-                html += `</div></div>`;
-            }
-
-            // 【個人備忘錄頁面】
-            else if (activeSub === 'memos') {
-                html += `<div class="muji-card p-5 mb-6"><h3 class="text-sm font-bold text-[#8C7667] mb-4 border-b border-dashed border-[#E6E1DA] pb-2.5 tracking-wider"><i class="fa-regular fa-note-sticky mr-1"></i>個人備忘錄</h3><div class="space-y-3 mb-5">`;
-                if(appState.memos.length === 0) html += `<div class="text-center py-5 text-sm text-[#A89F91]">尚無備忘錄</div>`;
-                appState.memos.forEach(m => {
-                    html += `
-                    <div class="bg-[#F5F2EB] border border-[#D1C6B4] rounded-lg p-4 text-sm flex justify-between items-start">
-                        <div class="w-11/12">
-                            ${m.text ? `<div class="text-[#4A3E3D] font-medium break-all leading-relaxed">${linkify(m.text)}</div>` : ''}
-                            ${m.photo ? `<img src="${m.photo}" class="mt-3 w-full max-h-40 object-cover rounded shadow-sm border border-[#D1C6B4]" onclick="openImageModal('${m.photo}')">` : ''}
-                        </div>
-                        <button onclick="deleteMemo('${m.id}')" class="text-[#A89F91] hover:text-[#D9534F] pl-3 text-base"><i class="fa-regular fa-trash-can"></i></button>
-                    </div>`;
-                });
-                html += `</div>
-                <div class="flex gap-2">
-                    <input type="text" id="newMemoText" placeholder="輸入備忘事項..." class="flex-1 border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                    <label class="border border-[#E6E1DA] bg-white rounded-md px-3 py-3 text-sm text-[#8C7667] cursor-pointer shadow-sm hover:bg-neutral-50 flex items-center transition">
-                        <i class="fa-solid fa-camera"></i>
-                        <input type="file" id="newMemoPhoto" accept="image/*" class="hidden" onchange="this.parentElement.classList.replace('text-[#8C7667]', 'text-[#4B6E7D]')">
-                    </label>
-                    <button onclick="addMemo()" class="muji-btn-primary text-sm font-bold px-5 py-3 rounded-lg shadow-sm">新增</button>
-                </div></div>`;
-            }
-
-            // 【採購型錄頁面】
-            else if (activeSub === 'shopping') {
-                html += `<div class="muji-card p-5 mb-3">
-                            <h3 class="text-sm font-bold text-[#8C7667] mb-5 border-b border-dashed border-[#E6E1DA] pb-2.5 tracking-wider"><i class="fa-solid fa-bag-shopping mr-1"></i>採購型錄</h3>
-                            <div class="grid grid-cols-3 gap-3 mb-6">`;
-                if(appState.shopping.length === 0) html += `<div class="col-span-3 text-center py-5 text-sm text-[#A89F91]">尚無採購商品</div>`;
-                appState.shopping.forEach((shop, sIdx) => {
-                    const buyStyle = shop.purchased ? 'bg-neutral-50 border-[#E6E1DA] opacity-60 grayscale' : 'bg-white border-[#D1C6B4]';
-                    const imgHolder = shop.img ? `<img src="${shop.img}" class="object-cover w-full h-full" onclick="openImageModal('${shop.img}')">` : `<div class="flex h-full items-center justify-center text-[#D1C6B4] text-2xl bg-[#F5F2EB]"><i class="fa-solid fa-gift"></i></div>`;
-                    html += `
-                        <div class="border rounded-md p-2 flex flex-col relative shadow-sm ${buyStyle}">
-                            <div class="w-full aspect-square rounded-[4px] overflow-hidden mb-2.5 border border-[#E6E1DA]">${imgHolder}</div>
-                            <div class="text-xs font-bold text-[#4A3E3D] line-clamp-2 leading-tight mb-1.5 h-[32px]">${shop.text}</div>
-                            ${shop.url ? `<a href="${shop.url}" target="_blank" class="text-[10px] text-[#4B6E7D] bg-[#4B6E7D]/5 px-2 py-1.5 rounded border border-[#4B6E7D]/20 mb-2 block text-center font-bold tracking-wider hover:bg-[#4B6E7D]/10">看網頁</a>` : '<div class="h-[26px] mb-2"></div>'}
-                            <div class="flex justify-between items-center mt-auto pt-2 border-t border-dashed border-[#E6E1DA]">
-                                <button onclick="toggleShop(${sIdx})" class="text-[11px] font-bold px-2.5 py-1 rounded ${shop.purchased?'bg-[#A89F91] text-white':'bg-[#EADFC9] text-[#5C4A42] hover:bg-[#D1C6B4] transition'}">${shop.purchased?'已購':'未購'}</button>
-                                <button onclick="deleteShop(${sIdx})" class="text-[#A89F91] hover:text-[#D9534F] text-xs p-1"><i class="fa-regular fa-trash-can"></i></button>
-                            </div>
-                        </div>`;
-                });
-                html += `</div>
-                    <div class="bg-[#F5F2EB] p-4 rounded-lg border border-[#D1C6B4] space-y-3">
-                        <input type="text" id="sText" placeholder="想買的商品名稱" class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                        <input type="text" id="sUrl" placeholder="商品網址 (選填)" class="w-full border border-[#E6E1DA] rounded-md text-sm p-3 bg-white shadow-inner focus:outline-none focus:border-[#8C7667]">
-                        <div class="flex items-center justify-between pt-1">
-                            <label class="border border-[#E6E1DA] bg-white rounded-md px-4 py-2.5 text-sm text-[#8C7667] font-bold cursor-pointer flex items-center shadow-sm hover:bg-neutral-50">
-                                <i class="fa-solid fa-camera mr-2"></i><span id="sPhotoText">附商品圖</span>
-                                <input type="file" id="sPhoto" accept="image/*" class="hidden" onchange="document.getElementById('sPhotoText').innerText='圖片已載入'; document.getElementById('sPhotoText').classList.add('text-[#4B6E7D]')">
-                            </label>
-                            <button onclick="addShop()" class="muji-btn-accent text-sm font-bold px-6 py-2.5 rounded-md shadow-sm">加入</button>
-                        </div>
-                    </div></div>`;
-            }
-
-            container.innerHTML = html;
-        }
-
-        // 修改所有列表內部的操作，加入 preventScroll = true 參數
-        function toggleCheck(i) { appState.checklist[i].checked=!appState.checklist[i].checked; saveState(); switchTab('lists', true); }
-        function addMemo() { 
-            const t = document.getElementById('newMemoText').value.trim(); 
-            const f = document.getElementById('newMemoPhoto').files[0];
-            if(!t && !f) return alert('請輸入備忘事項或上傳照片！');
-            const done = (img="") => { appState.memos.push({id:'m_'+Date.now(), text:t, photo:img}); saveState(); switchTab('lists', true); };
-            if(f) compressImage(f, 500, 0.7, done); else done("");
-        }
-        function deleteMemo(id) { appState.memos=appState.memos.filter(m=>m.id!==id); saveState(); switchTab('lists', true); }
-        function addShop() {
-            const t=document.getElementById('sText').value.trim(), u=document.getElementById('sUrl').value.trim(), f=document.getElementById('sPhoto').files[0];
-            if(!t)return alert('請填寫商品名稱！'); const done=(img="")=>{appState.shopping.push({id:'s_'+Date.now(),text:t,url:u,img,purchased:false});saveState();switchTab('lists', true);};
-            if(f) compressImage(f,400,0.6,done); else done("");
-        }
-        function toggleShop(i) { appState.shopping[i].purchased=!appState.shopping[i].purchased; saveState(); switchTab('lists', true); }
-        function deleteShop(i) { if(confirm('確定刪除此購物項目？')){ appState.shopping.splice(i,1); saveState(); switchTab('lists', true); } }
-
-        // ==========================================
-        // 5. INFO 資訊
-        // ==========================================
-        function renderInfoTab(container) {
-            let html = `<div class="mb-5"><h2 class="text-2xl font-bold text-[#5C4A42] muji-title"><i class="fa-solid fa-circle-info mr-2"></i>實用資訊</h2></div>`;
-            ['hotel', 'car'].forEach(type => {
-                const isCar = type==='car', title = isCar?'<i class="fa-solid fa-car mr-2"></i>租車資訊':'<i class="fa-solid fa-hotel mr-2"></i>住宿資訊', text = isCar?appState.info.carRental:appState.info.hotel;
-                html += `
-                    <div class="muji-card p-5 mb-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="text-sm font-bold text-[#8C7667] tracking-wider">${title}</h3><button onclick="toggleEdit('${type}')" id="btn-edit-${type}" class="text-xs font-bold text-[#A89F91] bg-neutral-50 px-3 py-1.5 rounded border border-[#E6E1DA] hover:bg-neutral-100"><i class="fa-regular fa-pen-to-square mr-1"></i>編輯</button></div>
-                        <div id="view-${type}" class="space-y-4">
-                            <div class="text-base text-[#4A3E3D] leading-relaxed font-medium whitespace-pre-wrap">${linkify(text)}</div>
-                            ${isCar&&appState.info.carAddress ? `<a href="${appState.info.carAddress}" target="_blank" class="inline-block text-xs font-bold text-white bg-[#4B6E7D] px-4 py-2 rounded-md shadow-sm"><i class="fa-solid fa-location-arrow mr-1.5"></i>地圖導航</a>` : ''}
-                            ${isCar ? `<label class="inline-block ml-2 text-xs bg-[#F5F2EB] border border-[#D1C6B4] font-bold px-4 py-2 rounded-md cursor-pointer text-[#8C7667] hover:bg-[#EADFC9] transition"><i class="fa-solid fa-camera mr-1.5"></i>附加照片/合約<input type="file" accept="image/*" class="hidden" onchange="uploadInfo(this)"></label>` : ''}
-                            ${isCar&&appState.info.carPhoto ? `<div class="mt-4"><img src="${appState.info.carPhoto}" class="w-full h-48 object-cover rounded-lg shadow-sm border border-[#E6E1DA]" onclick="openImageModal('${appState.info.carPhoto}')"></div>` : ''}
-                        </div>
-                        <div id="edit-${type}" class="hidden space-y-3 mt-3">
-                            <textarea id="e-${type}-text" class="w-full text-sm p-4 border border-[#E6E1DA] rounded-lg bg-[#F7F5F0] focus:outline-none focus:border-[#8C7667]" rows="4">${text}</textarea>
-                            ${isCar ? `<input type="text" id="e-car-url" value="${appState.info.carAddress}" placeholder="Google Maps 地址連結" class="w-full text-sm p-4 border border-[#E6E1DA] rounded-lg bg-[#F7F5F0] focus:outline-none focus:border-[#8C7667]">` : ''}
-                        </div>
-                    </div>`;
-            });
-            html += `
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <a href="https://www.jma.go.jp/bosai/map.html" target="_blank" class="muji-card p-4 flex flex-col items-center h-24 justify-center hover:bg-neutral-50 transition"><i class="fa-solid fa-cloud-sun-rain text-amber-500 text-3xl mb-2"></i><div class="text-xs font-bold text-[#5C4A42] tracking-widest">日本氣象廳</div></a>
-                    <a href="https://www.boca.gov.tw" target="_blank" class="muji-card p-4 flex flex-col items-center h-24 justify-center hover:bg-neutral-50 transition"><i class="fa-solid fa-passport text-[#4B6E7D] text-3xl mb-2"></i><div class="text-xs font-bold text-[#5C4A42] tracking-widest">領務局違禁品</div></a>
-                </div>
-                <div class="muji-card p-5 mb-3 bg-[#D9534F]/5 border-[#D9534F]/20">
-                    <h3 class="text-sm font-bold text-[#D9534F] mb-4"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>緊急與注意事項</h3>
-                    <ul class="text-xs text-[#4A3E3D] space-y-3 list-disc pl-5 font-medium leading-relaxed">
-                        <li>日本緊急求助：警察局 <span class="text-[#D9534F] font-bold">110</span>，救護車 <span class="text-[#D9534F] font-bold">119</span></li>
-                        <li>駐那霸辦事處急難救助：+81 98-862-7008</li>
-                        <li>自駕法規：日本為<span class="text-[#D9534F] font-bold">右駕左行</span>，行人路權絕對優先，切勿隨意右轉。</li>
-                        <li>免稅規定：裝入免稅專用密封袋之商品出境前請勿拆封。</li>
-                    </ul>
+                    <div class="p-2 text-center text-sm font-bold truncate ${item.checked ? 'line-through text-gray-400' : ''}">${item.name}</div>
+                    <button onclick="event.stopPropagation(); delShopping(${idx})" class="absolute bottom-1 right-1 text-red-400/50 hover:text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>
                 </div>`;
-            container.innerHTML = html;
-        }
+        });
+    }
 
-        function toggleEdit(type) {
-            const v = document.getElementById(`view-${type}`), e = document.getElementById(`edit-${type}`), b = document.getElementById(`btn-edit-${type}`);
-            if(e.classList.contains('hidden')){ v.classList.add('hidden'); e.classList.remove('hidden'); b.innerHTML=`<i class="fa-solid fa-check mr-1 text-green-600"></i>完成`; }
-            else { 
-                if(type==='hotel')appState.info.hotel=document.getElementById('e-hotel-text').value; 
-                else{appState.info.carRental=document.getElementById('e-car-text').value;appState.info.carAddress=document.getElementById('e-car-url').value;}
-                saveState(); switchTab('info', true);
-            }
+    function addShopping() {
+        const name = document.getElementById('newShopName').value;
+        const file = document.getElementById('newShopImg').files[0];
+        if(!name) return alert('請輸入商品名稱');
+        
+        const saveShop = (img) => {
+            appData.lists.shopping.push({name, img, checked:false});
+            saveData();
+            document.getElementById('newShopName').value='';
+            document.getElementById('newShopImg').value='';
+            renderShopping();
         }
-        function uploadInfo(i) { if(i.files&&i.files[0]){compressImage(i.files[0],600,0.7,(b)=>{appState.info.carPhoto=b;saveState();switchTab('info', true);});} }
-    </script>
+        if(file) compressImage(file, saveShop);
+        else saveShop(null);
+    }
+    function toggleShopping(idx) { appData.lists.shopping[idx].checked = !appData.lists.shopping[idx].checked; saveData(); renderShopping(); }
+    function delShopping(idx) { appData.lists.shopping.splice(idx, 1); saveData(); renderShopping(); }
+
+    function renderMemo() {
+        const memo = appData.lists.memo;
+        document.getElementById('memoContentDisplay').innerHTML = formatText(memo);
+        document.getElementById('memoContentEdit').value = memo;
+        const img = appData.images['memo'];
+        const imgEl = document.getElementById('memoImgDisplay');
+        if(img) { imgEl.src = img; imgEl.classList.remove('hidden'); }
+    }
+    function saveMemo() {
+        appData.lists.memo = document.getElementById('memoContentEdit').value;
+        saveData();
+        document.getElementById('memoContentDisplay').classList.remove('hidden');
+        document.getElementById('memoContentEdit').classList.add('hidden');
+        document.getElementById('memoSaveBtn').classList.add('hidden');
+        renderMemo();
+    }
+
+    // ================= INFO LOGIC =================
+    function renderInfo() {
+        document.getElementById('infoContentDisplay').innerHTML = formatText(appData.info);
+        document.getElementById('infoContentEdit').value = appData.info;
+        
+        if(appData.images.cover) {
+            const c = document.getElementById('coverImgContainer');
+            c.style.backgroundImage = `url(${appData.images.cover})`;
+            c.innerHTML = '';
+        }
+        if(appData.images.contract) {
+            const imgEl = document.getElementById('contractImgDisplay');
+            imgEl.src = appData.images.contract;
+            imgEl.classList.remove('hidden');
+        }
+    }
+    function saveInfo() {
+        appData.info = document.getElementById('infoContentEdit').value;
+        saveData();
+        document.getElementById('infoContentDisplay').classList.remove('hidden');
+        document.getElementById('infoContentEdit').classList.add('hidden');
+        document.getElementById('infoSaveBtn').classList.add('hidden');
+        renderInfo();
+    }
+
+    // Initialize App
+    init();
+</script>
 </body>
 </html>
