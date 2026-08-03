@@ -13,7 +13,7 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v6'));
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v7'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 
                 const appleLink = document.createElement('link');
@@ -250,7 +250,8 @@
                         <img id="shopImageTemp" class="hidden h-24 object-contain rounded-xl bg-white p-2 border mx-auto mt-2">
                     </div>
                 </div>
-                <div id="shopGrid" class="grid grid-cols-2 gap-4"></div>
+                <!-- 調整為三個網格排版 -->
+                <div id="shopGrid" class="grid grid-cols-3 gap-3"></div>
             </div>
         </section>
 
@@ -261,12 +262,17 @@
                 <button onclick="toggleInfoEdit()" id="infoEditBtn" class="text-[1rem] bg-warmbrown text-white px-5 py-2 rounded-full shadow-sm font-bold"><i class="fas fa-pen mr-1"></i>修改資料</button>
             </div>
 
-            <!-- GitHub 專屬地圖與相簿按鈕 -->
+            <!-- 線上專屬連結 (地圖與對話) -->
             <div class="muji-card p-6 mb-6 bg-white border-l-4 border-calmblue">
-                <h3 class="font-zen font-bold text-calmblue border-b border-calmblue/20 pb-3 mb-4 text-xl"><i class="fas fa-map-marked-alt mr-2"></i>線上地圖與相簿</h3>
-                <a href="https://s87928115-pixel.github.io/photo/" target="_blank" class="block w-full bg-calmblue text-white text-center py-4 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-calmblue/90 transition">
-                    <i class="fas fa-map-location-dot mr-2"></i>開啟專屬地圖 (GitHub)
-                </a>
+                <h3 class="font-zen font-bold text-calmblue border-b border-calmblue/20 pb-3 mb-4 text-xl"><i class="fas fa-link mr-2"></i>線上專屬連結</h3>
+                <div class="flex flex-col gap-3">
+                    <a href="https://s87928115-pixel.github.io/photo/" target="_blank" class="block w-full bg-calmblue text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-calmblue/90 transition">
+                        <i class="fas fa-map-location-dot mr-2"></i>線上地圖與相簿
+                    </a>
+                    <a href="https://s87928115-pixel.github.io/speak/" target="_blank" class="block w-full bg-warmbrown text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-warmbrown/90 transition">
+                        <i class="fas fa-comments mr-2"></i>開啟專屬對話
+                    </a>
+                </div>
             </div>
 
             <!-- 入境 QR Code 專區 -->
@@ -382,7 +388,6 @@
                 ]
             }
         ],
-        // 更新 Food 結構，支援 1.食物 / 2.飲料 圖片
         food: [
             {
                 category: "住宿區周邊 (Ekkamai / Thong Lo)",
@@ -445,7 +450,7 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v6'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v7'; 
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -683,7 +688,7 @@
         }
     }
 
-    /* ================= 2. FOOD 模組 (新增 食物 / 飲料 按鈕) ================= */
+    /* ================= 2. FOOD 模組 (包含食物與飲料照片按鈕) ================= */
     let isFoodEditing = false;
 
     function renderFood() {
@@ -953,17 +958,17 @@
     function renderShop() {
         const grid = document.getElementById('shopGrid');
         if(appData.lists.shop.length === 0) {
-            grid.innerHTML = '<div class="col-span-2 text-center text-gray-400 py-10 font-bold text-[1.1rem]">還沒有加入想買的商品喔！</div>';
+            grid.innerHTML = '<div class="col-span-3 text-center text-gray-400 py-10 font-bold text-[1rem]">清單內還沒有商品喔！</div>';
             return;
         }
         grid.innerHTML = appData.lists.shop.map((item, idx) => `
-            <div class="muji-card p-2 flex flex-col items-center relative overflow-hidden group">
-                <button onclick="deleteShopItem(${idx})" class="absolute top-2 right-2 text-white bg-highlight/90 rounded-full w-7 h-7 flex items-center justify-center text-sm z-10 shadow-md"><i class="fas fa-times"></i></button>
-                <div class="w-full aspect-square bg-gray-50 rounded-xl mb-2 overflow-hidden relative cursor-pointer border" onclick="toggleShopItem(${idx})">
-                    ${item.img ? `<img src="${item.img}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-gray-300"><i class="fas fa-box text-4xl"></i></div>`}
-                    ${item.done ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-[1px]"><i class="fas fa-check-circle text-white text-5xl shadow-sm"></i></div>` : ''}
+            <div class="muji-card p-1.5 flex flex-col items-center relative overflow-hidden group">
+                <button onclick="deleteShopItem(${idx})" class="absolute top-1.5 right-1.5 text-white bg-highlight/90 rounded-full w-6 h-6 flex items-center justify-center text-xs z-10 shadow-md"><i class="fas fa-times"></i></button>
+                <div class="w-full aspect-square bg-gray-50 rounded-lg mb-1.5 overflow-hidden relative cursor-pointer border" onclick="toggleShopItem(${idx})">
+                    ${item.img ? `<img src="${item.img}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-gray-300"><i class="fas fa-box text-3xl"></i></div>`}
+                    ${item.done ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-[1px]"><i class="fas fa-check-circle text-white text-4xl shadow-sm"></i></div>` : ''}
                 </div>
-                <div class="text-[1.1rem] font-bold text-center w-full truncate px-2 py-1 ${item.done ? 'line-through text-gray-400' : 'text-darkwood'}">${item.name}</div>
+                <div class="text-[0.95rem] font-bold text-center w-full truncate px-1 pb-1 ${item.done ? 'line-through text-gray-400' : 'text-darkwood'}">${item.name}</div>
             </div>
         `).join('');
     }
