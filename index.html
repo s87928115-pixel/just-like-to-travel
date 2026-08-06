@@ -13,7 +13,8 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v7'));
+                // 更新版本號以確保載入最新行程
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v8'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 
                 const appleLink = document.createElement('link');
@@ -123,7 +124,7 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-[1rem] font-bold mb-2 text-calmblue">時間 (選填)</label>
-                        <input type="text" id="planItemTime" placeholder="例如: 09:25" class="w-full p-4 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-warmbrown text-[1.1rem]">
+                        <input type="text" id="planItemTime" placeholder="例如: 09:25 或 早上/晚上" class="w-full p-4 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-warmbrown text-[1.1rem]">
                     </div>
                     <div>
                         <label class="block text-[1rem] font-bold mb-2 text-calmblue">行程內容 / 網址 (必填)</label>
@@ -332,10 +333,11 @@
 
 <script>
     /* ================= 資料結構與存取 ================= */
+    // 更新為使用者提供的新版行程內容
     const initialData = {
         coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
-            flight: "【去程】\n09:25 班次 JX741 (12:35抵達BKK)\n\n【阿姨回程】\n13:45 班次 JX742 (18:25抵達TPE)\n\n【其他人回程】\n17:40 班次 JX746 (22:30抵達TPE)",
+            flight: "【去程】\n09:25 班次 JX741 到達BKK時間12:35\n\n【阿姨回程】\n13:45 班次 JX742 到達TPE時間18:25\n\n【其他人回程】\n17:40 班次 JX746 到達TPE時間22:30",
             acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
             qrCodeImg: "" 
         },
@@ -343,48 +345,52 @@
             {
                 day: "DAY 1", date: "11/19",
                 items: [
-                    { id: 101, time: "06:05", text: "高鐵出發，6:47到桃園。轉乘機捷 7:02 / 7:17 到第二航廈", img: "" },
-                    { id: 102, time: "09:25", text: "搭乘 JX741 班機前往泰國 (預計 12:35 抵達)", img: "" },
-                    { id: 103, time: "13:30", text: "先到機場 B層換匯區換錢", img: "" },
-                    { id: 104, time: "16:00", text: "抵達旅館辦理入住", img: "" },
-                    { id: 105, time: "16:30", text: "出門前往 喬德夜市 \nhttps://maps.app.goo.gl/koPMjyKzWQdtdSYF9 \n或 新夜市 Save One Go \nhttps://maps.app.goo.gl/djUgooXf2RUcwgwX6", img: "" },
-                    { id: 106, time: "21:00", text: "逛完回旅館休息", img: "" }
+                    { id: 101, time: "06:05", text: "搭乘高鐵出發 ➔ 06:47 抵達桃園", img: "" },
+                    { id: 102, time: "07:02", text: "轉乘機場捷運 ➔ 第二航廈", img: "" },
+                    { id: 103, time: "09:25", text: "搭乘星宇 JX741 班機起飛", img: "" },
+                    { id: 104, time: "13:30", text: "機場 B 層換匯區換錢\n備註：(大約換5000-10000即可，大部分是吃飯跟去市集會用到)", img: "" },
+                    { id: 105, time: "16:00", text: "抵達 Ekkamai 區辦理入住", img: "" },
+                    { id: 106, time: "16:30", text: "前往喬德夜市 (JODD FAIRS) 或 Save One Go Night Market", img: "" },
+                    { id: 107, time: "21:00", text: "逛完回旅館休息", img: "" }
                 ]
             },
             {
                 day: "DAY 2", date: "11/20",
                 items: [
-                    { id: 201, time: "07:30", text: "在 Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/E2bPMt9qLvkamNR87", img: "" },
-                    { id: 202, time: "08:00", text: "坐園方車子到大象保護區，體驗約四小時(含午餐)", img: "" },
+                    { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/E2bPMt9qLvkamNR87", img: "" },
+                    { id: 202, time: "08:00", text: "搭乘園方專車 ➔ 大象保護區 (體驗約4小時，含午餐)", img: "" },
                     { id: 203, time: "14:30", text: "從園區出發回程 (車程約 1.5 小時)", img: "" },
-                    { id: 204, time: "16:30", text: "市區 centralwOrld 逛逛，或 班嘉奇蒂公園 森林天空步道走走", img: "" },
-                    { id: 205, time: "18:30", text: "晚餐吃泰式料理", img: "" }
+                    { id: 204, time: "16:30", text: "centralwOrld 逛街，或前往班嘉奇蒂公園 (Benjakitti Forest Park) 走森林天空步道", img: "" },
+                    { id: 205, time: "18:30", text: "享用道地泰式料理晚餐", img: "" }
                 ]
             },
             {
-                day: "DAY 3", date: "包車 11/21",
+                day: "DAY 3", date: "11/21 (包車)",
                 items: [
-                    { id: 301, time: "08:00", text: "包車出門：丹嫩莎朵水上市場 + 美功鐵道市場", img: "" },
-                    { id: 302, time: "14:00", text: "回市區朱拉大學美食街吃午餐，或 紅大哥水門雞飯", img: "" },
-                    { id: 303, time: "19:00", text: "晚上安排泰式按摩放鬆", img: "" }
+                    { id: 301, time: "08:00", text: "包車出發 ➔ 丹嫩莎朵水上市場 + 美功鐵道市場", img: "" },
+                    { id: 302, time: "14:00", text: "回市區吃午餐 (推薦：朱拉大學美食街 或 紅大哥水門雞飯)", img: "" },
+                    { id: 303, time: "19:00", text: "晚上安排泰式按摩，放鬆一天的疲憊", img: "" }
                 ]
             },
             {
-                day: "DAY 4", date: "包車 11/22",
+                day: "DAY 4", date: "11/22",
                 items: [
-                    { id: 401, time: "09:00", text: "恰圖恰市集 (BTS Mo Chit 站) 逛到中午", img: "" },
-                    { id: 402, time: "12:30", text: "勝利紀念碑吃船麵 (BTS Victory Monument 站)", img: "" },
-                    { id: 403, time: "14:00", text: "鄭王廟行程 (從勝利紀念碑搭 BTS 到 Saphan Taksin 站轉搭交通船過去)", img: "" },
-                    { id: 404, time: "15:40", text: "從鄭王廟離開，準備前往商場 (需預留約1小時交通時間)", img: "" },
-                    { id: 405, time: "19:30", text: "準時享用 Copper Beyond Buffet", img: "" },
-                    { id: 406, time: "21:30", text: "飯後步行至對面 Big C 補貨，開心回飯店！", img: "" }
+                    { id: 401, time: "09:00", text: "恰圖恰市集 (09:00 - 12:00)", img: "" },
+                    { id: 402, time: "12:30", text: "勝利紀念碑吃船麵 (搭乘 BTS 從 Mo Chit 直達 Victory Monument，超順)", img: "" },
+                    { id: 403, time: "14:00", text: "鄭王廟（Wat Arun）\n備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
+                    { id: 404, time: "15:45", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
+                    { id: 405, time: "17:30", text: "前往商場，準備享用 Copper Beyond Buffet\n備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘BTS 到 Chit Lom 站（或直接計程車）。", img: "" },
+                    { id: 406, time: "19:30", text: "Copper Beyond Buffet 豪華晚餐", img: "" },
+                    { id: 407, time: "21:30", text: "之後步行至對面 Central World 旁的 Big C 採買", img: "" }
                 ]
             },
             {
-                day: "DAY 5", date: "賦歸 11/23",
+                day: "DAY 5", date: "11/23",
                 items: [
-                    { id: 501, time: "09:00", text: "早上自由行動時間", img: "" },
-                    { id: 502, time: "15:30", text: "最晚抵達 BKK 機場準備搭機", img: "" }
+                    { id: 501, time: "早上", text: "Ekkamai / Thong Lo 周邊自由活動與最後採買", img: "" },
+                    { id: 502, time: "11:30", text: "阿姨最晚抵達機場時間，13:45 班機", img: "" },
+                    { id: 503, time: "15:30", text: "其他人最晚抵達 BKK 機場，準備搭機", img: "" },
+                    { id: 504, time: "17:40", text: "搭乘星宇 JX746 班機返台", img: "" }
                 ]
             }
         ],
@@ -450,7 +456,7 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v7'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v8'; // 更換版本號強制載入新資料
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
