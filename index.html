@@ -13,7 +13,7 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v9'));
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v10'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 
                 const appleLink = document.createElement('link');
@@ -61,6 +61,7 @@
     </script>
 
     <style>
+        /* 基礎樣式與隱藏滾動條 */
         body { background-color: #F7F5F0; color: #4A3E3D; -webkit-tap-highlight-color: transparent; font-size: 16px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -249,7 +250,7 @@
                         <img id="shopImageTemp" class="hidden h-24 object-contain rounded-xl bg-white p-2 border mx-auto mt-2">
                     </div>
                 </div>
-                <!-- 調整為三個網格排版 -->
+                <!-- 三個網格排版 -->
                 <div id="shopGrid" class="grid grid-cols-3 gap-3"></div>
             </div>
         </section>
@@ -334,7 +335,7 @@
     const initialData = {
         coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
-            flight: "【去程】\n09:25 班次 JX741 到達BKK時間12:35\n\n【阿姨回程】\n13:45 班次 JX742 到達TPE時間18:25\n\n【其他人回程】\n17:40 班次 JX746 到達TPE時間22:30",
+            flight: "【去程】\n09:25 班次 JX741 (12:35抵達BKK)\n\n【阿姨回程】\n13:45 班次 JX742 (18:25抵達TPE)\n\n【其他人回程】\n17:40 班次 JX746 (22:30抵達TPE)",
             acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
             qrCodeImg: "" 
         },
@@ -345,40 +346,39 @@
                     { id: 101, time: "06:05", text: "搭乘高鐵出發 ➔ 06:47 抵達桃園", img: "" },
                     { id: 102, time: "07:02", text: "轉乘機場捷運 ➔ 第二航廈", img: "" },
                     { id: 103, time: "09:25", text: "搭乘星宇 JX741 班機起飛", img: "" },
-                    { id: 104, time: "13:30", text: "機場 B 層換匯區換錢\n<span class='text-sm text-gray-500 block mt-1'>備註：(大約換5000-10000即可，大部分是吃飯跟去市集會用到)</span>", img: "" },
+                    { id: 104, time: "13:30", text: "機場 B 層 Super rich 換匯區換錢\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>備註：大約換5000-10000即可，大部分是吃飯跟去市集會用到</span>", img: "" },
                     { id: 105, time: "16:00", text: "抵達 Ekkamai 區辦理入住", img: "" },
-                    { id: 106, time: "16:30", text: "前往喬德夜市 (https://maps.app.goo.gl/myJ5ukB2UVAbScAq8) 或 Save One Go Night Market (https://maps.app.goo.gl/iJSPRmAMoEhn9JhV8)", img: "" },
+                    { id: 106, time: "16:30", text: "前往喬德夜市\nhttps://maps.app.goo.gl/myJ5ukB2UVAbScAq8\n或 Save One Go Night Market\nhttps://maps.app.goo.gl/iJSPRmAMoEhn9JhV8", img: "" },
                     { id: 107, time: "21:00", text: "逛完回旅館休息", img: "" }
                 ]
             },
             {
                 day: "DAY 2", date: "11/20",
                 items: [
-                    { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合", img: "" },
+                    { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/qzKWc1KmnyTDrhu39", img: "" },
                     { id: 202, time: "08:00", text: "搭乘園方專車 ➔ 大象保護區 (體驗約4小時，含午餐)", img: "" },
                     { id: 203, time: "14:30", text: "從園區出發回程 (車程約 1.5 小時)", img: "" },
-                    { id: 204, time: "16:30", text: "centralwOrld (https://maps.app.goo.gl/SDVcTB8YE19sMxZt8) 逛街，或前往班嘉奇蒂公園 (https://maps.app.goo.gl/Z6hwvV6rANZxqhPr7) 走森林天空步道", img: "" },
-                    { id: 205, time: "18:30", text: "享用道地泰式料理晚餐", img: "" }
+                    { id: 204, time: "16:30", text: "centralwOrld 逛街，或附近按摩\nhttps://maps.app.goo.gl/SDVcTB8YE19sMxZt8\n或前往班嘉奇蒂公園走森林天空步道\nhttps://maps.app.goo.gl/Z6hwvV6rANZxqhPr7\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>備註：One More Thai Massage按摩店\nhttps://maps.app.goo.gl/ESigr1CT9JXpuv3J7\nChandee Head Spa & Massage\nhttps://maps.app.goo.gl/GtaBSvvYp6KEXqoe8</span>", img: "" },
+                    { id: 205, time: "19:30 - 21:30", text: "Copper Beyond Buffet 豪華晚餐\nhttps://maps.app.goo.gl/t8Z76e9SiTxJTy1B7", img: "" }
                 ]
             },
             {
                 day: "DAY 3", date: "11/21 (包車)",
                 items: [
                     { id: 301, time: "08:00", text: "包車出發 ➔ 丹嫩莎朵水上市場 + 美功鐵道市場", img: "" },
-                    { id: 302, time: "14:00", text: "回市區吃午餐 (推薦：朱拉大學美食街 或 紅大哥水門雞飯 https://maps.app.goo.gl/AJr8387hziVcroeN8)", img: "" },
-                    { id: 303, time: "晚上", text: "安排泰式按摩，放鬆一天的疲憊", img: "" }
+                    { id: 302, time: "14:00", text: "回市區吃午餐\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>推薦：朱拉大學美食街 或 紅大哥水門雞飯\nhttps://maps.app.goo.gl/AJr8387hziVcroeN8</span>", img: "" },
+                    { id: 303, time: "晚上", text: "河濱夜市", img: "" }
                 ]
             },
             {
                 day: "DAY 4", date: "11/22",
                 items: [
                     { id: 401, time: "09:00 - 12:00", text: "恰圖恰市集", img: "" },
-                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵\n<span class='text-sm text-gray-500 block mt-1'>備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument</span>", img: "" },
-                    { id: 403, time: "14:00 - 15:30", text: "鄭王廟（Wat Arun）\n<span class='text-sm text-gray-500 block mt-1'>備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。</span>", img: "" },
-                    { id: 404, time: "15:45 - 17:30", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n<span class='text-sm text-gray-500 block mt-1'>備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。</span>", img: "" },
-                    { id: 405, time: "17:30 - 18:30", text: "前往商場，準備享用 Copper Beyond Buffet\n<span class='text-sm text-gray-500 block mt-1'>備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Chit Lom 站（或直接計程車）。</span>", img: "" },
-                    { id: 406, time: "19:30 - 21:30", text: "Copper Beyond Buffet 豪華晚餐 (https://maps.app.goo.gl/3nFYysmtvofZtokV9)", img: "" },
-                    { id: 407, time: "21:30 之後", text: "步行至對面 Central World 旁的 Big C 採買", img: "" }
+                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵\n船麵：https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument</span>", img: "" },
+                    { id: 403, time: "14:30 - 15:30", text: "鄭王廟（Wat Arun）\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。</span>", img: "" },
+                    { id: 404, time: "15:45 - 17:30", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。</span>", img: "" },
+                    { id: 405, time: "17:30 - 18:30", text: "慢慢回 Ekkamai 吃晚餐\n<span class='text-[0.95rem] text-gray-500 block mt-1 leading-normal'>備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。</span>", img: "" },
+                    { id: 406, time: "20:30 之後", text: "步行至附近的 Big C 採買", img: "" }
                 ]
             },
             {
@@ -425,7 +425,7 @@
                     { name: "唐人街夜市", url: "https://maps.app.goo.gl/wdUhsNYcvksixmPf9", img1: "", img2: "" },
                     { name: "Charoen Krung Bar & Bistro", url: "https://maps.app.goo.gl/DjgtHJwfvFxZqJFN7", img1: "", img2: "" },
                     { name: "拍那空船麵-勝利紀念碑", url: "https://maps.app.goo.gl/d5axyjMX5GHiQisQ7", img1: "", img2: "" },
-                    { name: "Save One Go Night Market", url: "https://maps.app.goo.gl/djUgooXf2RUcwgwX6", img1: "", img2: "" },
+                    { name: "Save One Go Night Market", url: "https://maps.app.goo.gl/jDgaMVq4yfC2aqDz7", img1: "", img2: "" },
                     { name: "Topkart Bangkok (卡丁車)", url: "https://maps.app.goo.gl/bYrTCqKLZZXEs8Wd6", img1: "", img2: "" }
                 ]
             },
@@ -453,7 +453,7 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v9'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v10'; // 更換版本號強制載入新資料
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -505,9 +505,10 @@
     function parseText(text) {
         if (!text) return "";
         let parsed = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        // 自動轉換網址為按鈕
         const urlRegex = /(https?:\/\/[^\s\)]+)/g;
         parsed = parsed.replace(urlRegex, function(url) {
-            return `<br><a href="${url}" target="_blank" class="inline-block my-1.5 px-4 py-2 bg-calmblue/10 text-calmblue border border-calmblue/30 rounded-full text-[0.95rem] font-bold no-underline active:bg-calmblue/20 transition shadow-sm"><i class="fas fa-link mr-1"></i> 開啟連結</a>`;
+            return `<br><a href="${url}" target="_blank" class="inline-block my-1.5 px-4 py-2 bg-calmblue/10 text-calmblue border border-calmblue/30 rounded-full text-[0.95rem] font-bold no-underline active:bg-calmblue/20 transition shadow-sm"><i class="fas fa-map-marker-alt mr-1"></i> 開啟地圖/連結</a>`;
         });
         return parsed;
     }
