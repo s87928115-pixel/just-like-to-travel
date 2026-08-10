@@ -13,7 +13,7 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v11'));
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v12'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 
                 const appleLink = document.createElement('link');
@@ -113,9 +113,7 @@
             <!-- 時間軸容器 -->
             <div class="relative pl-2 animate-fade-in" id="planTimelineContainer">
                 <div class="timeline-line" id="timelineLine"></div>
-                <div id="planItemsList" class="space-y-5">
-                    <!-- 動態渲染行程單項 -->
-                </div>
+                <div id="planItemsList" class="space-y-5"></div>
             </div>
             
             <button onclick="openPlanModal()" class="w-full mt-6 py-4 border-2 border-dashed border-warmbrown/40 text-warmbrown font-bold text-[1.1rem] rounded-xl bg-white hover:bg-warmbrown/5 transition active:scale-[0.98]"><i class="fas fa-plus mr-2"></i>新增行程</button>
@@ -162,41 +160,91 @@
             <div id="foodContainer" class="space-y-6"></div>
         </section>
 
-        <!-- ================= 3. WALLET 記帳 ================= -->
+        <!-- ================= 3. WALLET 記帳 (含分帳系統) ================= -->
         <section id="tab-wallet" class="tab-content animate-fade-in">
-            <div class="muji-card p-6 mb-6 bg-warmbrown/5 border-none">
-                <h3 class="font-zen font-bold text-warmbrown mb-4 text-xl"><i class="fas fa-calculator mr-2"></i>匯率計算機</h3>
-                <div class="flex gap-3 items-center mb-4">
-                    <span class="text-[1rem] font-bold">目前匯率：</span>
-                    <input type="number" id="walletRate" value="0.9" step="0.01" class="w-24 p-3 border rounded-xl bg-white text-darkwood font-bold text-center text-lg shadow-inner">
+            <!-- 頂部切換按鈕 -->
+            <div class="flex bg-white rounded-full p-1.5 shadow-sm mb-6 font-zen text-[1rem] border border-warmbrown/10">
+                <button onclick="switchWalletTab('expense')" id="wallet-tab-expense" class="flex-1 py-3 rounded-full font-bold bg-warmbrown text-white transition">記帳明細</button>
+                <button onclick="switchWalletTab('split')" id="wallet-tab-split" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">分帳結算</button>
+            </div>
+
+            <!-- A. 記帳明細區塊 -->
+            <div id="wallet-view-expense" class="animate-fade-in">
+                <div class="muji-card p-6 mb-6 bg-warmbrown/5 border-none">
+                    <h3 class="font-zen font-bold text-warmbrown mb-4 text-xl"><i class="fas fa-calculator mr-2"></i>匯率計算機</h3>
+                    <div class="flex gap-3 items-center mb-4">
+                        <span class="text-[1rem] font-bold">目前匯率：</span>
+                        <input type="number" id="walletRate" value="0.9" step="0.01" class="w-24 p-3 border rounded-xl bg-white text-darkwood font-bold text-center text-lg shadow-inner">
+                    </div>
+                    <div class="flex gap-3 items-center">
+                        <input type="number" id="walletThb" placeholder="輸入當地金額" class="flex-1 p-4 border rounded-xl bg-white text-darkwood text-xl font-bold shadow-inner" oninput="calculateRate()">
+                        <i class="fas fa-arrow-right text-warmbrown text-xl"></i>
+                        <div class="flex-1 p-4 bg-white rounded-xl border text-center font-bold text-calmblue text-xl shadow-inner" id="walletTwd">0 TWD</div>
+                    </div>
                 </div>
-                <div class="flex gap-3 items-center">
-                    <input type="number" id="walletThb" placeholder="輸入當地金額" class="flex-1 p-4 border rounded-xl bg-white text-darkwood text-xl font-bold shadow-inner" oninput="calculateRate()">
-                    <i class="fas fa-arrow-right text-warmbrown text-xl"></i>
-                    <div class="flex-1 p-4 bg-white rounded-xl border text-center font-bold text-calmblue text-xl shadow-inner" id="walletTwd">0 TWD</div>
+
+                <div class="muji-card p-6">
+                    <div class="flex justify-between items-center border-b border-warmbrown/20 pb-4 mb-5">
+                        <h3 class="font-zen font-bold text-warmbrown text-xl"><i class="fas fa-receipt mr-2"></i>記帳清單</h3>
+                        <span class="text-[1rem] font-bold text-calmblue bg-calmblue/10 px-4 py-1.5 rounded-full">總計: <span id="walletTotal" class="text-xl">0</span> TWD</span>
+                    </div>
+                    
+                    <div class="flex flex-col gap-3 mb-6 p-5 bg-beige/50 rounded-2xl border border-warmbrown/10">
+                        <input type="text" id="expenseName" placeholder="花費項目名稱" class="p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
+                        <div class="flex gap-3">
+                            <input type="number" id="expenseCost" placeholder="總金額 (TWD)" class="flex-1 p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
+                            <label class="bg-calmblue text-white px-5 py-4 rounded-xl cursor-pointer flex items-center justify-center shadow-sm active:scale-95 transition">
+                                <i class="fas fa-camera text-xl"></i>
+                                <input type="file" accept="image/*" onchange="handleReceiptUpload(event)">
+                            </label>
+                        </div>
+                        <img id="expenseReceiptPreview" class="hidden h-28 object-contain rounded-xl border border-gray-200 mt-2 bg-white p-2">
+                        
+                        <!-- 是否算入公費 -->
+                        <label class="flex items-center gap-3 mt-2 bg-white border border-gray-200 p-4 rounded-xl cursor-pointer shadow-sm active:scale-[0.98] transition">
+                            <input type="checkbox" id="expenseIsShared" checked class="w-6 h-6 accent-warmbrown">
+                            <span class="text-[1.1rem] font-bold text-darkwood">這筆算入公費 (需大家分帳)</span>
+                        </label>
+
+                        <button onclick="addExpense()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold shadow-sm mt-3 text-[1.1rem] active:scale-95 transition"><i class="fas fa-plus mr-1"></i>新增此筆花費</button>
+                    </div>
+
+                    <div id="expenseList" class="space-y-4"></div>
                 </div>
             </div>
 
-            <div class="muji-card p-6">
-                <div class="flex justify-between items-center border-b border-warmbrown/20 pb-4 mb-5">
-                    <h3 class="font-zen font-bold text-warmbrown text-xl"><i class="fas fa-receipt mr-2"></i>記帳清單</h3>
-                    <span class="text-[1rem] font-bold text-calmblue bg-calmblue/10 px-4 py-1.5 rounded-full">總計: <span id="walletTotal" class="text-xl">0</span> TWD</span>
-                </div>
-                
-                <div class="flex flex-col gap-3 mb-6 p-5 bg-beige/50 rounded-2xl border border-warmbrown/10">
-                    <input type="text" id="expenseName" placeholder="花費項目名稱" class="p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
-                    <div class="flex gap-3">
-                        <input type="number" id="expenseCost" placeholder="金額 (TWD)" class="flex-1 p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
-                        <label class="bg-calmblue text-white px-5 py-4 rounded-xl cursor-pointer flex items-center justify-center shadow-sm active:scale-95 transition">
-                            <i class="fas fa-camera text-xl"></i>
-                            <input type="file" accept="image/*" onchange="handleReceiptUpload(event)">
-                        </label>
+            <!-- B. 分帳結算區塊 -->
+            <div id="wallet-view-split" class="hidden animate-fade-in">
+                <!-- 總結卡片 -->
+                <div class="muji-card p-6 mb-6 bg-gradient-to-br from-calmblue to-blue-800 text-white border-none shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 opacity-10 text-8xl transform translate-x-4 -translate-y-4"><i class="fas fa-handshake"></i></div>
+                    <div class="relative z-10">
+                        <h3 class="font-zen font-bold text-white/80 mb-2 text-lg">公費總金額</h3>
+                        <div class="text-4xl font-bold font-zen mb-4 tracking-wider"><span id="splitTotalAmount">0</span> <span class="text-xl">TWD</span></div>
+                        
+                        <div class="flex justify-between items-end border-t border-white/20 pt-4">
+                            <div>
+                                <div class="text-sm text-white/80 mb-1">分攤人數 (<span id="splitMemberCount">1</span>人)</div>
+                                <div class="text-xl font-bold"><i class="fas fa-user-group mr-2"></i>每人應付</div>
+                            </div>
+                            <div class="text-3xl font-bold font-zen text-yellow-300"><span id="splitPerPerson">0</span> <span class="text-lg text-white">TWD</span></div>
+                        </div>
                     </div>
-                    <img id="expenseReceiptPreview" class="hidden h-28 object-contain rounded-xl border border-gray-200 mt-2 bg-white p-2">
-                    <button onclick="addExpense()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold shadow-sm mt-3 text-[1.1rem] active:scale-95 transition"><i class="fas fa-plus mr-1"></i>新增此筆花費</button>
                 </div>
 
-                <div id="expenseList" class="space-y-4"></div>
+                <!-- 成員名單 -->
+                <div class="muji-card p-6">
+                    <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-3 mb-5 text-xl"><i class="fas fa-users mr-2"></i>成員繳費狀態</h3>
+                    
+                    <div class="flex gap-2 mb-5">
+                        <input type="text" id="newMemberName" placeholder="輸入成員名稱..." class="flex-1 p-3 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
+                        <button onclick="addSplitMember()" class="bg-warmbrown text-white px-5 rounded-xl shadow-sm font-bold active:scale-95 transition"><i class="fas fa-user-plus mr-1"></i>加入</button>
+                    </div>
+
+                    <div id="splitMembersList" class="space-y-3">
+                        <!-- 動態渲染成員清單 -->
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -295,9 +343,7 @@
             </div>
 
             <!-- 住宿與航班 -->
-            <div class="space-y-6" id="infoContainer">
-                <!-- 內容由 JS 渲染 -->
-            </div>
+            <div class="space-y-6" id="infoContainer"></div>
 
             <div class="muji-card p-6 mt-8 border-t-4 border-calmblue">
                 <h3 class="font-zen font-bold text-calmblue mb-5 text-xl"><i class="fas fa-palette mr-2"></i>外觀設定</h3>
@@ -337,7 +383,7 @@
 </div>
 
 <script>
-    /* ================= 資料結構與存取 ================= */
+    /* ================= 資料結構與存取 (v12 加入分帳與更新行程) ================= */
     const initialData = {
         coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
@@ -364,7 +410,7 @@
                     { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/qzKWc1KmnyTDrhu39", img: "" },
                     { id: 202, time: "08:00", text: "搭乘園方專車 ➔ 大象保護區 (體驗約4小時，含午餐)", img: "" },
                     { id: 203, time: "14:30", text: "從園區出發回程 (車程約 1.5 小時)", img: "" },
-                    { id: 204, time: "16:30", text: "centralwOrld 逛街，或附近按摩\nhttps://maps.app.goo.gl/SDVcTB8YE19sMxZt8\n或前往班嘉奇蒂公園走森林天空步道\nhttps://maps.app.goo.gl/Z6hwvV6rANZxqhPr7\n備註：One More Thai Massage按摩店\nhttps://maps.app.goo.gl/ESigr1CT9JXpuv3J7\n備註：Chandee Head Spa & Massage\nhttps://maps.app.goo.gl/GtaBSvvYp6KEXqoe8", img: "" },
+                    { id: 204, time: "16:30", text: "centralwOrld 逛街，或附近按摩\nhttps://maps.app.goo.gl/SDVcTB8YE19sMxZt8\n或前往班嘉奇蒂公園走森林天空步道\nhttps://maps.app.goo.gl/Z6hwvV6rANZxqhPr7\n備註：One More Thai Massage按摩店\nhttps://maps.app.goo.gl/ESigr1CT9JXpuv3J7\nChandee Head Spa & Massage\nhttps://maps.app.goo.gl/GtaBSvvYp6KEXqoe8", img: "" },
                     { id: 205, time: "19:30 - 21:30", text: "Copper Beyond Buffet 豪華晚餐\nhttps://maps.app.goo.gl/t8Z76e9SiTxJTy1B7", img: "" }
                 ]
             },
@@ -446,7 +492,13 @@
                 ]
             }
         ],
-        wallet: { rate: 0.9, expenses: [] },
+        wallet: { 
+            rate: 0.9, 
+            expenses: [],
+            members: [
+                { id: 1, name: "自己", hasPaid: true } // 預設加入一位成員
+            ]
+        },
         lists: {
             baggage: [
                 { text: "護照 (效期 6 個月以上)", done: false },
@@ -459,14 +511,18 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v11'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v12'; 
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             let data = JSON.parse(stored);
-            if (data.food && data.food.length > 0 && data.food[0].items[0].img1 === undefined) {
-                data.food.forEach(cat => cat.items.forEach(item => { item.img1 = ""; item.img2 = ""; }));
+            // 遷移舊資料，補充分帳成員設定與公費標記
+            if (!data.wallet.members) {
+                data.wallet.members = [{ id: Date.now(), name: "自己", hasPaid: true }];
+            }
+            if (data.wallet.expenses.length > 0 && data.wallet.expenses[0].isShared === undefined) {
+                data.wallet.expenses.forEach(e => e.isShared = true); // 舊花費預設為公費
             }
             return data;
         } else {
@@ -497,7 +553,6 @@
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                // 為了避免 LocalStorage 塞爆，進一步限制最大寬度為 500px
                 const MAX_WIDTH = 500;
                 let width = img.width;
                 let height = img.height;
@@ -509,7 +564,6 @@
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                // 將品質壓低到 0.5 確保不會太容易爆掉
                 callback(canvas.toDataURL('image/jpeg', 0.5));
             };
             img.src = e.target.result;
@@ -520,16 +574,15 @@
     // 文字解析：自動轉換連結與標示備註
     function parseText(text) {
         if (!text) return "";
-        // 1. 防止 HTML XSS
         let parsed = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         
-        // 2. 針對「備註」開頭的文字進行抓取並縮小字體 (支援 備註: 或是 *備註:)
+        // 標記備註字體縮小變灰
         parsed = parsed.replace(/(\*?備註[：:].*)/g, '<span class="text-[0.95rem] text-gray-500 block mt-1 leading-normal">$1</span>');
         
-        // 3. 標記時間變紅色
+        // 標記時間變紅
         parsed = parsed.replace(/(\b\d{1,2}:\d{2}\b)/g, '<span class="text-highlight font-bold font-zen">$1</span>');
 
-        // 4. 自動轉換網址為按鈕
+        // 自動轉換網址為按鈕
         const urlRegex = /(https?:\/\/[^\s\)]+)/g;
         parsed = parsed.replace(urlRegex, function(url) {
             return `<br><a href="${url}" target="_blank" class="inline-block my-1.5 px-4 py-2 bg-calmblue/10 text-calmblue border border-calmblue/30 rounded-full text-[0.95rem] font-bold no-underline active:bg-calmblue/20 transition shadow-sm"><i class="fas fa-map-marker-alt mr-1"></i> 開啟地圖/連結</a>`;
@@ -743,7 +796,6 @@
                                 <a href="${item.url}" target="_blank" class="w-10 h-10 rounded-full bg-calmblue/10 flex items-center justify-center text-calmblue shrink-0 shadow-sm ml-2 active:bg-calmblue/20"><i class="fas fa-location-dot"></i></a>
                             </div>
                             
-                            <!-- 檢視模式下，有圖片才顯示網格 -->
                             ${!isFoodEditing && (item.img1 || item.img2) ? `
                                 <div class="grid grid-cols-2 gap-3 mt-4">
                                     ${item.img1 ? `<img src="${item.img1}" class="w-full h-32 object-cover rounded-xl border shadow-sm" onclick="window.open('${item.img1}')">` : '<div></div>'}
@@ -751,10 +803,8 @@
                                 </div>
                             ` : ''}
 
-                            <!-- 編輯模式下，顯示上傳按鈕或現有圖片 -->
                             ${isFoodEditing ? `
                                 <div class="grid grid-cols-2 gap-3 mt-4">
-                                    <!-- 圖片1: 食物 -->
                                     <div class="relative h-32">
                                         ${item.img1 ? `
                                             <img src="${item.img1}" class="w-full h-full object-cover rounded-xl border shadow-sm opacity-70">
@@ -767,7 +817,6 @@
                                             </label>
                                         `}
                                     </div>
-                                    <!-- 圖片2: 飲料 -->
                                     <div class="relative h-32">
                                         ${item.img2 ? `
                                             <img src="${item.img2}" class="w-full h-full object-cover rounded-xl border shadow-sm opacity-70">
@@ -814,7 +863,23 @@
         }
     }
 
-    /* ================= 3. WALLET 記帳 ================= */
+    /* ================= 3. WALLET 記帳 (含分帳) ================= */
+    function switchWalletTab(tab) {
+        document.getElementById('wallet-view-expense').classList.add('hidden');
+        document.getElementById('wallet-view-split').classList.add('hidden');
+        document.getElementById('wallet-tab-expense').classList.replace('bg-warmbrown', 'bg-transparent');
+        document.getElementById('wallet-tab-expense').classList.replace('text-white', 'text-warmbrown');
+        document.getElementById('wallet-tab-split').classList.replace('bg-warmbrown', 'bg-transparent');
+        document.getElementById('wallet-tab-split').classList.replace('text-white', 'text-warmbrown');
+
+        document.getElementById('wallet-view-' + tab).classList.remove('hidden');
+        document.getElementById('wallet-tab-' + tab).classList.remove('bg-transparent', 'text-warmbrown');
+        document.getElementById('wallet-tab-' + tab).classList.add('bg-warmbrown', 'text-white');
+        
+        if(tab === 'split') renderSplitView();
+        else renderWallet();
+    }
+
     let tempExpenseImg = "";
     function renderWallet() {
         document.getElementById('walletRate').value = appData.wallet.rate;
@@ -827,13 +892,14 @@
             list.innerHTML = appData.wallet.expenses.map((exp, idx) => {
                 total += parseFloat(exp.cost);
                 return `
-                <div class="muji-card p-4 flex items-center gap-4">
-                    ${exp.img ? `<img src="${exp.img}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer border" onclick="window.open('${exp.img}')">` : `<div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-300 border"><i class="fas fa-receipt text-2xl"></i></div>`}
-                    <div class="flex-1 overflow-hidden">
+                <div class="muji-card p-4 flex items-center gap-4 relative overflow-hidden">
+                    ${exp.isShared ? `<div class="absolute top-0 left-0 bg-calmblue text-white text-[10px] px-2 py-0.5 rounded-br-lg font-bold shadow-sm"><i class="fas fa-users mr-1"></i>公費</div>` : ''}
+                    ${exp.img ? `<img src="${exp.img}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer border mt-2" onclick="window.open('${exp.img}')">` : `<div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-300 border mt-2"><i class="fas fa-receipt text-2xl"></i></div>`}
+                    <div class="flex-1 overflow-hidden mt-2">
                         <div class="font-bold text-darkwood truncate text-[1.1rem]">${exp.name}</div>
                         <div class="text-highlight font-zen text-[1rem] font-bold mt-1">${exp.cost} TWD</div>
                     </div>
-                    <button onclick="deleteExpense(${idx})" class="text-gray-300 hover:text-highlight p-2 text-2xl"><i class="fas fa-trash"></i></button>
+                    <button onclick="deleteExpense(${idx})" class="text-gray-300 hover:text-highlight p-2 text-2xl active:scale-90 transition mt-2"><i class="fas fa-trash"></i></button>
                 </div>
                 `;
             }).join('');
@@ -863,13 +929,15 @@
     function addExpense() {
         const name = document.getElementById('expenseName').value.trim();
         const cost = document.getElementById('expenseCost').value.trim();
+        const isShared = document.getElementById('expenseIsShared').checked;
         if (!name || !cost) return alert('名稱跟花費金額都要輸入喔！');
         
-        appData.wallet.expenses.unshift({ name, cost, img: tempExpenseImg });
+        appData.wallet.expenses.unshift({ name, cost, img: tempExpenseImg, isShared });
         saveData(appData);
         
         document.getElementById('expenseName').value = '';
         document.getElementById('expenseCost').value = '';
+        document.getElementById('expenseIsShared').checked = true; // 恢復預設勾選
         document.getElementById('expenseReceiptPreview').classList.add('hidden');
         tempExpenseImg = "";
         
@@ -884,13 +952,78 @@
         }
     }
 
+    // === 分帳視圖邏輯 ===
+    function renderSplitView() {
+        const members = appData.wallet.members || [];
+        const sharedTotal = appData.wallet.expenses.filter(e => e.isShared).reduce((sum, e) => sum + parseFloat(e.cost), 0);
+        const count = members.length;
+        const perPerson = count > 0 ? Math.ceil(sharedTotal / count) : 0;
+
+        document.getElementById('splitTotalAmount').innerText = sharedTotal.toLocaleString();
+        document.getElementById('splitMemberCount').innerText = count;
+        document.getElementById('splitPerPerson').innerText = perPerson.toLocaleString();
+
+        const list = document.getElementById('splitMembersList');
+        if (count === 0) {
+            list.innerHTML = '<div class="text-center text-gray-400 py-4 font-bold text-sm">請在上方新增分帳成員</div>';
+        } else {
+            list.innerHTML = members.map(m => `
+                <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl bg-white shadow-sm transition ${m.hasPaid ? 'opacity-60 bg-green-50/50' : ''}">
+                    <div class="w-10 h-10 rounded-full bg-warmbrown/10 text-warmbrown flex items-center justify-center font-bold font-zen">
+                        ${m.name.charAt(0)}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-bold text-[1.05rem] text-darkwood">${m.name}</div>
+                    </div>
+                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-1.5 rounded-lg border">
+                        <input type="checkbox" ${m.hasPaid ? 'checked' : ''} onchange="toggleMemberPaid(${m.id})" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-bold ${m.hasPaid ? 'text-green-600' : 'text-gray-500'}">已付</span>
+                    </label>
+                    <button onclick="deleteSplitMember(${m.id})" class="text-gray-300 hover:text-highlight px-2 active:scale-90 transition"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
+        }
+    }
+
+    function addSplitMember() {
+        const input = document.getElementById('newMemberName');
+        const name = input.value.trim();
+        if (!name) return;
+        
+        if (appData.wallet.members.length >= 15) {
+            return alert('分帳成員最多只能 15 人喔！');
+        }
+
+        appData.wallet.members.push({ id: Date.now(), name: name, hasPaid: false });
+        saveData(appData);
+        input.value = '';
+        renderSplitView();
+    }
+
+    function toggleMemberPaid(id) {
+        const member = appData.wallet.members.find(m => m.id === id);
+        if (member) {
+            member.hasPaid = !member.hasPaid;
+            saveData(appData);
+            renderSplitView();
+        }
+    }
+
+    function deleteSplitMember(id) {
+        if(confirm('要移除這位成員嗎？這會重新計算每個人的分攤金額喔！')) {
+            appData.wallet.members = appData.wallet.members.filter(m => m.id !== id);
+            saveData(appData);
+            renderSplitView();
+        }
+    }
+
     /* ================= 4. LISTS 清單 ================= */
     function renderBaggage() {
         document.getElementById('baggageList').innerHTML = appData.lists.baggage.map((item, idx) => `
             <div class="flex items-center gap-4 p-4 border-b border-warmbrown/10 ${item.done ? 'opacity-40 bg-gray-50 rounded-xl' : ''} transition">
                 <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleBaggage(${idx})" class="w-6 h-6 accent-warmbrown cursor-pointer shrink-0">
                 <span class="flex-1 text-[1.1rem] ${item.done ? 'line-through text-gray-500' : 'text-darkwood font-bold'}">${item.text}</span>
-                <button onclick="deleteBaggage(${idx})" class="text-gray-300 hover:text-highlight px-2 text-xl"><i class="fas fa-times"></i></button>
+                <button onclick="deleteBaggage(${idx})" class="text-gray-300 hover:text-highlight px-2 text-xl active:scale-90 transition"><i class="fas fa-times"></i></button>
             </div>
         `).join('');
     }
@@ -992,7 +1125,7 @@
         }
         grid.innerHTML = appData.lists.shop.map((item, idx) => `
             <div class="muji-card p-1.5 flex flex-col items-center relative overflow-hidden group">
-                <button onclick="deleteShopItem(${idx})" class="absolute top-1.5 right-1.5 text-white bg-highlight/90 rounded-full w-6 h-6 flex items-center justify-center text-xs z-10 shadow-md"><i class="fas fa-times"></i></button>
+                <button onclick="deleteShopItem(${idx})" class="absolute top-1.5 right-1.5 text-white bg-highlight/90 rounded-full w-6 h-6 flex items-center justify-center text-xs z-10 shadow-md active:scale-90 transition"><i class="fas fa-times"></i></button>
                 <div class="w-full aspect-square bg-gray-50 rounded-lg mb-1.5 overflow-hidden relative cursor-pointer border" onclick="toggleShopItem(${idx})">
                     ${item.img ? `<img src="${item.img}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-gray-300"><i class="fas fa-box text-3xl"></i></div>`}
                     ${item.done ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-[1px]"><i class="fas fa-check-circle text-white text-4xl shadow-sm"></i></div>` : ''}
@@ -1062,11 +1195,11 @@
             container.innerHTML = `
                 <div class="muji-card p-6">
                     <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-plane mr-2"></i>航班資訊</h3>
-                    <textarea id="editInfoFlight" class="w-full h-40 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 text-[1.1rem] leading-relaxed">${appData.info.flight}</textarea>
+                    <textarea id="editInfoFlight" class="w-full h-40 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 text-[1.1rem] leading-relaxed shadow-inner">${appData.info.flight}</textarea>
                 </div>
                 <div class="muji-card p-6">
                     <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-hotel mr-2"></i>住宿資訊</h3>
-                    <textarea id="editInfoAcc" class="w-full h-40 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 text-[1.1rem] leading-relaxed">${appData.info.acc}</textarea>
+                    <textarea id="editInfoAcc" class="w-full h-40 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 text-[1.1rem] leading-relaxed shadow-inner">${appData.info.acc}</textarea>
                 </div>
             `;
             document.getElementById('infoEditBtn').innerHTML = '<i class="fas fa-save mr-1"></i>儲存修改';
