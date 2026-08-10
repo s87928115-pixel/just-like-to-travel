@@ -13,7 +13,8 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v12'));
+                // 更新為 v13
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v13'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 
                 const appleLink = document.createElement('link');
@@ -102,7 +103,6 @@
         
         <!-- ================= 1. PLAN 行程 ================= -->
         <section id="tab-plan" class="tab-content active animate-fade-in">
-            <!-- Day Selector -->
             <div class="flex overflow-x-auto no-scrollbar gap-3 mb-5" id="planDaySelector"></div>
             
             <div class="flex justify-between items-center mb-5 pl-2 border-l-4 border-warmbrown">
@@ -110,7 +110,6 @@
                 <button onclick="togglePlanManageMode()" id="planManageBtn" class="text-sm bg-warmbrown text-white px-4 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-list-check mr-1"></i>管理行程</button>
             </div>
 
-            <!-- 時間軸容器 -->
             <div class="relative pl-2 animate-fade-in" id="planTimelineContainer">
                 <div class="timeline-line" id="timelineLine"></div>
                 <div id="planItemsList" class="space-y-5"></div>
@@ -119,7 +118,7 @@
             <button onclick="openPlanModal()" class="w-full mt-6 py-4 border-2 border-dashed border-warmbrown/40 text-warmbrown font-bold text-[1.1rem] rounded-xl bg-white hover:bg-warmbrown/5 transition active:scale-[0.98]"><i class="fas fa-plus mr-2"></i>新增行程</button>
         </section>
 
-        <!-- 行程編輯/新增 Modal -->
+        <!-- 行程編輯 Modal -->
         <div id="planModal" class="fixed inset-0 bg-darkwood/60 z-50 hidden flex flex-col justify-end backdrop-blur-sm">
             <div class="bg-beige w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-slide-up">
                 <button onclick="closePlanModal()" class="absolute top-5 right-5 text-gray-400 hover:text-darkwood text-2xl transition"><i class="fas fa-times"></i></button>
@@ -160,7 +159,7 @@
             <div id="foodContainer" class="space-y-6"></div>
         </section>
 
-        <!-- ================= 3. WALLET 記帳 (含分帳系統) ================= -->
+        <!-- ================= 3. WALLET 記帳 (含進階分帳系統) ================= -->
         <section id="tab-wallet" class="tab-content animate-fade-in">
             <!-- 頂部切換按鈕 -->
             <div class="flex bg-white rounded-full p-1.5 shadow-sm mb-6 font-zen text-[1rem] border border-warmbrown/10">
@@ -201,10 +200,17 @@
                         <img id="expenseReceiptPreview" class="hidden h-28 object-contain rounded-xl border border-gray-200 mt-2 bg-white p-2">
                         
                         <!-- 是否算入公費 -->
-                        <label class="flex items-center gap-3 mt-2 bg-white border border-gray-200 p-4 rounded-xl cursor-pointer shadow-sm active:scale-[0.98] transition">
-                            <input type="checkbox" id="expenseIsShared" checked class="w-6 h-6 accent-warmbrown">
-                            <span class="text-[1.1rem] font-bold text-darkwood">這筆算入公費 (需大家分帳)</span>
-                        </label>
+                        <div class="mt-2 bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="expenseIsShared" checked onchange="toggleExpenseMembersSelection()" class="w-6 h-6 accent-warmbrown">
+                                <span class="text-[1.1rem] font-bold text-darkwood">這筆算入公費 (需分攤)</span>
+                            </label>
+                            
+                            <!-- 選擇特定分攤成員 (動態產生) -->
+                            <div id="expenseMembersSelection" class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
+                                <!-- 由 JS 渲染現有成員的 Checkbox -->
+                            </div>
+                        </div>
 
                         <button onclick="addExpense()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold shadow-sm mt-3 text-[1.1rem] active:scale-95 transition"><i class="fas fa-plus mr-1"></i>新增此筆花費</button>
                     </div>
@@ -219,15 +225,10 @@
                 <div class="muji-card p-6 mb-6 bg-gradient-to-br from-calmblue to-blue-800 text-white border-none shadow-lg relative overflow-hidden">
                     <div class="absolute top-0 right-0 opacity-10 text-8xl transform translate-x-4 -translate-y-4"><i class="fas fa-handshake"></i></div>
                     <div class="relative z-10">
-                        <h3 class="font-zen font-bold text-white/80 mb-2 text-lg">公費總金額</h3>
-                        <div class="text-4xl font-bold font-zen mb-4 tracking-wider"><span id="splitTotalAmount">0</span> <span class="text-xl">TWD</span></div>
-                        
-                        <div class="flex justify-between items-end border-t border-white/20 pt-4">
-                            <div>
-                                <div class="text-sm text-white/80 mb-1">分攤人數 (<span id="splitMemberCount">1</span>人)</div>
-                                <div class="text-xl font-bold"><i class="fas fa-user-group mr-2"></i>每人應付</div>
-                            </div>
-                            <div class="text-3xl font-bold font-zen text-yellow-300"><span id="splitPerPerson">0</span> <span class="text-lg text-white">TWD</span></div>
+                        <h3 class="font-zen font-bold text-white/80 mb-2 text-lg">總公費池 (已計入所有分攤)</h3>
+                        <div class="text-4xl font-bold font-zen mb-2 tracking-wider"><span id="splitTotalAmount">0</span> <span class="text-xl">TWD</span></div>
+                        <div class="text-sm text-white/80 border-t border-white/20 pt-3 mt-2">
+                            系統會依據每筆花費的「勾選成員」，自動計算每個人個別專屬的應付金額。
                         </div>
                     </div>
                 </div>
@@ -237,7 +238,7 @@
                     <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-3 mb-5 text-xl"><i class="fas fa-users mr-2"></i>成員繳費狀態</h3>
                     
                     <div class="flex gap-2 mb-5">
-                        <input type="text" id="newMemberName" placeholder="輸入成員名稱..." class="flex-1 p-3 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
+                        <input type="text" id="newMemberName" placeholder="新增成員 (最多15人)..." class="flex-1 p-3 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
                         <button onclick="addSplitMember()" class="bg-warmbrown text-white px-5 rounded-xl shadow-sm font-bold active:scale-95 transition"><i class="fas fa-user-plus mr-1"></i>加入</button>
                     </div>
 
@@ -383,7 +384,7 @@
 </div>
 
 <script>
-    /* ================= 資料結構與存取 (v12 加入分帳與更新行程) ================= */
+    /* ================= 資料結構與存取 (v13 加入進階分帳) ================= */
     const initialData = {
         coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
@@ -496,7 +497,7 @@
             rate: 0.9, 
             expenses: [],
             members: [
-                { id: 1, name: "自己", hasPaid: true } // 預設加入一位成員
+                { id: 1, name: "自己", hasPaid: true } 
             ]
         },
         lists: {
@@ -511,19 +512,22 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v12'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v13'; 
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             let data = JSON.parse(stored);
-            // 遷移舊資料，補充分帳成員設定與公費標記
             if (!data.wallet.members) {
                 data.wallet.members = [{ id: Date.now(), name: "自己", hasPaid: true }];
             }
-            if (data.wallet.expenses.length > 0 && data.wallet.expenses[0].isShared === undefined) {
-                data.wallet.expenses.forEach(e => e.isShared = true); // 舊花費預設為公費
-            }
+            // 遷移：將舊版的 isShared 轉換成新的 sharedBy 陣列
+            data.wallet.expenses.forEach(e => {
+                if (e.isShared === undefined) e.isShared = true;
+                if (e.isShared && !e.sharedBy) {
+                    e.sharedBy = data.wallet.members.map(m => m.id); // 舊花費預設全體平分
+                }
+            });
             return data;
         } else {
             saveData(initialData);
@@ -546,7 +550,7 @@
     let appData = loadData();
     let currentPlanIndex = 0;
     
-    // 圖片 Canvas 高度壓縮 (防爆容量)
+    // 圖片 Canvas 高度壓縮
     function compressImage(file, callback) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -575,14 +579,9 @@
     function parseText(text) {
         if (!text) return "";
         let parsed = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        
-        // 標記備註字體縮小變灰
         parsed = parsed.replace(/(\*?備註[：:].*)/g, '<span class="text-[0.95rem] text-gray-500 block mt-1 leading-normal">$1</span>');
-        
-        // 標記時間變紅
         parsed = parsed.replace(/(\b\d{1,2}:\d{2}\b)/g, '<span class="text-highlight font-bold font-zen">$1</span>');
 
-        // 自動轉換網址為按鈕
         const urlRegex = /(https?:\/\/[^\s\)]+)/g;
         parsed = parsed.replace(urlRegex, function(url) {
             return `<br><a href="${url}" target="_blank" class="inline-block my-1.5 px-4 py-2 bg-calmblue/10 text-calmblue border border-calmblue/30 rounded-full text-[0.95rem] font-bold no-underline active:bg-calmblue/20 transition shadow-sm"><i class="fas fa-map-marker-alt mr-1"></i> 開啟地圖/連結</a>`;
@@ -863,7 +862,7 @@
         }
     }
 
-    /* ================= 3. WALLET 記帳 (含分帳) ================= */
+    /* ================= 3. WALLET 記帳 (含進階分帳系統) ================= */
     function switchWalletTab(tab) {
         document.getElementById('wallet-view-expense').classList.add('hidden');
         document.getElementById('wallet-view-split').classList.add('hidden');
@@ -891,6 +890,17 @@
         } else {
             list.innerHTML = appData.wallet.expenses.map((exp, idx) => {
                 total += parseFloat(exp.cost);
+                
+                // 產生參與分攤的名單字串
+                let sharersText = "";
+                if(exp.isShared && exp.sharedBy && exp.sharedBy.length > 0) {
+                    const names = exp.sharedBy.map(id => {
+                        const m = appData.wallet.members.find(member => member.id === id);
+                        return m ? m.name : "已刪除成員";
+                    });
+                    sharersText = `<div class="text-xs text-gray-400 mt-1"><i class="fas fa-user-friends mr-1"></i>${names.join(', ')} 分攤</div>`;
+                }
+
                 return `
                 <div class="muji-card p-4 flex items-center gap-4 relative overflow-hidden">
                     ${exp.isShared ? `<div class="absolute top-0 left-0 bg-calmblue text-white text-[10px] px-2 py-0.5 rounded-br-lg font-bold shadow-sm"><i class="fas fa-users mr-1"></i>公費</div>` : ''}
@@ -898,6 +908,7 @@
                     <div class="flex-1 overflow-hidden mt-2">
                         <div class="font-bold text-darkwood truncate text-[1.1rem]">${exp.name}</div>
                         <div class="text-highlight font-zen text-[1rem] font-bold mt-1">${exp.cost} TWD</div>
+                        ${sharersText}
                     </div>
                     <button onclick="deleteExpense(${idx})" class="text-gray-300 hover:text-highlight p-2 text-2xl active:scale-90 transition mt-2"><i class="fas fa-trash"></i></button>
                 </div>
@@ -905,6 +916,7 @@
             }).join('');
         }
         document.getElementById('walletTotal').innerText = total.toLocaleString();
+        toggleExpenseMembersSelection(); // 更新新增表單內的成員選擇區
     }
 
     function calculateRate() {
@@ -926,18 +938,47 @@
         });
     }
 
+    function toggleExpenseMembersSelection() {
+        const isShared = document.getElementById('expenseIsShared').checked;
+        const container = document.getElementById('expenseMembersSelection');
+        
+        if (isShared) {
+            container.classList.remove('hidden');
+            if (appData.wallet.members.length === 0) {
+                container.innerHTML = '<span class="text-sm text-highlight font-bold">請先至「分帳結算」新增成員！</span>';
+            } else {
+                container.innerHTML = appData.wallet.members.map(m => `
+                    <label class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg cursor-pointer text-sm font-bold shadow-sm active:scale-95 transition">
+                        <input type="checkbox" value="${m.id}" class="expense-member-cb w-4 h-4 accent-warmbrown" checked>
+                        ${m.name}
+                    </label>
+                `).join('');
+            }
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+
     function addExpense() {
         const name = document.getElementById('expenseName').value.trim();
         const cost = document.getElementById('expenseCost').value.trim();
         const isShared = document.getElementById('expenseIsShared').checked;
+        
         if (!name || !cost) return alert('名稱跟花費金額都要輸入喔！');
         
-        appData.wallet.expenses.unshift({ name, cost, img: tempExpenseImg, isShared });
+        let sharedBy = [];
+        if (isShared) {
+            const checkboxes = document.querySelectorAll('.expense-member-cb:checked');
+            checkboxes.forEach(cb => sharedBy.push(parseInt(cb.value)));
+            if(sharedBy.length === 0) return alert('公費項目請至少勾選一位分攤成員！');
+        }
+
+        appData.wallet.expenses.unshift({ name, cost, img: tempExpenseImg, isShared, sharedBy });
         saveData(appData);
         
         document.getElementById('expenseName').value = '';
         document.getElementById('expenseCost').value = '';
-        document.getElementById('expenseIsShared').checked = true; // 恢復預設勾選
+        document.getElementById('expenseIsShared').checked = true; 
         document.getElementById('expenseReceiptPreview').classList.add('hidden');
         tempExpenseImg = "";
         
@@ -952,19 +993,35 @@
         }
     }
 
-    // === 分帳視圖邏輯 ===
+    // === 分帳視圖邏輯 (依照個人參與的項目個別計算) ===
     function renderSplitView() {
         const members = appData.wallet.members || [];
-        const sharedTotal = appData.wallet.expenses.filter(e => e.isShared).reduce((sum, e) => sum + parseFloat(e.cost), 0);
-        const count = members.length;
-        const perPerson = count > 0 ? Math.ceil(sharedTotal / count) : 0;
+        
+        // 初始化每個人的負債字典
+        let memberDebts = {};
+        members.forEach(m => memberDebts[m.id] = 0);
+        let totalShared = 0;
 
-        document.getElementById('splitTotalAmount').innerText = sharedTotal.toLocaleString();
-        document.getElementById('splitMemberCount').innerText = count;
-        document.getElementById('splitPerPerson').innerText = perPerson.toLocaleString();
+        // 計算每筆公費，按勾選的人數平分
+        appData.wallet.expenses.forEach(exp => {
+            if(exp.isShared) {
+                // 找出該筆花費中，目前還存在於系統內的成員
+                let activeSharers = (exp.sharedBy || []).filter(id => memberDebts[id] !== undefined);
+                
+                if(activeSharers.length > 0) {
+                    let costPerPerson = parseFloat(exp.cost) / activeSharers.length;
+                    totalShared += parseFloat(exp.cost);
+                    activeSharers.forEach(id => {
+                        memberDebts[id] += costPerPerson;
+                    });
+                }
+            }
+        });
+
+        document.getElementById('splitTotalAmount').innerText = totalShared.toLocaleString();
 
         const list = document.getElementById('splitMembersList');
-        if (count === 0) {
+        if (members.length === 0) {
             list.innerHTML = '<div class="text-center text-gray-400 py-4 font-bold text-sm">請在上方新增分帳成員</div>';
         } else {
             list.innerHTML = members.map(m => `
@@ -974,12 +1031,13 @@
                     </div>
                     <div class="flex-1">
                         <div class="font-bold text-[1.05rem] text-darkwood">${m.name}</div>
+                        <div class="text-[0.9rem] font-zen font-bold text-highlight mt-1">應付: ${Math.ceil(memberDebts[m.id]).toLocaleString()} TWD</div>
                     </div>
-                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-1.5 rounded-lg border">
+                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-lg border shadow-sm active:scale-95 transition">
                         <input type="checkbox" ${m.hasPaid ? 'checked' : ''} onchange="toggleMemberPaid(${m.id})" class="w-5 h-5 accent-green-600">
                         <span class="text-sm font-bold ${m.hasPaid ? 'text-green-600' : 'text-gray-500'}">已付</span>
                     </label>
-                    <button onclick="deleteSplitMember(${m.id})" class="text-gray-300 hover:text-highlight px-2 active:scale-90 transition"><i class="fas fa-times"></i></button>
+                    <button onclick="deleteSplitMember(${m.id})" class="text-gray-300 hover:text-highlight px-2 active:scale-90 transition"><i class="fas fa-times text-lg"></i></button>
                 </div>
             `).join('');
         }
@@ -1273,7 +1331,7 @@
     window.onload = () => {
         renderPlan();
         renderFood();
-        renderWallet();
+        renderWallet(); // 預設會呼叫 toggleExpenseMembersSelection
         renderBaggage();
         renderMemo();
         renderShop();
