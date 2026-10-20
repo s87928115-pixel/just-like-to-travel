@@ -13,15 +13,13 @@
     <script>
         (function() {
             try {
-                // 更新為 v13
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v13'));
+                // 更新為 v17
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v17'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
-                
                 const appleLink = document.createElement('link');
                 appleLink.rel = 'apple-touch-icon';
                 appleLink.href = iconUrl;
                 document.head.appendChild(appleLink);
-
                 const stdLink = document.createElement('link');
                 stdLink.rel = 'icon';
                 stdLink.href = iconUrl;
@@ -30,15 +28,10 @@
         })();
     </script>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -79,8 +72,6 @@
         textarea { resize: none; }
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(140, 118, 103, 0.1); }
         input[type="file"] { display: none; }
-        
-        /* 時間軸樣式 */
         .timeline-line { position: absolute; left: 15px; top: 20px; bottom: 0; width: 2px; background-color: rgba(140, 118, 103, 0.2); z-index: 0; }
         .timeline-dot { position: absolute; left: 11px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background-color: #D9534F; z-index: 1; border: 2px solid #FFF; box-shadow: 0 0 0 2px #D9534F; }
     </style>
@@ -88,7 +79,6 @@
 <body class="font-noto text-lg text-darkwood selection:bg-warmbrown/30">
 
 <div class="max-w-md mx-auto min-h-screen relative shadow-2xl bg-beige overflow-hidden flex flex-col pb-safe">
-    <!-- Header -->
     <header class="relative w-full h-48 bg-gray-200 shrink-0">
         <img id="headerCoverImg" src="" class="w-full h-full object-cover" alt="Cover">
         <div class="absolute inset-0 bg-gradient-to-t from-darkwood/70 via-darkwood/20 to-transparent"></div>
@@ -98,32 +88,27 @@
         </div>
     </header>
 
-    <!-- Main Content Area -->
     <main class="flex-1 overflow-y-auto no-scrollbar p-4 relative" id="mainContainer">
         
-        <!-- ================= 1. PLAN 行程 ================= -->
+        <!-- PLAN -->
         <section id="tab-plan" class="tab-content active animate-fade-in">
             <div class="flex overflow-x-auto no-scrollbar gap-3 mb-5" id="planDaySelector"></div>
-            
             <div class="flex justify-between items-center mb-5 pl-2 border-l-4 border-warmbrown">
                 <h2 class="text-2xl font-zen font-bold text-warmbrown" id="planDayTitle">DAY 1</h2>
                 <button onclick="togglePlanManageMode()" id="planManageBtn" class="text-sm bg-warmbrown text-white px-4 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-list-check mr-1"></i>管理行程</button>
             </div>
-
             <div class="relative pl-2 animate-fade-in" id="planTimelineContainer">
                 <div class="timeline-line" id="timelineLine"></div>
                 <div id="planItemsList" class="space-y-5"></div>
             </div>
-            
             <button onclick="openPlanModal()" class="w-full mt-6 py-4 border-2 border-dashed border-warmbrown/40 text-warmbrown font-bold text-[1.1rem] rounded-xl bg-white hover:bg-warmbrown/5 transition active:scale-[0.98]"><i class="fas fa-plus mr-2"></i>新增行程</button>
         </section>
 
-        <!-- 行程編輯 Modal -->
+        <!-- PLAN Modal -->
         <div id="planModal" class="fixed inset-0 bg-darkwood/60 z-50 hidden flex flex-col justify-end backdrop-blur-sm">
             <div class="bg-beige w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-slide-up">
                 <button onclick="closePlanModal()" class="absolute top-5 right-5 text-gray-400 hover:text-darkwood text-2xl transition"><i class="fas fa-times"></i></button>
                 <h3 class="text-xl font-zen font-bold text-warmbrown mb-5 border-b border-warmbrown/20 pb-2" id="planModalTitle">新增行程</h3>
-                
                 <div class="space-y-4">
                     <div>
                         <label class="block text-[1rem] font-bold mb-2 text-calmblue">時間 (選填)</label>
@@ -144,30 +129,35 @@
                         </div>
                     </div>
                 </div>
-                
                 <button onclick="savePlanItem()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold mt-8 shadow-md text-[1.1rem] active:scale-95 transition"><i class="fas fa-save mr-2"></i>儲存行程</button>
             </div>
         </div>
 
-        <!-- ================= 2. FOOD 美食 ================= -->
+        <!-- FOOD -->
         <section id="tab-food" class="tab-content animate-fade-in">
             <div class="flex justify-between items-center mb-5 pl-2 border-l-4 border-warmbrown">
                 <h2 class="text-2xl font-zen font-bold text-warmbrown">曼谷美食地圖</h2>
                 <button onclick="toggleFoodEditMode()" id="foodEditBtn" class="text-sm bg-warmbrown text-white px-4 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-image mr-1"></i>管理美食照片</button>
             </div>
-            
+            <div class="muji-card p-5 mb-6 bg-beige/50 border border-warmbrown/10">
+                <h3 class="font-zen font-bold text-calmblue mb-3 text-[1.1rem]"><i class="fas fa-plus-circle mr-2"></i>新增餐廳/景點</h3>
+                <div class="space-y-3">
+                    <input type="text" id="newFoodName" placeholder="餐廳名稱" class="w-full p-3 border border-gray-200 rounded-xl bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-calmblue">
+                    <input type="text" id="newFoodUrl" placeholder="Google Maps 網址 (選填)" class="w-full p-3 border border-gray-200 rounded-xl bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-calmblue">
+                    <input list="foodCategoryList" id="newFoodCategory" placeholder="選擇或輸入新分類" class="w-full p-3 border border-gray-200 rounded-xl bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-calmblue">
+                    <datalist id="foodCategoryList"></datalist>
+                    <button onclick="addNewFood()" class="w-full bg-calmblue text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition">加入地圖</button>
+                </div>
+            </div>
             <div id="foodContainer" class="space-y-6"></div>
         </section>
 
-        <!-- ================= 3. WALLET 記帳 (含進階分帳系統) ================= -->
+        <!-- WALLET -->
         <section id="tab-wallet" class="tab-content animate-fade-in">
-            <!-- 頂部切換按鈕 -->
             <div class="flex bg-white rounded-full p-1.5 shadow-sm mb-6 font-zen text-[1rem] border border-warmbrown/10">
                 <button onclick="switchWalletTab('expense')" id="wallet-tab-expense" class="flex-1 py-3 rounded-full font-bold bg-warmbrown text-white transition">記帳明細</button>
                 <button onclick="switchWalletTab('split')" id="wallet-tab-split" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">分帳結算</button>
             </div>
-
-            <!-- A. 記帳明細區塊 -->
             <div id="wallet-view-expense" class="animate-fade-in">
                 <div class="muji-card p-6 mb-6 bg-warmbrown/5 border-none">
                     <h3 class="font-zen font-bold text-warmbrown mb-4 text-xl"><i class="fas fa-calculator mr-2"></i>匯率計算機</h3>
@@ -176,52 +166,39 @@
                         <input type="number" id="walletRate" value="0.9" step="0.01" class="w-24 p-3 border rounded-xl bg-white text-darkwood font-bold text-center text-lg shadow-inner">
                     </div>
                     <div class="flex gap-3 items-center">
-                        <input type="number" id="walletThb" placeholder="輸入當地金額" class="flex-1 p-4 border rounded-xl bg-white text-darkwood text-xl font-bold shadow-inner" oninput="calculateRate()">
+                        <input type="number" id="walletThb" placeholder="當地金額" class="flex-1 p-4 border rounded-xl bg-white text-darkwood text-xl font-bold shadow-inner" oninput="calculateRate()">
                         <i class="fas fa-arrow-right text-warmbrown text-xl"></i>
                         <div class="flex-1 p-4 bg-white rounded-xl border text-center font-bold text-calmblue text-xl shadow-inner" id="walletTwd">0 TWD</div>
                     </div>
                 </div>
-
                 <div class="muji-card p-6">
                     <div class="flex justify-between items-center border-b border-warmbrown/20 pb-4 mb-5">
                         <h3 class="font-zen font-bold text-warmbrown text-xl"><i class="fas fa-receipt mr-2"></i>記帳清單</h3>
                         <span class="text-[1rem] font-bold text-calmblue bg-calmblue/10 px-4 py-1.5 rounded-full">總計: <span id="walletTotal" class="text-xl">0</span> TWD</span>
                     </div>
-                    
                     <div class="flex flex-col gap-3 mb-6 p-5 bg-beige/50 rounded-2xl border border-warmbrown/10">
                         <input type="text" id="expenseName" placeholder="花費項目名稱" class="p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
                         <div class="flex gap-3">
-                            <input type="number" id="expenseCost" placeholder="總金額 (TWD)" class="flex-1 p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
+                            <input type="number" id="expenseCost" placeholder="金額 (TWD)" class="flex-1 p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
                             <label class="bg-calmblue text-white px-5 py-4 rounded-xl cursor-pointer flex items-center justify-center shadow-sm active:scale-95 transition">
                                 <i class="fas fa-camera text-xl"></i>
                                 <input type="file" accept="image/*" onchange="handleReceiptUpload(event)">
                             </label>
                         </div>
                         <img id="expenseReceiptPreview" class="hidden h-28 object-contain rounded-xl border border-gray-200 mt-2 bg-white p-2">
-                        
-                        <!-- 是否算入公費 -->
                         <div class="mt-2 bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" id="expenseIsShared" checked onchange="toggleExpenseMembersSelection()" class="w-6 h-6 accent-warmbrown">
                                 <span class="text-[1.1rem] font-bold text-darkwood">這筆算入公費 (需分攤)</span>
                             </label>
-                            
-                            <!-- 選擇特定分攤成員 (動態產生) -->
-                            <div id="expenseMembersSelection" class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
-                                <!-- 由 JS 渲染現有成員的 Checkbox -->
-                            </div>
+                            <div id="expenseMembersSelection" class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-2"></div>
                         </div>
-
                         <button onclick="addExpense()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold shadow-sm mt-3 text-[1.1rem] active:scale-95 transition"><i class="fas fa-plus mr-1"></i>新增此筆花費</button>
                     </div>
-
                     <div id="expenseList" class="space-y-4"></div>
                 </div>
             </div>
-
-            <!-- B. 分帳結算區塊 -->
             <div id="wallet-view-split" class="hidden animate-fade-in">
-                <!-- 總結卡片 -->
                 <div class="muji-card p-6 mb-6 bg-gradient-to-br from-calmblue to-blue-800 text-white border-none shadow-lg relative overflow-hidden">
                     <div class="absolute top-0 right-0 opacity-10 text-8xl transform translate-x-4 -translate-y-4"><i class="fas fa-handshake"></i></div>
                     <div class="relative z-10">
@@ -232,32 +209,24 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 成員名單 -->
                 <div class="muji-card p-6">
                     <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-3 mb-5 text-xl"><i class="fas fa-users mr-2"></i>成員繳費狀態</h3>
-                    
                     <div class="flex gap-2 mb-5">
                         <input type="text" id="newMemberName" placeholder="新增成員 (最多15人)..." class="flex-1 p-3 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
                         <button onclick="addSplitMember()" class="bg-warmbrown text-white px-5 rounded-xl shadow-sm font-bold active:scale-95 transition"><i class="fas fa-user-plus mr-1"></i>加入</button>
                     </div>
-
-                    <div id="splitMembersList" class="space-y-3">
-                        <!-- 動態渲染成員清單 -->
-                    </div>
+                    <div id="splitMembersList" class="space-y-3"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= 4. LISTS 清單 ================= -->
+        <!-- LISTS -->
         <section id="tab-lists" class="tab-content animate-fade-in">
             <div class="flex bg-white rounded-full p-1.5 shadow-sm mb-6 font-zen text-[1rem] border border-warmbrown/10">
                 <button onclick="switchListTab('baggage')" id="subtab-baggage" class="flex-1 py-3 rounded-full font-bold bg-warmbrown text-white transition">行李確認</button>
                 <button onclick="switchListTab('memo')" id="subtab-memo" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">備忘筆記</button>
                 <button onclick="switchListTab('shop')" id="subtab-shop" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">採購型錄</button>
             </div>
-
-            <!-- 行李 -->
             <div id="list-baggage" class="muji-card p-6 animate-fade-in">
                 <div class="flex gap-3 mb-6">
                     <input type="text" id="baggageInput" placeholder="輸入要帶的物品..." class="flex-1 p-4 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
@@ -265,8 +234,6 @@
                 </div>
                 <div id="baggageList" class="space-y-2"></div>
             </div>
-
-            <!-- 備忘錄 -->
             <div id="list-memo" class="hidden animate-fade-in">
                 <div class="muji-card p-6 mb-5 relative">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-warmbrown/10">
@@ -290,8 +257,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 採購型錄 -->
             <div id="list-shop" class="hidden animate-fade-in">
                 <div class="muji-card p-5 mb-6 bg-beige/30 border-dashed border-2 border-warmbrown/30">
                     <div class="flex flex-col gap-3">
@@ -310,27 +275,35 @@
             </div>
         </section>
 
-        <!-- ================= 5. INFO 資訊 ================= -->
+        <!-- INFO -->
         <section id="tab-info" class="tab-content animate-fade-in">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-zen font-bold text-warmbrown pl-2 border-l-4 border-warmbrown">旅途重要資訊</h2>
                 <button onclick="toggleInfoEdit()" id="infoEditBtn" class="text-[1rem] bg-warmbrown text-white px-5 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-pen mr-1"></i>修改資料</button>
             </div>
 
-            <!-- 線上專屬連結 -->
-            <div class="muji-card p-6 mb-6 bg-white border-l-4 border-calmblue">
+            <!-- 線上專屬連結 (按鈕版) -->
+            <div class="muji-card p-6 mb-6 bg-white border-l-4 border-calmblue" id="infoLinksContainer">
                 <h3 class="font-zen font-bold text-calmblue border-b border-calmblue/20 pb-3 mb-4 text-xl"><i class="fas fa-link mr-2"></i>線上專屬連結</h3>
                 <div class="flex flex-col gap-3">
                     <a href="https://s87928115-pixel.github.io/photo/" target="_blank" class="block w-full bg-calmblue text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-calmblue/90 active:scale-95 transition">
-                        <i class="fas fa-map-location-dot mr-2"></i>線上地圖與相簿
+                        <i class="fas fa-images mr-2"></i>線上地圖與相簿
                     </a>
                     <a href="https://s87928115-pixel.github.io/speak/" target="_blank" class="block w-full bg-warmbrown text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-warmbrown/90 active:scale-95 transition">
                         <i class="fas fa-comments mr-2"></i>開啟專屬對話
                     </a>
+                    <a href="https://maps.app.goo.gl/" target="_blank" id="savedMapsLink" class="block w-full bg-green-600 text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-green-700 active:scale-95 transition">
+                        <i class="fas fa-map-pin mr-2"></i>開啟 Google 星號儲存清單
+                    </a>
                 </div>
             </div>
 
-            <!-- 入境 QR Code 專區 -->
+            <div class="muji-card p-6 mb-6 bg-beige/50 border border-warmbrown/30 hidden" id="infoLinkEditContainer">
+                <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-map-pin mr-2"></i>星號清單連結</h3>
+                <input type="text" id="editSavedMapsUrl" class="w-full p-4 border border-warmbrown/30 rounded-xl bg-white text-[1rem] shadow-inner" placeholder="貼上 Google Maps 星號分享網址...">
+                <p class="text-xs text-gray-500 mt-2">將 Google Map APP 中「已儲存清單」的分享網址貼在此處。</p>
+            </div>
+
             <div class="muji-card p-6 mb-6 bg-gradient-to-br from-white to-beige/50">
                 <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-3 mb-5 text-xl"><i class="fas fa-qrcode mr-2"></i>入境 QR Code / 簽證</h3>
                 <div class="flex flex-col items-center">
@@ -343,10 +316,9 @@
                 </div>
             </div>
 
-            <!-- 住宿與航班 -->
             <div class="space-y-6" id="infoContainer"></div>
 
-            <div class="muji-card p-6 mt-8 border-t-4 border-calmblue">
+            <div class="muji-card p-6 mt-8 border-t-4 border-calmblue hidden" id="infoSettingsContainer">
                 <h3 class="font-zen font-bold text-calmblue mb-5 text-xl"><i class="fas fa-palette mr-2"></i>外觀設定</h3>
                 <label class="block w-full text-center bg-beige border-2 border-dashed border-warmbrown/40 text-warmbrown py-5 rounded-xl cursor-pointer font-bold transition hover:bg-warmbrown/10 active:scale-95 text-[1.1rem]">
                     <i class="fas fa-image mr-2"></i>自訂首頁封面照片
@@ -384,58 +356,64 @@
 </div>
 
 <script>
-    /* ================= 資料結構與存取 (v13 加入進階分帳) ================= */
+    /* ================= 資料結構與存取 (更新 Day2, Day3, 住宿地址) ================= */
     const initialData = {
         coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
             flight: "【去程】\n09:25 班次 JX741 到達BKK時間12:35\n\n【阿姨回程】\n13:45 班次 JX742 到達TPE時間18:25\n\n【其他人回程】\n17:40 班次 JX746 到達TPE時間22:30",
-            acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
-            qrCodeImg: "" 
+            acc: "【民宿(包棟)】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【旅館】\nhttps://maps.app.goo.gl/XfT6827unAomMdUp7",
+            qrCodeImg: "",
+            savedMapsUrl: "https://maps.app.goo.gl/" 
         },
         plan: [
             {
-                day: "DAY 1", date: "11/19",
+                day: "DAY 1", date: "啟程與夜市初體驗",
                 items: [
                     { id: 101, time: "06:05", text: "搭乘高鐵出發 ➔ 06:47 抵達桃園", img: "" },
                     { id: 102, time: "07:02", text: "轉乘機場捷運 ➔ 第二航廈", img: "" },
                     { id: 103, time: "09:25", text: "搭乘星宇 JX741 班機起飛", img: "" },
-                    { id: 104, time: "13:30", text: "機場 B 層 Super rich 換匯區換錢\n備註：大約換5000-10000即可，大部分是吃飯跟去市集會用到", img: "" },
+                    { id: 104, time: "13:30", text: "機場 B 層 Super rich 換匯區換錢\n*備註：大約換5000-10000即可，大部分是吃飯跟去市集會用到", img: "" },
                     { id: 105, time: "16:00", text: "抵達 Ekkamai 區辦理入住", img: "" },
-                    { id: 106, time: "16:30", text: "前往喬德夜市\nhttps://maps.app.goo.gl/myJ5ukB2UVAbScAq8\n或 Save One Go Night Market\nhttps://maps.app.goo.gl/iJSPRmAMoEhn9JhV8", img: "" },
+                    { id: 106, time: "16:30", text: "前往喬德夜市 https://maps.app.goo.gl/myJ5ukB2UVAbScAq8 或 Save One Go Night Market https://maps.app.goo.gl/iJSPRmAMoEhn9JhV8", img: "" },
                     { id: 107, time: "21:00", text: "逛完回旅館休息", img: "" }
                 ]
             },
             {
-                day: "DAY 2", date: "11/20",
+                day: "DAY 2", date: "11/20 (特級廚師之路)",
                 items: [
-                    { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/qzKWc1KmnyTDrhu39", img: "" },
-                    { id: 202, time: "08:00", text: "搭乘園方專車 ➔ 大象保護區 (體驗約4小時，含午餐)", img: "" },
-                    { id: 203, time: "14:30", text: "從園區出發回程 (車程約 1.5 小時)", img: "" },
-                    { id: 204, time: "16:30", text: "centralwOrld 逛街，或附近按摩\nhttps://maps.app.goo.gl/SDVcTB8YE19sMxZt8\n或前往班嘉奇蒂公園走森林天空步道\nhttps://maps.app.goo.gl/Z6hwvV6rANZxqhPr7\n備註：One More Thai Massage按摩店\nhttps://maps.app.goo.gl/ESigr1CT9JXpuv3J7\nChandee Head Spa & Massage\nhttps://maps.app.goo.gl/GtaBSvvYp6KEXqoe8", img: "" },
-                    { id: 205, time: "19:30 - 21:30", text: "Copper Beyond Buffet 豪華晚餐\nhttps://maps.app.goo.gl/t8Z76e9SiTxJTy1B7", img: "" }
+                    { id: 201, time: "08:00", text: "出門吃早餐", img: "" },
+                    { id: 202, time: "09:00", text: "特級廚師修練中", img: "" },
+                    { id: 203, time: "12:00", text: "結束", img: "" },
+                    { id: 204, time: "12:30", text: "各自踏上不同的旅行", img: "" },
+                    { id: 205, time: "18:45", text: "自助餐排隊", img: "" },
+                    { id: 206, time: "19:30", text: "吃飯", img: "" }
                 ]
             },
             {
                 day: "DAY 3", date: "11/21 (包車)",
                 items: [
-                    { id: 301, time: "08:00", text: "包車出發 ➔ 丹嫩莎朵水上市場 + 美功鐵道市場", img: "" },
-                    { id: 302, time: "14:00", text: "回市區朱拉大學美食街吃午餐", img: "" },
-                    { id: 303, time: "晚上", text: "河濱夜市", img: "" }
+                    { id: 301, time: "08:00", text: "出發", img: "" },
+                    { id: 302, time: "09:40", text: "抵達碼頭", img: "" },
+                    { id: 303, time: "10:00 - 13:00", text: "參加活動", img: "" },
+                    { id: 304, time: "13:30 - 14:00", text: "美功市場小吃", img: "" },
+                    { id: 305, time: "14:30", text: "火車進站", img: "" },
+                    { id: 306, time: "15:00", text: "集合上車", img: "" },
+                    { id: 307, time: "17:00", text: "朱拉隆功美食街", img: "" }
                 ]
             },
             {
-                day: "DAY 4", date: "11/22",
+                day: "DAY 4", date: "市集與老城漫步",
                 items: [
                     { id: 401, time: "09:00 - 12:00", text: "恰圖恰市集", img: "" },
-                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵\n船麵：https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
-                    { id: 403, time: "14:30 - 15:30", text: "鄭王廟（Wat Arun）\n備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
-                    { id: 404, time: "15:45 - 17:30", text: "崧越路+Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n備註：從鄭王廟碼頭搭乘藍旗船至 (N5 碼頭) 走進老街。", img: "" },
-                    { id: 405, time: "17:30 - 18:30", text: "慢慢回 Ekkamai 吃晚餐\n備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
+                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵 https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n*備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
+                    { id: 403, time: "14:30 - 15:30", text: "鄭王廟（Wat Arun）\n*備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
+                    { id: 404, time: "15:45 - 17:30", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n*備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
+                    { id: 405, time: "17:30 - 18:30", text: "慢慢回 Ekkamai 吃晚餐\n*備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
                     { id: 406, time: "20:30 之後", text: "步行至附近的 Big C 採買", img: "" }
                 ]
             },
             {
-                day: "DAY 5", date: "11/23 回家",
+                day: "DAY 5", date: "回家",
                 items: [
                     { id: 501, time: "早上", text: "Ekkamai / Thong Lo 周邊自由活動與最後採買", img: "" },
                     { id: 502, time: "11:30", text: "阿姨最晚抵達機場時間，13:45 班機", img: "" },
@@ -512,21 +490,17 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v13'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v17'; 
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             let data = JSON.parse(stored);
-            if (!data.wallet.members) {
-                data.wallet.members = [{ id: Date.now(), name: "自己", hasPaid: true }];
-            }
-            // 遷移：將舊版的 isShared 轉換成新的 sharedBy 陣列
+            if (!data.wallet.members) data.wallet.members = [{ id: Date.now(), name: "自己", hasPaid: true }];
+            if (!data.info.savedMapsUrl) data.info.savedMapsUrl = initialData.info.savedMapsUrl;
             data.wallet.expenses.forEach(e => {
                 if (e.isShared === undefined) e.isShared = true;
-                if (e.isShared && !e.sharedBy) {
-                    e.sharedBy = data.wallet.members.map(m => m.id); // 舊花費預設全體平分
-                }
+                if (e.isShared && !e.sharedBy) e.sharedBy = data.wallet.members.map(m => m.id);
             });
             return data;
         } else {
@@ -550,7 +524,6 @@
     let appData = loadData();
     let currentPlanIndex = 0;
     
-    // 圖片 Canvas 高度壓縮
     function compressImage(file, callback) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -575,18 +548,15 @@
         reader.readAsDataURL(file);
     }
 
-    // 文字解析：自動轉換連結與標示備註
     function parseText(text) {
         if (!text) return "";
         let parsed = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         parsed = parsed.replace(/(\*?備註[：:].*)/g, '<span class="text-[0.95rem] text-gray-500 block mt-1 leading-normal">$1</span>');
         parsed = parsed.replace(/(\b\d{1,2}:\d{2}\b)/g, '<span class="text-highlight font-bold font-zen">$1</span>');
-
         const urlRegex = /(https?:\/\/[^\s\)]+)/g;
         parsed = parsed.replace(urlRegex, function(url) {
             return `<br><a href="${url}" target="_blank" class="inline-block my-1.5 px-4 py-2 bg-calmblue/10 text-calmblue border border-calmblue/30 rounded-full text-[0.95rem] font-bold no-underline active:bg-calmblue/20 transition shadow-sm"><i class="fas fa-map-marker-alt mr-1"></i> 開啟地圖/連結</a>`;
         });
-        
         return parsed;
     }
 
@@ -775,6 +745,7 @@
     function renderFood() {
         const container = document.getElementById('foodContainer');
         const btn = document.getElementById('foodEditBtn');
+        const dataList = document.getElementById('foodCategoryList');
 
         if (isFoodEditing) {
             btn.innerHTML = '<i class="fas fa-check mr-1"></i>完成管理';
@@ -784,15 +755,18 @@
             btn.classList.replace('bg-calmblue', 'bg-warmbrown');
         }
 
+        dataList.innerHTML = appData.food.map(cat => `<option value="${cat.category}">`).join('');
+
         container.innerHTML = appData.food.map((cat, catIdx) => `
             <div class="mb-8">
                 <h3 class="text-[1.2rem] font-bold text-calmblue mb-4 font-zen border-b-2 border-calmblue/20 pb-2"><i class="fas fa-utensils mr-2"></i>${cat.category}</h3>
                 <div class="grid grid-cols-1 gap-4">
                     ${cat.items.map((item, itemIdx) => `
-                        <div class="muji-card p-5">
+                        <div class="muji-card p-5 relative group">
+                            ${isFoodEditing ? `<button onclick="deleteFoodItem(${catIdx}, ${itemIdx})" class="absolute -top-3 -right-2 bg-highlight text-white w-8 h-8 rounded-full shadow-lg text-sm transition hover:scale-110"><i class="fas fa-trash"></i></button>` : ''}
                             <div class="flex justify-between items-start">
                                 <span class="font-bold text-darkwood text-[1.1rem] leading-snug">${item.name}</span>
-                                <a href="${item.url}" target="_blank" class="w-10 h-10 rounded-full bg-calmblue/10 flex items-center justify-center text-calmblue shrink-0 shadow-sm ml-2 active:bg-calmblue/20"><i class="fas fa-location-dot"></i></a>
+                                ${item.url ? `<a href="${item.url}" target="_blank" class="w-10 h-10 rounded-full bg-calmblue/10 flex items-center justify-center text-calmblue shrink-0 shadow-sm ml-2 active:bg-calmblue/20"><i class="fas fa-location-dot"></i></a>` : ''}
                             </div>
                             
                             ${!isFoodEditing && (item.img1 || item.img2) ? `
@@ -842,6 +816,40 @@
         renderFood();
     }
 
+    function addNewFood() {
+        const name = document.getElementById('newFoodName').value.trim();
+        const url = document.getElementById('newFoodUrl').value.trim();
+        const category = document.getElementById('newFoodCategory').value.trim() || "未分類";
+
+        if (!name) return alert('請輸入餐廳名稱！');
+
+        let catObj = appData.food.find(c => c.category === category);
+        if (!catObj) {
+            catObj = { category: category, items: [] };
+            appData.food.push(catObj);
+        }
+        
+        catObj.items.push({ name: name, url: url, img1: "", img2: "" });
+        saveData(appData);
+        
+        document.getElementById('newFoodName').value = '';
+        document.getElementById('newFoodUrl').value = '';
+        document.getElementById('newFoodCategory').value = '';
+        
+        renderFood();
+    }
+
+    function deleteFoodItem(catIdx, itemIdx) {
+        if(confirm('確定要刪除這家餐廳嗎？')) {
+            appData.food[catIdx].items.splice(itemIdx, 1);
+            if(appData.food[catIdx].items.length === 0) {
+                appData.food.splice(catIdx, 1);
+            }
+            saveData(appData);
+            renderFood();
+        }
+    }
+
     function uploadFoodImage(catIdx, itemIdx, imgNum, event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -862,7 +870,7 @@
         }
     }
 
-    /* ================= 3. WALLET 記帳 (含進階分帳系統) ================= */
+    /* ================= 3. WALLET 記帳 ================= */
     function switchWalletTab(tab) {
         document.getElementById('wallet-view-expense').classList.add('hidden');
         document.getElementById('wallet-view-split').classList.add('hidden');
@@ -891,7 +899,6 @@
             list.innerHTML = appData.wallet.expenses.map((exp, idx) => {
                 total += parseFloat(exp.cost);
                 
-                // 產生參與分攤的名單字串
                 let sharersText = "";
                 if(exp.isShared && exp.sharedBy && exp.sharedBy.length > 0) {
                     const names = exp.sharedBy.map(id => {
@@ -916,7 +923,7 @@
             }).join('');
         }
         document.getElementById('walletTotal').innerText = total.toLocaleString();
-        toggleExpenseMembersSelection(); // 更新新增表單內的成員選擇區
+        toggleExpenseMembersSelection(); 
     }
 
     function calculateRate() {
@@ -993,19 +1000,15 @@
         }
     }
 
-    // === 分帳視圖邏輯 (依照個人參與的項目個別計算) ===
     function renderSplitView() {
         const members = appData.wallet.members || [];
         
-        // 初始化每個人的負債字典
         let memberDebts = {};
         members.forEach(m => memberDebts[m.id] = 0);
         let totalShared = 0;
 
-        // 計算每筆公費，按勾選的人數平分
         appData.wallet.expenses.forEach(exp => {
             if(exp.isShared) {
-                // 找出該筆花費中，目前還存在於系統內的成員
                 let activeSharers = (exp.sharedBy || []).filter(id => memberDebts[id] !== undefined);
                 
                 if(activeSharers.length > 0) {
@@ -1249,7 +1252,25 @@
         }
 
         const container = document.getElementById('infoContainer');
+        const linksContainer = document.getElementById('infoLinksContainer');
+        const linkEditContainer = document.getElementById('infoLinkEditContainer');
+        const settingsContainer = document.getElementById('infoSettingsContainer');
+        const savedMapsLink = document.getElementById('savedMapsLink');
+
+        if (appData.info.savedMapsUrl && appData.info.savedMapsUrl.trim() !== "") {
+            savedMapsLink.href = appData.info.savedMapsUrl;
+            savedMapsLink.classList.remove('hidden');
+        } else {
+            savedMapsLink.classList.add('hidden');
+        }
+
         if (isInfoEditing) {
+            linksContainer.classList.add('hidden');
+            linkEditContainer.classList.remove('hidden');
+            settingsContainer.classList.remove('hidden');
+
+            document.getElementById('editSavedMapsUrl').value = appData.info.savedMapsUrl || "";
+
             container.innerHTML = `
                 <div class="muji-card p-6">
                     <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-plane mr-2"></i>航班資訊</h3>
@@ -1263,6 +1284,10 @@
             document.getElementById('infoEditBtn').innerHTML = '<i class="fas fa-save mr-1"></i>儲存修改';
             document.getElementById('infoEditBtn').classList.replace('bg-warmbrown', 'bg-calmblue');
         } else {
+            linksContainer.classList.remove('hidden');
+            linkEditContainer.classList.add('hidden');
+            settingsContainer.classList.add('hidden');
+
             container.innerHTML = `
                 <div class="muji-card p-6">
                     <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-2 mb-4 text-[1.2rem]"><i class="fas fa-plane mr-2"></i>航班時刻</h3>
@@ -1284,6 +1309,7 @@
         if (isInfoEditing) {
             appData.info.flight = document.getElementById('editInfoFlight').value;
             appData.info.acc = document.getElementById('editInfoAcc').value;
+            appData.info.savedMapsUrl = document.getElementById('editSavedMapsUrl').value.trim();
             saveData(appData);
         }
         isInfoEditing = !isInfoEditing;
@@ -1331,13 +1357,12 @@
     window.onload = () => {
         renderPlan();
         renderFood();
-        renderWallet(); // 預設會呼叫 toggleExpenseMembersSelection
+        renderWallet(); 
         renderBaggage();
         renderMemo();
         renderShop();
         renderInfo();
     };
-
 </script>
 </body>
 </html>
