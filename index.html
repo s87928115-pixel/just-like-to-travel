@@ -12,7 +12,7 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v18'));
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v17'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 const appleLink = document.createElement('link');
                 appleLink.rel = 'apple-touch-icon';
@@ -406,16 +406,16 @@
             {
                 day: "DAY 4", date: "11/22",
                 items: [
-                    { id: 401, time: "09:00", text: "恰圖恰市集 (至12:00)", img: "" },
-                    { id: 402, time: "12:30", text: "勝利紀念碑吃船麵 https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n*備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
-                    { id: 403, time: "14:30", text: "鄭王廟（Wat Arun）\n*備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
-                    { id: 404, time: "15:45", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n*備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
-                    { id: 405, time: "17:30", text: "慢慢回 Ekkamai 吃晚餐\n*備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
-                    { id: 406, time: "20:30", text: "之後步行至附近的 Big C 採買", img: "" }
+                    { id: 401, time: "09:00 - 12:00", text: "恰圖恰市集", img: "" },
+                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵 https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n*備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
+                    { id: 403, time: "14:30 - 15:30", text: "鄭王廟（Wat Arun）\n*備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
+                    { id: 404, time: "15:45 - 17:30", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n*備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
+                    { id: 405, time: "17:30 - 18:30", text: "慢慢回 Ekkamai 吃晚餐\n*備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
+                    { id: 406, time: "20:30 之後", text: "步行至附近的 Big C 採買", img: "" }
                 ]
             },
             {
-                day: "DAY 5", date: "11/23",
+                day: "DAY 5", date: "11/23 回家",
                 items: [
                     { id: 501, time: "早上", text: "Ekkamai / Thong Lo 周邊自由活動與最後採買", img: "" },
                     { id: 502, time: "11:30", text: "阿姨最晚抵達機場時間，13:45 班機", img: "" },
@@ -492,7 +492,7 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v17'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v16'; 
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -1235,7 +1235,7 @@
         }
     }
 
-    /* ================= 5. INFO 資訊 ================= */
+    /* ================= 5. INFO 資訊 (方案 B：加入星號清單連結功能) ================= */
     let isInfoEditing = false;
     function renderInfo() {
         const qrPreview = document.getElementById('infoQrCodePreview');
@@ -1259,6 +1259,7 @@
         const settingsContainer = document.getElementById('infoSettingsContainer');
         const savedMapsLink = document.getElementById('savedMapsLink');
 
+        // 更新儲存的地圖連結按鈕
         if (appData.info.savedMapsUrl && appData.info.savedMapsUrl.trim() !== "") {
             savedMapsLink.href = appData.info.savedMapsUrl;
             savedMapsLink.classList.remove('hidden');
