@@ -1,1 +1,1367 @@
 
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>泰飽了要走走 - 行程助手</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="泰飽了要走走">
+
+    <script>
+        (function() {
+            try {
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v16'));
+                const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
+                const appleLink = document.createElement('link');
+                appleLink.rel = 'apple-touch-icon';
+                appleLink.href = iconUrl;
+                document.head.appendChild(appleLink);
+                const stdLink = document.createElement('link');
+                stdLink.rel = 'icon';
+                stdLink.href = iconUrl;
+                document.head.appendChild(stdLink);
+            } catch (e) { console.error('PWA Icon Load Error', e); }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: '#F7F5F0',
+                        darkwood: '#4A3E3D',
+                        warmbrown: '#8C7667',
+                        calmblue: '#4B6E7D',
+                        highlight: '#D9534F'
+                    },
+                    fontFamily: {
+                        noto: ['"Noto Sans TC"', 'sans-serif'],
+                        klee: ['"Klee One"', 'cursive'],
+                        zen: ['"Zen Maru Gothic"', 'sans-serif']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.2s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F7F5F0; color: #4A3E3D; -webkit-tap-highlight-color: transparent; font-size: 16px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .muji-card { background: #FFFFFF; border-radius: 12px; box-shadow: 0 4px 12px rgba(74, 62, 61, 0.06); border: 1px solid rgba(140, 118, 103, 0.1); }
+        .tab-content { display: none; padding-bottom: 6.5rem; }
+        .tab-content.active { display: block; }
+        textarea { resize: none; }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(140, 118, 103, 0.1); }
+        input[type="file"] { display: none; }
+        .timeline-line { position: absolute; left: 15px; top: 20px; bottom: 0; width: 2px; background-color: rgba(140, 118, 103, 0.2); z-index: 0; }
+        .timeline-dot { position: absolute; left: 11px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background-color: #D9534F; z-index: 1; border: 2px solid #FFF; box-shadow: 0 0 0 2px #D9534F; }
+    </style>
+</head>
+<body class="font-noto text-lg text-darkwood selection:bg-warmbrown/30">
+
+<div class="max-w-md mx-auto min-h-screen relative shadow-2xl bg-beige overflow-hidden flex flex-col pb-safe">
+    <header class="relative w-full h-48 bg-gray-200 shrink-0">
+        <img id="headerCoverImg" src="" class="w-full h-full object-cover" alt="Cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-darkwood/70 via-darkwood/20 to-transparent"></div>
+        <div class="absolute bottom-4 left-4 right-4">
+            <h1 class="text-3xl font-klee font-bold text-white tracking-widest drop-shadow-md">泰飽了要走走</h1>
+            <p class="text-[1rem] font-zen text-white/90 mt-1">Bangkok Trip - 5 Days</p>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto no-scrollbar p-4 relative" id="mainContainer">
+        
+        <!-- PLAN -->
+        <section id="tab-plan" class="tab-content active animate-fade-in">
+            <div class="flex overflow-x-auto no-scrollbar gap-3 mb-5" id="planDaySelector"></div>
+            <div class="flex justify-between items-center mb-5 pl-2 border-l-4 border-warmbrown">
+                <h2 class="text-2xl font-zen font-bold text-warmbrown" id="planDayTitle">DAY 1</h2>
+                <button onclick="togglePlanManageMode()" id="planManageBtn" class="text-sm bg-warmbrown text-white px-4 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-list-check mr-1"></i>管理行程</button>
+            </div>
+            <div class="relative pl-2 animate-fade-in" id="planTimelineContainer">
+                <div class="timeline-line" id="timelineLine"></div>
+                <div id="planItemsList" class="space-y-5"></div>
+            </div>
+            <button onclick="openPlanModal()" class="w-full mt-6 py-4 border-2 border-dashed border-warmbrown/40 text-warmbrown font-bold text-[1.1rem] rounded-xl bg-white hover:bg-warmbrown/5 transition active:scale-[0.98]"><i class="fas fa-plus mr-2"></i>新增行程</button>
+        </section>
+
+        <!-- PLAN Modal -->
+        <div id="planModal" class="fixed inset-0 bg-darkwood/60 z-50 hidden flex flex-col justify-end backdrop-blur-sm">
+            <div class="bg-beige w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-slide-up">
+                <button onclick="closePlanModal()" class="absolute top-5 right-5 text-gray-400 hover:text-darkwood text-2xl transition"><i class="fas fa-times"></i></button>
+                <h3 class="text-xl font-zen font-bold text-warmbrown mb-5 border-b border-warmbrown/20 pb-2" id="planModalTitle">新增行程</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-[1rem] font-bold mb-2 text-calmblue">時間 (選填)</label>
+                        <input type="text" id="planItemTime" placeholder="例如: 09:25 或 早上/晚上" class="w-full p-4 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-warmbrown text-[1.1rem] transition shadow-inner">
+                    </div>
+                    <div>
+                        <label class="block text-[1rem] font-bold mb-2 text-calmblue">行程內容 / 網址 (必填)</label>
+                        <textarea id="planItemText" rows="5" placeholder="輸入細節，若有網址會自動轉成按鈕。&#10;若以「備註：」開頭，字體會自動變小！" class="w-full p-4 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-warmbrown text-[1.1rem] leading-relaxed transition shadow-inner"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[1rem] font-bold mb-2 text-calmblue">附加照片 (選填)</label>
+                        <div class="flex gap-3 items-start">
+                            <label class="bg-calmblue/10 text-calmblue border border-calmblue/20 px-4 py-4 rounded-xl cursor-pointer flex-1 text-center font-bold text-[1rem] hover:bg-calmblue/20 transition active:scale-95">
+                                <i class="fas fa-camera mr-2"></i>上傳照片
+                                <input type="file" accept="image/*" onchange="handlePlanItemImg(event)">
+                            </label>
+                            <img id="planItemImgPreview" src="" class="hidden h-20 w-20 object-cover rounded-xl border border-gray-200 shadow-sm">
+                        </div>
+                    </div>
+                </div>
+                <button onclick="savePlanItem()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold mt-8 shadow-md text-[1.1rem] active:scale-95 transition"><i class="fas fa-save mr-2"></i>儲存行程</button>
+            </div>
+        </div>
+
+        <!-- FOOD -->
+        <section id="tab-food" class="tab-content animate-fade-in">
+            <div class="flex justify-between items-center mb-5 pl-2 border-l-4 border-warmbrown">
+                <h2 class="text-2xl font-zen font-bold text-warmbrown">曼谷美食地圖</h2>
+                <button onclick="toggleFoodEditMode()" id="foodEditBtn" class="text-sm bg-warmbrown text-white px-4 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-image mr-1"></i>管理美食照片</button>
+            </div>
+            <div class="muji-card p-5 mb-6 bg-beige/50 border border-warmbrown/10">
+                <h3 class="font-zen font-bold text-calmblue mb-3 text-[1.1rem]"><i class="fas fa-plus-circle mr-2"></i>新增餐廳/景點</h3>
+                <div class="space-y-3">
+                    <input type="text" id="newFoodName" placeholder="餐廳名稱" class="w-full p-3 border border-gray-200 rounded-xl bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-calmblue">
+                    <input type="text" id="newFoodUrl" placeholder="Google Maps 網址 (選填)" class="w-full p-3 border border-gray-200 rounded-xl bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-calmblue">
+                    <input list="foodCategoryList" id="newFoodCategory" placeholder="選擇或輸入新分類" class="w-full p-3 border border-gray-200 rounded-xl bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-calmblue">
+                    <datalist id="foodCategoryList"></datalist>
+                    <button onclick="addNewFood()" class="w-full bg-calmblue text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition">加入地圖</button>
+                </div>
+            </div>
+            <div id="foodContainer" class="space-y-6"></div>
+        </section>
+
+        <!-- WALLET -->
+        <section id="tab-wallet" class="tab-content animate-fade-in">
+            <div class="flex bg-white rounded-full p-1.5 shadow-sm mb-6 font-zen text-[1rem] border border-warmbrown/10">
+                <button onclick="switchWalletTab('expense')" id="wallet-tab-expense" class="flex-1 py-3 rounded-full font-bold bg-warmbrown text-white transition">記帳明細</button>
+                <button onclick="switchWalletTab('split')" id="wallet-tab-split" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">分帳結算</button>
+            </div>
+            <div id="wallet-view-expense" class="animate-fade-in">
+                <div class="muji-card p-6 mb-6 bg-warmbrown/5 border-none">
+                    <h3 class="font-zen font-bold text-warmbrown mb-4 text-xl"><i class="fas fa-calculator mr-2"></i>匯率計算機</h3>
+                    <div class="flex gap-3 items-center mb-4">
+                        <span class="text-[1rem] font-bold">目前匯率：</span>
+                        <input type="number" id="walletRate" value="0.9" step="0.01" class="w-24 p-3 border rounded-xl bg-white text-darkwood font-bold text-center text-lg shadow-inner">
+                    </div>
+                    <div class="flex gap-3 items-center">
+                        <input type="number" id="walletThb" placeholder="當地金額" class="flex-1 p-4 border rounded-xl bg-white text-darkwood text-xl font-bold shadow-inner" oninput="calculateRate()">
+                        <i class="fas fa-arrow-right text-warmbrown text-xl"></i>
+                        <div class="flex-1 p-4 bg-white rounded-xl border text-center font-bold text-calmblue text-xl shadow-inner" id="walletTwd">0 TWD</div>
+                    </div>
+                </div>
+                <div class="muji-card p-6">
+                    <div class="flex justify-between items-center border-b border-warmbrown/20 pb-4 mb-5">
+                        <h3 class="font-zen font-bold text-warmbrown text-xl"><i class="fas fa-receipt mr-2"></i>記帳清單</h3>
+                        <span class="text-[1rem] font-bold text-calmblue bg-calmblue/10 px-4 py-1.5 rounded-full">總計: <span id="walletTotal" class="text-xl">0</span> TWD</span>
+                    </div>
+                    <div class="flex flex-col gap-3 mb-6 p-5 bg-beige/50 rounded-2xl border border-warmbrown/10">
+                        <input type="text" id="expenseName" placeholder="花費項目名稱" class="p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
+                        <div class="flex gap-3">
+                            <input type="number" id="expenseCost" placeholder="金額 (TWD)" class="flex-1 p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
+                            <label class="bg-calmblue text-white px-5 py-4 rounded-xl cursor-pointer flex items-center justify-center shadow-sm active:scale-95 transition">
+                                <i class="fas fa-camera text-xl"></i>
+                                <input type="file" accept="image/*" onchange="handleReceiptUpload(event)">
+                            </label>
+                        </div>
+                        <img id="expenseReceiptPreview" class="hidden h-28 object-contain rounded-xl border border-gray-200 mt-2 bg-white p-2">
+                        <div class="mt-2 bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="expenseIsShared" checked onchange="toggleExpenseMembersSelection()" class="w-6 h-6 accent-warmbrown">
+                                <span class="text-[1.1rem] font-bold text-darkwood">這筆算入公費 (需分攤)</span>
+                            </label>
+                            <div id="expenseMembersSelection" class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-2"></div>
+                        </div>
+                        <button onclick="addExpense()" class="w-full bg-warmbrown text-white py-4 rounded-xl font-bold shadow-sm mt-3 text-[1.1rem] active:scale-95 transition"><i class="fas fa-plus mr-1"></i>新增此筆花費</button>
+                    </div>
+                    <div id="expenseList" class="space-y-4"></div>
+                </div>
+            </div>
+            <div id="wallet-view-split" class="hidden animate-fade-in">
+                <div class="muji-card p-6 mb-6 bg-gradient-to-br from-calmblue to-blue-800 text-white border-none shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 opacity-10 text-8xl transform translate-x-4 -translate-y-4"><i class="fas fa-handshake"></i></div>
+                    <div class="relative z-10">
+                        <h3 class="font-zen font-bold text-white/80 mb-2 text-lg">總公費池 (已計入所有分攤)</h3>
+                        <div class="text-4xl font-bold font-zen mb-2 tracking-wider"><span id="splitTotalAmount">0</span> <span class="text-xl">TWD</span></div>
+                        <div class="text-sm text-white/80 border-t border-white/20 pt-3 mt-2">
+                            系統會依據每筆花費的「勾選成員」，自動計算每個人個別專屬的應付金額。
+                        </div>
+                    </div>
+                </div>
+                <div class="muji-card p-6">
+                    <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-3 mb-5 text-xl"><i class="fas fa-users mr-2"></i>成員繳費狀態</h3>
+                    <div class="flex gap-2 mb-5">
+                        <input type="text" id="newMemberName" placeholder="新增成員 (最多15人)..." class="flex-1 p-3 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
+                        <button onclick="addSplitMember()" class="bg-warmbrown text-white px-5 rounded-xl shadow-sm font-bold active:scale-95 transition"><i class="fas fa-user-plus mr-1"></i>加入</button>
+                    </div>
+                    <div id="splitMembersList" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LISTS -->
+        <section id="tab-lists" class="tab-content animate-fade-in">
+            <div class="flex bg-white rounded-full p-1.5 shadow-sm mb-6 font-zen text-[1rem] border border-warmbrown/10">
+                <button onclick="switchListTab('baggage')" id="subtab-baggage" class="flex-1 py-3 rounded-full font-bold bg-warmbrown text-white transition">行李確認</button>
+                <button onclick="switchListTab('memo')" id="subtab-memo" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">備忘筆記</button>
+                <button onclick="switchListTab('shop')" id="subtab-shop" class="flex-1 py-3 rounded-full font-bold text-warmbrown transition">採購型錄</button>
+            </div>
+            <div id="list-baggage" class="muji-card p-6 animate-fade-in">
+                <div class="flex gap-3 mb-6">
+                    <input type="text" id="baggageInput" placeholder="輸入要帶的物品..." class="flex-1 p-4 border border-gray-200 rounded-xl bg-beige/30 focus:bg-white text-[1.1rem] transition shadow-inner">
+                    <button onclick="addBaggage()" class="bg-calmblue text-white px-6 rounded-xl shadow-sm text-xl active:scale-95 transition"><i class="fas fa-plus"></i></button>
+                </div>
+                <div id="baggageList" class="space-y-2"></div>
+            </div>
+            <div id="list-memo" class="hidden animate-fade-in">
+                <div class="muji-card p-6 mb-5 relative">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-warmbrown/10">
+                        <h3 class="font-zen font-bold text-warmbrown text-xl">自由筆記</h3>
+                        <button onclick="toggleMemoEdit()" id="memoEditBtn" class="text-[1rem] bg-warmbrown text-white px-5 py-2 rounded-full font-bold active:scale-95 transition"><i class="fas fa-pen mr-1"></i>編輯</button>
+                    </div>
+                    <div id="memoViewMode" class="whitespace-pre-wrap leading-relaxed min-h-[120px] text-[1.1rem]"></div>
+                    <div id="memoEditMode" class="hidden">
+                        <textarea id="memoTextarea" class="w-full h-56 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 mb-4 text-[1.1rem] leading-relaxed focus:bg-white transition shadow-inner"></textarea>
+                        <div class="flex gap-3">
+                            <label class="flex-1 text-center bg-calmblue text-white py-4 rounded-xl cursor-pointer font-bold shadow-sm text-[1.1rem] active:scale-95 transition">
+                                <i class="fas fa-image mr-1"></i>附加圖片
+                                <input type="file" accept="image/*" onchange="handleMemoImageUpload(event)">
+                            </label>
+                            <button onclick="saveMemoEdit()" class="flex-1 bg-warmbrown text-white py-4 rounded-xl font-bold shadow-sm text-[1.1rem] active:scale-95 transition"><i class="fas fa-save mr-1"></i>儲存</button>
+                        </div>
+                    </div>
+                    <div id="memoImageContainer" class="mt-5 hidden relative">
+                        <img id="memoImagePreview" src="" class="w-full rounded-xl shadow-sm border border-gray-200">
+                        <button onclick="removeMemoImage()" class="absolute top-3 right-3 bg-white/90 text-highlight p-3 rounded-full shadow-md backdrop-blur active:scale-90 transition"><i class="fas fa-trash text-lg"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div id="list-shop" class="hidden animate-fade-in">
+                <div class="muji-card p-5 mb-6 bg-beige/30 border-dashed border-2 border-warmbrown/30">
+                    <div class="flex flex-col gap-3">
+                        <input type="text" id="shopNameInput" placeholder="想買什麼？ (商品名稱)" class="p-4 border border-gray-200 rounded-xl bg-white text-[1.1rem] shadow-inner">
+                        <div class="flex gap-3">
+                            <label class="flex-1 bg-white border border-gray-300 text-gray-500 py-4 rounded-xl cursor-pointer text-center font-bold text-[1rem] shadow-sm hover:bg-gray-50 active:scale-95 transition">
+                                <i class="fas fa-camera mr-1"></i>商品截圖
+                                <input type="file" accept="image/*" onchange="handleShopImageTemp(event)">
+                            </label>
+                            <button onclick="addShopItem()" class="flex-1 bg-calmblue text-white rounded-xl shadow-sm font-bold text-[1rem] active:scale-95 transition"><i class="fas fa-plus mr-1"></i>加入清單</button>
+                        </div>
+                        <img id="shopImageTemp" class="hidden h-24 object-contain rounded-xl bg-white p-2 border mx-auto mt-2">
+                    </div>
+                </div>
+                <div id="shopGrid" class="grid grid-cols-3 gap-3"></div>
+            </div>
+        </section>
+
+        <!-- INFO -->
+        <section id="tab-info" class="tab-content animate-fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-zen font-bold text-warmbrown pl-2 border-l-4 border-warmbrown">旅途重要資訊</h2>
+                <button onclick="toggleInfoEdit()" id="infoEditBtn" class="text-[1rem] bg-warmbrown text-white px-5 py-2 rounded-full shadow-sm font-bold active:scale-95 transition"><i class="fas fa-pen mr-1"></i>修改資料</button>
+            </div>
+
+            <!-- 線上專屬連結 (方案B: 直接跳轉清單按鈕) -->
+            <div class="muji-card p-6 mb-6 bg-white border-l-4 border-calmblue" id="infoLinksContainer">
+                <h3 class="font-zen font-bold text-calmblue border-b border-calmblue/20 pb-3 mb-4 text-xl"><i class="fas fa-link mr-2"></i>線上專屬連結</h3>
+                <div class="flex flex-col gap-3">
+                    <a href="https://s87928115-pixel.github.io/photo/" target="_blank" class="block w-full bg-calmblue text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-calmblue/90 active:scale-95 transition">
+                        <i class="fas fa-images mr-2"></i>線上地圖與相簿
+                    </a>
+                    <a href="https://s87928115-pixel.github.io/speak/" target="_blank" class="block w-full bg-warmbrown text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-warmbrown/90 active:scale-95 transition">
+                        <i class="fas fa-comments mr-2"></i>開啟專屬對話
+                    </a>
+                    <!-- 使用者可在此 href 填入自己 Google Map 星號清單的分享網址 -->
+                    <a href="https://maps.app.goo.gl/" target="_blank" id="savedMapsLink" class="block w-full bg-green-600 text-white text-center py-3.5 rounded-xl font-bold text-[1.1rem] shadow-md hover:bg-green-700 active:scale-95 transition">
+                        <i class="fas fa-map-pin mr-2"></i>開啟 Google 星號儲存清單
+                    </a>
+                </div>
+            </div>
+
+            <!-- 編輯模式下修改連結的輸入框 (預設隱藏) -->
+            <div class="muji-card p-6 mb-6 bg-beige/50 border border-warmbrown/30 hidden" id="infoLinkEditContainer">
+                <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-map-pin mr-2"></i>星號清單連結</h3>
+                <input type="text" id="editSavedMapsUrl" class="w-full p-4 border border-warmbrown/30 rounded-xl bg-white text-[1rem] shadow-inner" placeholder="貼上 Google Maps 星號分享網址...">
+                <p class="text-xs text-gray-500 mt-2">將 Google Map APP 中「已儲存清單」的分享網址貼在此處。</p>
+            </div>
+
+            <!-- 入境 QR Code 專區 -->
+            <div class="muji-card p-6 mb-6 bg-gradient-to-br from-white to-beige/50">
+                <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-3 mb-5 text-xl"><i class="fas fa-qrcode mr-2"></i>入境 QR Code / 簽證</h3>
+                <div class="flex flex-col items-center">
+                    <img id="infoQrCodePreview" src="" class="w-full max-w-[280px] rounded-xl shadow-md mb-4 hidden object-contain bg-white p-3 border">
+                    <label id="qrCodeUploadLabel" class="bg-calmblue text-white px-6 py-4 rounded-full cursor-pointer font-bold shadow-md transition hover:bg-calmblue/90 active:scale-95 transform text-[1.1rem]">
+                        <i class="fas fa-upload mr-2"></i>上傳條碼截圖
+                        <input type="file" accept="image/*" onchange="handleQrCodeUpload(event)">
+                    </label>
+                    <button id="removeQrBtn" onclick="removeQrCode()" class="mt-3 text-gray-400 hover:text-highlight text-[1rem] hidden font-bold underline transition"><i class="fas fa-trash mr-1"></i>移除並重新上傳</button>
+                </div>
+            </div>
+
+            <!-- 住宿與航班 -->
+            <div class="space-y-6" id="infoContainer"></div>
+
+            <div class="muji-card p-6 mt-8 border-t-4 border-calmblue hidden" id="infoSettingsContainer">
+                <h3 class="font-zen font-bold text-calmblue mb-5 text-xl"><i class="fas fa-palette mr-2"></i>外觀設定</h3>
+                <label class="block w-full text-center bg-beige border-2 border-dashed border-warmbrown/40 text-warmbrown py-5 rounded-xl cursor-pointer font-bold transition hover:bg-warmbrown/10 active:scale-95 text-[1.1rem]">
+                    <i class="fas fa-image mr-2"></i>自訂首頁封面照片
+                    <input type="file" accept="image/*" onchange="updateCoverImage(event)">
+                </label>
+                <p class="text-sm text-highlight mt-4 text-center font-bold">更換封面後，請將本網頁<span class="underline">先移除舊的捷徑</span>，再「重新加入主畫面」，圖示才會同步更新喔！</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="glass-nav absolute bottom-0 w-full h-[5rem] flex justify-around items-center z-40 rounded-t-3xl shadow-[0_-10px_40px_rgba(74,62,61,0.08)] px-2 pb-safe">
+        <button onclick="switchTab('plan', this)" class="nav-btn active flex flex-col items-center justify-center w-16 h-full text-warmbrown transform transition active:scale-90">
+            <i class="fas fa-calendar-alt text-2xl mb-1"></i>
+            <span class="text-[12px] font-bold">行程</span>
+        </button>
+        <button onclick="switchTab('food', this)" class="nav-btn flex flex-col items-center justify-center w-16 h-full text-gray-400 hover:text-warmbrown transform transition active:scale-90">
+            <i class="fas fa-utensils text-2xl mb-1"></i>
+            <span class="text-[12px] font-bold">美食</span>
+        </button>
+        <button onclick="switchTab('wallet', this)" class="nav-btn flex flex-col items-center justify-center w-16 h-full text-gray-400 hover:text-warmbrown transform transition active:scale-90">
+            <i class="fas fa-wallet text-2xl mb-1"></i>
+            <span class="text-[12px] font-bold">記帳</span>
+        </button>
+        <button onclick="switchTab('lists', this)" class="nav-btn flex flex-col items-center justify-center w-16 h-full text-gray-400 hover:text-warmbrown transform transition active:scale-90">
+            <i class="fas fa-list-check text-2xl mb-1"></i>
+            <span class="text-[12px] font-bold">清單</span>
+        </button>
+        <button onclick="switchTab('info', this)" class="nav-btn flex flex-col items-center justify-center w-16 h-full text-gray-400 hover:text-warmbrown transform transition active:scale-90">
+            <i class="fas fa-passport text-2xl mb-1"></i>
+            <span class="text-[12px] font-bold">資訊</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    /* ================= 資料結構與存取 ================= */
+    const initialData = {
+        coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
+        info: {
+            flight: "【去程】\n09:25 班次 JX741 到達BKK時間12:35\n\n【阿姨回程】\n13:45 班次 JX742 到達TPE時間18:25\n\n【其他人回程】\n17:40 班次 JX746 到達TPE時間22:30",
+            acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
+            qrCodeImg: "",
+            savedMapsUrl: "https://maps.app.goo.gl/" // 預設留空供使用者自填
+        },
+        plan: [
+            {
+                day: "DAY 1", date: "啟程與夜市初體驗",
+                items: [
+                    { id: 101, time: "06:05", text: "搭乘高鐵出發 ➔ 06:47 抵達桃園", img: "" },
+                    { id: 102, time: "07:02", text: "轉乘機場捷運 ➔ 第二航廈", img: "" },
+                    { id: 103, time: "09:25", text: "搭乘星宇 JX741 班機起飛", img: "" },
+                    { id: 104, time: "13:30", text: "機場 B 層 Super rich 換匯區換錢\n*備註：大約換5000-10000即可，大部分是吃飯跟去市集會用到", img: "" },
+                    { id: 105, time: "16:00", text: "抵達 Ekkamai 區辦理入住", img: "" },
+                    { id: 106, time: "16:30", text: "前往喬德夜市 https://maps.app.goo.gl/myJ5ukB2UVAbScAq8 或 Save One Go Night Market https://maps.app.goo.gl/iJSPRmAMoEhn9JhV8", img: "" },
+                    { id: 107, time: "21:00", text: "逛完回旅館休息", img: "" }
+                ]
+            },
+            {
+                day: "DAY 2", date: "大象保護區與市區漫步",
+                items: [
+                    { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/qzKWc1KmnyTDrhu39", img: "" },
+                    { id: 202, time: "08:00", text: "搭乘園方專車 ➔ 大象保護區 (體驗約4小時，含午餐)", img: "" },
+                    { id: 203, time: "14:30", text: "從園區出發回程 (車程約 1.5 小時)", img: "" },
+                    { id: 204, time: "16:30", text: "centralwOrld https://maps.app.goo.gl/SDVcTB8YE19sMxZt8 逛街，或前往班嘉奇蒂公園 https://maps.app.goo.gl/Z6hwvV6rANZxqhPr7 走森林天空步道\n*備註：附近按摩推薦 One More Thai Massage https://maps.app.goo.gl/ESigr1CT9JXpuv3J7 或是 Chandee Head Spa & Massage https://maps.app.goo.gl/GtaBSvvYp6KEXqoe8", img: "" },
+                    { id: 205, time: "19:30 - 21:30", text: "Copper Beyond Buffet 豪華晚餐 https://maps.app.goo.gl/t8Z76e9SiTxJTy1B7", img: "" }
+                ]
+            },
+            {
+                day: "DAY 3", date: "水上與鐵道市場 (包車日)",
+                items: [
+                    { id: 301, time: "08:00", text: "包車出發 ➔ 丹嫩莎朵水上市場 + 美功鐵道市場", img: "" },
+                    { id: 302, time: "14:00", text: "回市區吃午餐\n推薦：朱拉大學美食街 或 紅大哥水門雞飯 https://maps.app.goo.gl/AJr8387hziVcroeN8", img: "" },
+                    { id: 303, time: "晚上", text: "河濱夜市與泰式按摩，放鬆一天的疲憊", img: "" }
+                ]
+            },
+            {
+                day: "DAY 4", date: "市集與老城漫步",
+                items: [
+                    { id: 401, time: "09:00 - 12:00", text: "恰圖恰市集", img: "" },
+                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵 https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n*備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
+                    { id: 403, time: "14:30 - 15:30", text: "鄭王廟（Wat Arun）\n*備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
+                    { id: 404, time: "15:45 - 17:30", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n*備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
+                    { id: 405, time: "17:30 - 18:30", text: "慢慢回 Ekkamai 吃晚餐\n*備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
+                    { id: 406, time: "20:30 之後", text: "步行至附近的 Big C 採買", img: "" }
+                ]
+            },
+            {
+                day: "DAY 5", date: "回家",
+                items: [
+                    { id: 501, time: "早上", text: "Ekkamai / Thong Lo 周邊自由活動與最後採買", img: "" },
+                    { id: 502, time: "11:30", text: "阿姨最晚抵達機場時間，13:45 班機", img: "" },
+                    { id: 503, time: "15:30", text: "其他人最晚抵達 BKK 機場，準備搭機", img: "" },
+                    { id: 504, time: "17:40", text: "搭乘星宇 JX746 班機返台", img: "" }
+                ]
+            }
+        ],
+        food: [
+            {
+                category: "住宿區周邊 (Ekkamai / Thong Lo)",
+                items: [
+                    { name: "Tamnak Isan Ekamai", url: "https://maps.app.goo.gl/Uehp1Gs2uWMHpz2d9", img1: "", img2: "" },
+                    { name: "Mother May I Kitchen", url: "https://maps.app.goo.gl/D5qKigaLM29DcnYT7", img1: "", img2: "" },
+                    { name: "段哥 Thai Street food", url: "https://maps.app.goo.gl/W1bgvDwFzHQaXgRcA", img1: "", img2: "" },
+                    { name: "Mae Varee (芒果糯米飯)", url: "https://maps.app.goo.gl/rMihuDup2LsVBcZD8", img1: "", img2: "" },
+                    { name: "Goji Kitchen+Bar", url: "https://maps.app.goo.gl/3YN1YaU9cYUcnMhd9", img1: "", img2: "" }
+                ]
+            },
+            {
+                category: "購物市中心與水門區 (BTS Chit Lom / Siam)",
+                items: [
+                    { name: "中央世界購物商場 (CentralWorld)", url: "https://maps.app.goo.gl/qryGjwxrZSRR4zWd6", img1: "", img2: "" },
+                    { name: "Copper Beyond Buffet", url: "https://maps.app.goo.gl/SayZdEX69gTLshWe8", img1: "", img2: "" },
+                    { name: "紅大哥水門雞飯店", url: "https://maps.app.goo.gl/vqSep8wiTSvx9cRu8", img1: "", img2: "" },
+                    { name: "Thong Smith (通思密船麵)", url: "https://maps.app.goo.gl/d7yGmXAK78QMx2De8", img1: "", img2: "" }
+                ]
+            },
+            {
+                category: "朱拉隆功大學商圈 (BTS / MRT)",
+                items: [
+                    { name: "Kampang ISAN Casual Dining", url: "https://maps.app.goo.gl/P4DGn5JhFD3jJFS67", img1: "", img2: "" },
+                    { name: "Nueng Nom Nua (牛奶小子)", url: "https://maps.app.goo.gl/ToQgo4q54G5QFauv6", img1: "", img2: "" },
+                    { name: "朱拉50巷廚房", url: "https://maps.app.goo.gl/pbSx2tyqFEDSsz717", img1: "", img2: "" }
+                ]
+            },
+            {
+                category: "老城區與特色夜市",
+                items: [
+                    { name: "唐人街夜市", url: "https://maps.app.goo.gl/wdUhsNYcvksixmPf9", img1: "", img2: "" },
+                    { name: "Charoen Krung Bar & Bistro", url: "https://maps.app.goo.gl/DjgtHJwfvFxZqJFN7", img1: "", img2: "" },
+                    { name: "拍那空船麵-勝利紀念碑", url: "https://maps.app.goo.gl/d5axyjMX5GHiQisQ7", img1: "", img2: "" },
+                    { name: "Save One Go Night Market", url: "https://maps.app.goo.gl/djUgooXf2RUcwgwX6", img1: "", img2: "" },
+                    { name: "Topkart Bangkok (卡丁車)", url: "https://maps.app.goo.gl/bYrTCqKLZZXEs8Wd6", img1: "", img2: "" }
+                ]
+            },
+            {
+                category: "必吃經典街頭小吃",
+                items: [
+                    { name: "班斕蛋捲", url: "https://maps.app.goo.gl/ZwUqb6aYMYHb5JTg9", img1: "", img2: "" },
+                    { name: "Roti (第一名香蕉煎餅)", url: "https://maps.app.goo.gl/KrXzmPc46bNiMxCr5", img1: "", img2: "" },
+                    { name: "Zhong ped pa low (滷鴨)", url: "https://maps.app.goo.gl/RFMSqnTATzE9gjdw9", img1: "", img2: "" },
+                    { name: "Somsak (粉絲蟹煲)", url: "https://maps.app.goo.gl/oiweN53nRgxNDbcn9", img1: "", img2: "" },
+                    { name: "Yum yum", url: "https://maps.app.goo.gl/4VBuaEAUPcmd9L6SA", img1: "", img2: "" }
+                ]
+            }
+        ],
+        wallet: { 
+            rate: 0.9, 
+            expenses: [],
+            members: [
+                { id: 1, name: "自己", hasPaid: true } 
+            ]
+        },
+        lists: {
+            baggage: [
+                { text: "護照 (效期 6 個月以上)", done: false },
+                { text: "泰銖現金 & 信用卡", done: false },
+                { text: "網卡 / eSIM", done: false },
+                { text: "防曬乳 / 太陽眼鏡", done: false }
+            ],
+            memo: { text: "採購提醒：\nBig C 必買：手標泰奶、海苔、Pocky", img: "" },
+            shop: []
+        }
+    };
+
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v16'; 
+    
+    function loadData() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            let data = JSON.parse(stored);
+            if (!data.wallet.members) data.wallet.members = [{ id: Date.now(), name: "自己", hasPaid: true }];
+            if (!data.info.savedMapsUrl) data.info.savedMapsUrl = initialData.info.savedMapsUrl;
+            data.wallet.expenses.forEach(e => {
+                if (e.isShared === undefined) e.isShared = true;
+                if (e.isShared && !e.sharedBy) e.sharedBy = data.wallet.members.map(m => m.id);
+            });
+            return data;
+        } else {
+            saveData(initialData);
+            return initialData;
+        }
+    }
+
+    function saveData(data) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                alert('系統容量已滿！\n因為這是無需網路的單頁程式，手機儲存空間有限。\n請至「美食」、「記帳」或「行程」刪除部分舊照片後再試一次。');
+            } else {
+                console.error(e);
+            }
+        }
+    }
+
+    let appData = loadData();
+    let currentPlanIndex = 0;
+    
+    function compressImage(file, callback) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 500;
+                let width = img.width;
+                let height = img.height;
+                if (width > MAX_WIDTH) {
+                    height = Math.round(height * (MAX_WIDTH / width));
+                    width = MAX_WIDTH;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', 0.5));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function parseText(text) {
+        if (!text) return "";
+        let parsed = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        parsed = parsed.replace(/(\*?備註[：:].*)/g, '<span class="text-[0.95rem] text-gray-500 block mt-1 leading-normal">$1</span>');
+        parsed = parsed.replace(/(\b\d{1,2}:\d{2}\b)/g, '<span class="text-highlight font-bold font-zen">$1</span>');
+        const urlRegex = /(https?:\/\/[^\s\)]+)/g;
+        parsed = parsed.replace(urlRegex, function(url) {
+            return `<br><a href="${url}" target="_blank" class="inline-block my-1.5 px-4 py-2 bg-calmblue/10 text-calmblue border border-calmblue/30 rounded-full text-[0.95rem] font-bold no-underline active:bg-calmblue/20 transition shadow-sm"><i class="fas fa-map-marker-alt mr-1"></i> 開啟地圖/連結</a>`;
+        });
+        return parsed;
+    }
+
+    /* ================= UI 切換 ================= */
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('text-warmbrown', 'active');
+            btn.classList.add('text-gray-400');
+        });
+        if (btnElement) {
+            btnElement.classList.remove('text-gray-400');
+            btnElement.classList.add('text-warmbrown', 'active');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchListTab(type) {
+        ['baggage', 'memo', 'shop'].forEach(t => {
+            document.getElementById(`list-${t}`).classList.add('hidden');
+            let btn = document.getElementById(`subtab-${t}`);
+            btn.classList.remove('bg-warmbrown', 'text-white');
+            btn.classList.add('text-warmbrown');
+        });
+        document.getElementById(`list-${type}`).classList.remove('hidden');
+        let activeBtn = document.getElementById(`subtab-${type}`);
+        activeBtn.classList.remove('text-warmbrown');
+        activeBtn.classList.add('bg-warmbrown', 'text-white');
+    }
+
+    /* ================= 1. PLAN 行程模組 ================= */
+    let isPlanManageMode = false;
+    let editingItemObjId = null; 
+    let tempPlanItemImg = "";
+
+    function renderPlan() {
+        const selector = document.getElementById('planDaySelector');
+        selector.innerHTML = appData.plan.map((p, idx) => `
+            <button onclick="selectPlanDay(${idx})" class="shrink-0 px-6 py-3 rounded-full font-zen font-bold text-[1rem] transition ${idx === currentPlanIndex ? 'bg-warmbrown text-white shadow-lg transform scale-105' : 'bg-white text-warmbrown border border-warmbrown/20'}">
+                ${p.day} <span class="text-[0.7rem] opacity-80 block -mt-1">${p.date}</span>
+            </button>
+        `).join('');
+
+        const dayData = appData.plan[currentPlanIndex];
+        document.getElementById('planDayTitle').innerText = `${dayData.day} - ${dayData.date}`;
+
+        const listContainer = document.getElementById('planItemsList');
+        const timelineLine = document.getElementById('timelineLine');
+        
+        if(dayData.items.length === 0) {
+            listContainer.innerHTML = '<div class="text-center text-gray-400 py-10 font-bold text-[1.1rem]">今天還沒有安排行程喔！</div>';
+            timelineLine.style.display = 'none';
+        } else {
+            timelineLine.style.display = 'block';
+            listContainer.innerHTML = dayData.items.map(item => `
+                <div class="relative pl-8 pb-3">
+                    <div class="timeline-dot"></div>
+                    <div class="muji-card p-5 relative group border-t border-white shadow-md">
+                        ${isPlanManageMode ? `
+                        <div class="absolute -top-3 -right-2 flex gap-2 z-10">
+                            <button onclick="openPlanModal(${item.id})" class="bg-calmblue text-white w-9 h-9 rounded-full shadow-lg text-sm transition hover:scale-110"><i class="fas fa-pen"></i></button>
+                            <button onclick="deletePlanItem(${item.id})" class="bg-highlight text-white w-9 h-9 rounded-full shadow-lg text-sm transition hover:scale-110"><i class="fas fa-trash"></i></button>
+                        </div>
+                        ` : ''}
+                        
+                        ${item.time ? `<div class="text-highlight font-zen font-bold text-2xl tracking-wide mb-2">${item.time}</div>` : ''}
+                        <div class="text-[1.1rem] leading-loose text-darkwood">${parseText(item.text)}</div>
+                        ${item.img ? `<img src="${item.img}" class="mt-4 rounded-xl w-full max-h-56 object-cover border border-gray-100 shadow-sm" onclick="window.open('${item.img}')">` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        const btn = document.getElementById('planManageBtn');
+        if (isPlanManageMode) {
+            btn.innerHTML = '<i class="fas fa-check mr-1"></i>完成管理';
+            btn.classList.replace('bg-warmbrown', 'bg-calmblue');
+        } else {
+            btn.innerHTML = '<i class="fas fa-list-check mr-1"></i>管理行程';
+            btn.classList.replace('bg-calmblue', 'bg-warmbrown');
+        }
+    }
+
+    function selectPlanDay(idx) {
+        currentPlanIndex = idx;
+        renderPlan();
+    }
+
+    function togglePlanManageMode() {
+        isPlanManageMode = !isPlanManageMode;
+        renderPlan();
+    }
+
+    function openPlanModal(itemId = null) {
+        editingItemObjId = itemId;
+        const modal = document.getElementById('planModal');
+        const title = document.getElementById('planModalTitle');
+        const timeInput = document.getElementById('planItemTime');
+        const textInput = document.getElementById('planItemText');
+        const imgPreview = document.getElementById('planItemImgPreview');
+
+        if (itemId) {
+            title.innerText = '編輯行程';
+            const item = appData.plan[currentPlanIndex].items.find(i => i.id === itemId);
+            timeInput.value = item.time || '';
+            textInput.value = item.text || '';
+            tempPlanItemImg = item.img || '';
+        } else {
+            title.innerText = '新增行程';
+            timeInput.value = '';
+            textInput.value = '';
+            tempPlanItemImg = '';
+        }
+
+        if (tempPlanItemImg) {
+            imgPreview.src = tempPlanItemImg;
+            imgPreview.classList.remove('hidden');
+        } else {
+            imgPreview.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    function closePlanModal() {
+        document.getElementById('planModal').classList.add('hidden');
+    }
+
+    function handlePlanItemImg(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            tempPlanItemImg = base64;
+            const preview = document.getElementById('planItemImgPreview');
+            preview.src = base64;
+            preview.classList.remove('hidden');
+        });
+    }
+
+    function savePlanItem() {
+        const time = document.getElementById('planItemTime').value.trim();
+        const text = document.getElementById('planItemText').value.trim();
+        if (!text) return alert('行程內容不可為空喔！');
+
+        const dayItems = appData.plan[currentPlanIndex].items;
+
+        if (editingItemObjId) {
+            const item = dayItems.find(i => i.id === editingItemObjId);
+            if (item) {
+                item.time = time;
+                item.text = text;
+                item.img = tempPlanItemImg;
+            }
+        } else {
+            dayItems.push({
+                id: Date.now(), 
+                time: time,
+                text: text,
+                img: tempPlanItemImg
+            });
+            dayItems.sort((a, b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
+        }
+
+        saveData(appData);
+        closePlanModal();
+        renderPlan();
+    }
+
+    function deletePlanItem(itemId) {
+        if(confirm('確定要刪除這個行程嗎？')) {
+            const dayItems = appData.plan[currentPlanIndex].items;
+            const index = dayItems.findIndex(i => i.id === itemId);
+            if(index > -1) {
+                dayItems.splice(index, 1);
+                saveData(appData);
+                renderPlan();
+            }
+        }
+    }
+
+    /* ================= 2. FOOD 模組 ================= */
+    let isFoodEditing = false;
+
+    function renderFood() {
+        const container = document.getElementById('foodContainer');
+        const btn = document.getElementById('foodEditBtn');
+        const dataList = document.getElementById('foodCategoryList');
+
+        if (isFoodEditing) {
+            btn.innerHTML = '<i class="fas fa-check mr-1"></i>完成管理';
+            btn.classList.replace('bg-warmbrown', 'bg-calmblue');
+        } else {
+            btn.innerHTML = '<i class="fas fa-image mr-1"></i>管理美食照片';
+            btn.classList.replace('bg-calmblue', 'bg-warmbrown');
+        }
+
+        dataList.innerHTML = appData.food.map(cat => `<option value="${cat.category}">`).join('');
+
+        container.innerHTML = appData.food.map((cat, catIdx) => `
+            <div class="mb-8">
+                <h3 class="text-[1.2rem] font-bold text-calmblue mb-4 font-zen border-b-2 border-calmblue/20 pb-2"><i class="fas fa-utensils mr-2"></i>${cat.category}</h3>
+                <div class="grid grid-cols-1 gap-4">
+                    ${cat.items.map((item, itemIdx) => `
+                        <div class="muji-card p-5 relative group">
+                            ${isFoodEditing ? `<button onclick="deleteFoodItem(${catIdx}, ${itemIdx})" class="absolute -top-3 -right-2 bg-highlight text-white w-8 h-8 rounded-full shadow-lg text-sm transition hover:scale-110"><i class="fas fa-trash"></i></button>` : ''}
+                            <div class="flex justify-between items-start">
+                                <span class="font-bold text-darkwood text-[1.1rem] leading-snug">${item.name}</span>
+                                ${item.url ? `<a href="${item.url}" target="_blank" class="w-10 h-10 rounded-full bg-calmblue/10 flex items-center justify-center text-calmblue shrink-0 shadow-sm ml-2 active:bg-calmblue/20"><i class="fas fa-location-dot"></i></a>` : ''}
+                            </div>
+                            
+                            ${!isFoodEditing && (item.img1 || item.img2) ? `
+                                <div class="grid grid-cols-2 gap-3 mt-4">
+                                    ${item.img1 ? `<img src="${item.img1}" class="w-full h-32 object-cover rounded-xl border shadow-sm" onclick="window.open('${item.img1}')">` : '<div></div>'}
+                                    ${item.img2 ? `<img src="${item.img2}" class="w-full h-32 object-cover rounded-xl border shadow-sm" onclick="window.open('${item.img2}')">` : '<div></div>'}
+                                </div>
+                            ` : ''}
+
+                            ${isFoodEditing ? `
+                                <div class="grid grid-cols-2 gap-3 mt-4">
+                                    <div class="relative h-32">
+                                        ${item.img1 ? `
+                                            <img src="${item.img1}" class="w-full h-full object-cover rounded-xl border shadow-sm opacity-70">
+                                            <div class="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">1. 食物</div>
+                                            <button onclick="removeFoodImage(${catIdx}, ${itemIdx}, 1)" class="absolute -top-2 -right-2 bg-white text-highlight rounded-full w-8 h-8 flex items-center justify-center shadow-lg"><i class="fas fa-times text-sm"></i></button>
+                                        ` : `
+                                            <label class="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                <i class="fas fa-hamburger text-gray-400 mb-2 text-xl"></i><span class="text-[0.9rem] text-gray-500 font-bold">1. 食物</span>
+                                                <input type="file" accept="image/*" onchange="uploadFoodImage(${catIdx}, ${itemIdx}, 1, event)">
+                                            </label>
+                                        `}
+                                    </div>
+                                    <div class="relative h-32">
+                                        ${item.img2 ? `
+                                            <img src="${item.img2}" class="w-full h-full object-cover rounded-xl border shadow-sm opacity-70">
+                                            <div class="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">2. 飲料</div>
+                                            <button onclick="removeFoodImage(${catIdx}, ${itemIdx}, 2)" class="absolute -top-2 -right-2 bg-white text-highlight rounded-full w-8 h-8 flex items-center justify-center shadow-lg"><i class="fas fa-times text-sm"></i></button>
+                                        ` : `
+                                            <label class="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                <i class="fas fa-coffee text-gray-400 mb-2 text-xl"></i><span class="text-[0.9rem] text-gray-500 font-bold">2. 飲料</span>
+                                                <input type="file" accept="image/*" onchange="uploadFoodImage(${catIdx}, ${itemIdx}, 2, event)">
+                                            </label>
+                                        `}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleFoodEditMode() {
+        isFoodEditing = !isFoodEditing;
+        renderFood();
+    }
+
+    function addNewFood() {
+        const name = document.getElementById('newFoodName').value.trim();
+        const url = document.getElementById('newFoodUrl').value.trim();
+        const category = document.getElementById('newFoodCategory').value.trim() || "未分類";
+
+        if (!name) return alert('請輸入餐廳名稱！');
+
+        let catObj = appData.food.find(c => c.category === category);
+        if (!catObj) {
+            catObj = { category: category, items: [] };
+            appData.food.push(catObj);
+        }
+        
+        catObj.items.push({ name: name, url: url, img1: "", img2: "" });
+        saveData(appData);
+        
+        document.getElementById('newFoodName').value = '';
+        document.getElementById('newFoodUrl').value = '';
+        document.getElementById('newFoodCategory').value = '';
+        
+        renderFood();
+    }
+
+    function deleteFoodItem(catIdx, itemIdx) {
+        if(confirm('確定要刪除這家餐廳嗎？')) {
+            appData.food[catIdx].items.splice(itemIdx, 1);
+            if(appData.food[catIdx].items.length === 0) {
+                appData.food.splice(catIdx, 1);
+            }
+            saveData(appData);
+            renderFood();
+        }
+    }
+
+    function uploadFoodImage(catIdx, itemIdx, imgNum, event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            if(imgNum === 1) appData.food[catIdx].items[itemIdx].img1 = base64;
+            if(imgNum === 2) appData.food[catIdx].items[itemIdx].img2 = base64;
+            saveData(appData);
+            renderFood();
+        });
+    }
+
+    function removeFoodImage(catIdx, itemIdx, imgNum) {
+        if(confirm('確定要移除這張照片嗎？')) {
+            if(imgNum === 1) appData.food[catIdx].items[itemIdx].img1 = "";
+            if(imgNum === 2) appData.food[catIdx].items[itemIdx].img2 = "";
+            saveData(appData);
+            renderFood();
+        }
+    }
+
+    /* ================= 3. WALLET 記帳 ================= */
+    function switchWalletTab(tab) {
+        document.getElementById('wallet-view-expense').classList.add('hidden');
+        document.getElementById('wallet-view-split').classList.add('hidden');
+        document.getElementById('wallet-tab-expense').classList.replace('bg-warmbrown', 'bg-transparent');
+        document.getElementById('wallet-tab-expense').classList.replace('text-white', 'text-warmbrown');
+        document.getElementById('wallet-tab-split').classList.replace('bg-warmbrown', 'bg-transparent');
+        document.getElementById('wallet-tab-split').classList.replace('text-white', 'text-warmbrown');
+
+        document.getElementById('wallet-view-' + tab).classList.remove('hidden');
+        document.getElementById('wallet-tab-' + tab).classList.remove('bg-transparent', 'text-warmbrown');
+        document.getElementById('wallet-tab-' + tab).classList.add('bg-warmbrown', 'text-white');
+        
+        if(tab === 'split') renderSplitView();
+        else renderWallet();
+    }
+
+    let tempExpenseImg = "";
+    function renderWallet() {
+        document.getElementById('walletRate').value = appData.wallet.rate;
+        const list = document.getElementById('expenseList');
+        let total = 0;
+        
+        if (appData.wallet.expenses.length === 0) {
+            list.innerHTML = '<div class="text-center text-gray-400 py-8 font-bold text-[1.1rem]">目前還沒有花費紀錄喔！</div>';
+        } else {
+            list.innerHTML = appData.wallet.expenses.map((exp, idx) => {
+                total += parseFloat(exp.cost);
+                
+                let sharersText = "";
+                if(exp.isShared && exp.sharedBy && exp.sharedBy.length > 0) {
+                    const names = exp.sharedBy.map(id => {
+                        const m = appData.wallet.members.find(member => member.id === id);
+                        return m ? m.name : "已刪除成員";
+                    });
+                    sharersText = `<div class="text-xs text-gray-400 mt-1"><i class="fas fa-user-friends mr-1"></i>${names.join(', ')} 分攤</div>`;
+                }
+
+                return `
+                <div class="muji-card p-4 flex items-center gap-4 relative overflow-hidden">
+                    ${exp.isShared ? `<div class="absolute top-0 left-0 bg-calmblue text-white text-[10px] px-2 py-0.5 rounded-br-lg font-bold shadow-sm"><i class="fas fa-users mr-1"></i>公費</div>` : ''}
+                    ${exp.img ? `<img src="${exp.img}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer border mt-2" onclick="window.open('${exp.img}')">` : `<div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-300 border mt-2"><i class="fas fa-receipt text-2xl"></i></div>`}
+                    <div class="flex-1 overflow-hidden mt-2">
+                        <div class="font-bold text-darkwood truncate text-[1.1rem]">${exp.name}</div>
+                        <div class="text-highlight font-zen text-[1rem] font-bold mt-1">${exp.cost} TWD</div>
+                        ${sharersText}
+                    </div>
+                    <button onclick="deleteExpense(${idx})" class="text-gray-300 hover:text-highlight p-2 text-2xl active:scale-90 transition mt-2"><i class="fas fa-trash"></i></button>
+                </div>
+                `;
+            }).join('');
+        }
+        document.getElementById('walletTotal').innerText = total.toLocaleString();
+        toggleExpenseMembersSelection(); 
+    }
+
+    function calculateRate() {
+        const thb = document.getElementById('walletThb').value;
+        const rate = document.getElementById('walletRate').value;
+        appData.wallet.rate = rate;
+        saveData(appData);
+        document.getElementById('walletTwd').innerText = thb ? Math.round(thb * rate) + ' TWD' : '0 TWD';
+    }
+
+    function handleReceiptUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            tempExpenseImg = base64;
+            const preview = document.getElementById('expenseReceiptPreview');
+            preview.src = base64;
+            preview.classList.remove('hidden');
+        });
+    }
+
+    function toggleExpenseMembersSelection() {
+        const isShared = document.getElementById('expenseIsShared').checked;
+        const container = document.getElementById('expenseMembersSelection');
+        
+        if (isShared) {
+            container.classList.remove('hidden');
+            if (appData.wallet.members.length === 0) {
+                container.innerHTML = '<span class="text-sm text-highlight font-bold">請先至「分帳結算」新增成員！</span>';
+            } else {
+                container.innerHTML = appData.wallet.members.map(m => `
+                    <label class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg cursor-pointer text-sm font-bold shadow-sm active:scale-95 transition">
+                        <input type="checkbox" value="${m.id}" class="expense-member-cb w-4 h-4 accent-warmbrown" checked>
+                        ${m.name}
+                    </label>
+                `).join('');
+            }
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+
+    function addExpense() {
+        const name = document.getElementById('expenseName').value.trim();
+        const cost = document.getElementById('expenseCost').value.trim();
+        const isShared = document.getElementById('expenseIsShared').checked;
+        
+        if (!name || !cost) return alert('名稱跟花費金額都要輸入喔！');
+        
+        let sharedBy = [];
+        if (isShared) {
+            const checkboxes = document.querySelectorAll('.expense-member-cb:checked');
+            checkboxes.forEach(cb => sharedBy.push(parseInt(cb.value)));
+            if(sharedBy.length === 0) return alert('公費項目請至少勾選一位分攤成員！');
+        }
+
+        appData.wallet.expenses.unshift({ name, cost, img: tempExpenseImg, isShared, sharedBy });
+        saveData(appData);
+        
+        document.getElementById('expenseName').value = '';
+        document.getElementById('expenseCost').value = '';
+        document.getElementById('expenseIsShared').checked = true; 
+        document.getElementById('expenseReceiptPreview').classList.add('hidden');
+        tempExpenseImg = "";
+        
+        renderWallet();
+    }
+
+    function deleteExpense(idx) {
+        if(confirm('刪除這筆花費紀錄？')) {
+            appData.wallet.expenses.splice(idx, 1);
+            saveData(appData);
+            renderWallet();
+        }
+    }
+
+    function renderSplitView() {
+        const members = appData.wallet.members || [];
+        
+        let memberDebts = {};
+        members.forEach(m => memberDebts[m.id] = 0);
+        let totalShared = 0;
+
+        appData.wallet.expenses.forEach(exp => {
+            if(exp.isShared) {
+                let activeSharers = (exp.sharedBy || []).filter(id => memberDebts[id] !== undefined);
+                
+                if(activeSharers.length > 0) {
+                    let costPerPerson = parseFloat(exp.cost) / activeSharers.length;
+                    totalShared += parseFloat(exp.cost);
+                    activeSharers.forEach(id => {
+                        memberDebts[id] += costPerPerson;
+                    });
+                }
+            }
+        });
+
+        document.getElementById('splitTotalAmount').innerText = totalShared.toLocaleString();
+
+        const list = document.getElementById('splitMembersList');
+        if (members.length === 0) {
+            list.innerHTML = '<div class="text-center text-gray-400 py-4 font-bold text-sm">請在上方新增分帳成員</div>';
+        } else {
+            list.innerHTML = members.map(m => `
+                <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl bg-white shadow-sm transition ${m.hasPaid ? 'opacity-60 bg-green-50/50' : ''}">
+                    <div class="w-10 h-10 rounded-full bg-warmbrown/10 text-warmbrown flex items-center justify-center font-bold font-zen">
+                        ${m.name.charAt(0)}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-bold text-[1.05rem] text-darkwood">${m.name}</div>
+                        <div class="text-[0.9rem] font-zen font-bold text-highlight mt-1">應付: ${Math.ceil(memberDebts[m.id]).toLocaleString()} TWD</div>
+                    </div>
+                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-lg border shadow-sm active:scale-95 transition">
+                        <input type="checkbox" ${m.hasPaid ? 'checked' : ''} onchange="toggleMemberPaid(${m.id})" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-bold ${m.hasPaid ? 'text-green-600' : 'text-gray-500'}">已付</span>
+                    </label>
+                    <button onclick="deleteSplitMember(${m.id})" class="text-gray-300 hover:text-highlight px-2 active:scale-90 transition"><i class="fas fa-times text-lg"></i></button>
+                </div>
+            `).join('');
+        }
+    }
+
+    function addSplitMember() {
+        const input = document.getElementById('newMemberName');
+        const name = input.value.trim();
+        if (!name) return;
+        
+        if (appData.wallet.members.length >= 15) {
+            return alert('分帳成員最多只能 15 人喔！');
+        }
+
+        appData.wallet.members.push({ id: Date.now(), name: name, hasPaid: false });
+        saveData(appData);
+        input.value = '';
+        renderSplitView();
+    }
+
+    function toggleMemberPaid(id) {
+        const member = appData.wallet.members.find(m => m.id === id);
+        if (member) {
+            member.hasPaid = !member.hasPaid;
+            saveData(appData);
+            renderSplitView();
+        }
+    }
+
+    function deleteSplitMember(id) {
+        if(confirm('要移除這位成員嗎？這會重新計算每個人的分攤金額喔！')) {
+            appData.wallet.members = appData.wallet.members.filter(m => m.id !== id);
+            saveData(appData);
+            renderSplitView();
+        }
+    }
+
+    /* ================= 4. LISTS 清單 ================= */
+    function renderBaggage() {
+        document.getElementById('baggageList').innerHTML = appData.lists.baggage.map((item, idx) => `
+            <div class="flex items-center gap-4 p-4 border-b border-warmbrown/10 ${item.done ? 'opacity-40 bg-gray-50 rounded-xl' : ''} transition">
+                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleBaggage(${idx})" class="w-6 h-6 accent-warmbrown cursor-pointer shrink-0">
+                <span class="flex-1 text-[1.1rem] ${item.done ? 'line-through text-gray-500' : 'text-darkwood font-bold'}">${item.text}</span>
+                <button onclick="deleteBaggage(${idx})" class="text-gray-300 hover:text-highlight px-2 text-xl active:scale-90 transition"><i class="fas fa-times"></i></button>
+            </div>
+        `).join('');
+    }
+
+    function addBaggage() {
+        const input = document.getElementById('baggageInput');
+        if (!input.value.trim()) return;
+        appData.lists.baggage.unshift({ text: input.value.trim(), done: false });
+        saveData(appData);
+        input.value = '';
+        renderBaggage();
+    }
+
+    function toggleBaggage(idx) {
+        appData.lists.baggage[idx].done = !appData.lists.baggage[idx].done;
+        saveData(appData);
+        renderBaggage();
+    }
+
+    function deleteBaggage(idx) {
+        appData.lists.baggage.splice(idx, 1);
+        saveData(appData);
+        renderBaggage();
+    }
+
+    let isMemoEditing = false;
+    function renderMemo() {
+        const data = appData.lists.memo;
+        document.getElementById('memoViewMode').innerHTML = parseText(data.text) || '<span class="text-gray-400 italic">點擊編輯新增備忘內容...</span>';
+        document.getElementById('memoTextarea').value = data.text;
+
+        const imgContainer = document.getElementById('memoImageContainer');
+        const imgPreview = document.getElementById('memoImagePreview');
+        if (data.img) {
+            imgPreview.src = data.img;
+            imgContainer.classList.remove('hidden');
+        } else {
+            imgContainer.classList.add('hidden');
+        }
+
+        document.getElementById('memoViewMode').classList.remove('hidden');
+        document.getElementById('memoEditMode').classList.add('hidden');
+        document.getElementById('memoEditBtn').innerHTML = '<i class="fas fa-pen mr-1"></i>編輯';
+        document.getElementById('memoEditBtn').classList.replace('bg-gray-400', 'bg-warmbrown');
+        isMemoEditing = false;
+    }
+
+    function toggleMemoEdit() {
+        isMemoEditing = !isMemoEditing;
+        const viewMode = document.getElementById('memoViewMode');
+        const editMode = document.getElementById('memoEditMode');
+        const btn = document.getElementById('memoEditBtn');
+
+        if (isMemoEditing) {
+            viewMode.classList.add('hidden');
+            editMode.classList.remove('hidden');
+            btn.innerHTML = '<i class="fas fa-times mr-1"></i>取消';
+            btn.classList.replace('bg-warmbrown', 'bg-gray-400');
+        } else {
+            renderMemo();
+        }
+    }
+
+    function saveMemoEdit() {
+        appData.lists.memo.text = document.getElementById('memoTextarea').value;
+        saveData(appData);
+        renderMemo();
+    }
+
+    function handleMemoImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            appData.lists.memo.img = base64;
+            saveData(appData);
+            renderMemo();
+            document.getElementById('memoViewMode').classList.add('hidden');
+            document.getElementById('memoEditMode').classList.remove('hidden');
+            document.getElementById('memoEditBtn').innerHTML = '<i class="fas fa-times mr-1"></i>取消';
+            document.getElementById('memoEditBtn').classList.replace('bg-warmbrown', 'bg-gray-400');
+            isMemoEditing = true;
+        });
+    }
+
+    function removeMemoImage() {
+        if(confirm('移除照片？')) {
+            appData.lists.memo.img = "";
+            saveData(appData);
+            renderMemo();
+        }
+    }
+
+    let tempShopImg = "";
+    function renderShop() {
+        const grid = document.getElementById('shopGrid');
+        if(appData.lists.shop.length === 0) {
+            grid.innerHTML = '<div class="col-span-3 text-center text-gray-400 py-10 font-bold text-[1rem]">清單內還沒有商品喔！</div>';
+            return;
+        }
+        grid.innerHTML = appData.lists.shop.map((item, idx) => `
+            <div class="muji-card p-1.5 flex flex-col items-center relative overflow-hidden group">
+                <button onclick="deleteShopItem(${idx})" class="absolute top-1.5 right-1.5 text-white bg-highlight/90 rounded-full w-6 h-6 flex items-center justify-center text-xs z-10 shadow-md active:scale-90 transition"><i class="fas fa-times"></i></button>
+                <div class="w-full aspect-square bg-gray-50 rounded-lg mb-1.5 overflow-hidden relative cursor-pointer border" onclick="toggleShopItem(${idx})">
+                    ${item.img ? `<img src="${item.img}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-gray-300"><i class="fas fa-box text-3xl"></i></div>`}
+                    ${item.done ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-[1px]"><i class="fas fa-check-circle text-white text-4xl shadow-sm"></i></div>` : ''}
+                </div>
+                <div class="text-[0.95rem] font-bold text-center w-full truncate px-1 pb-1 ${item.done ? 'line-through text-gray-400' : 'text-darkwood'}">${item.name}</div>
+            </div>
+        `).join('');
+    }
+
+    function handleShopImageTemp(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            tempShopImg = base64;
+            const preview = document.getElementById('shopImageTemp');
+            preview.src = base64;
+            preview.classList.remove('hidden');
+        });
+    }
+
+    function addShopItem() {
+        const name = document.getElementById('shopNameInput').value.trim();
+        if (!name) return alert('請輸入商品名稱');
+        appData.lists.shop.unshift({ name, img: tempShopImg, done: false });
+        saveData(appData);
+        
+        document.getElementById('shopNameInput').value = '';
+        tempShopImg = '';
+        document.getElementById('shopImageTemp').classList.add('hidden');
+        renderShop();
+    }
+
+    function toggleShopItem(idx) {
+        appData.lists.shop[idx].done = !appData.lists.shop[idx].done;
+        saveData(appData);
+        renderShop();
+    }
+    
+    function deleteShopItem(idx) {
+        if(confirm('從清單刪除此商品？')) {
+            appData.lists.shop.splice(idx, 1);
+            saveData(appData);
+            renderShop();
+        }
+    }
+
+    /* ================= 5. INFO 資訊 (方案 B：加入星號清單連結功能) ================= */
+    let isInfoEditing = false;
+    function renderInfo() {
+        const qrPreview = document.getElementById('infoQrCodePreview');
+        const removeBtn = document.getElementById('removeQrBtn');
+        const uploadLabel = document.getElementById('qrCodeUploadLabel');
+
+        if (appData.info.qrCodeImg) {
+            qrPreview.src = appData.info.qrCodeImg;
+            qrPreview.classList.remove('hidden');
+            removeBtn.classList.remove('hidden');
+            uploadLabel.classList.add('hidden');
+        } else {
+            qrPreview.classList.add('hidden');
+            removeBtn.classList.add('hidden');
+            uploadLabel.classList.remove('hidden');
+        }
+
+        const container = document.getElementById('infoContainer');
+        const linksContainer = document.getElementById('infoLinksContainer');
+        const linkEditContainer = document.getElementById('infoLinkEditContainer');
+        const settingsContainer = document.getElementById('infoSettingsContainer');
+        const savedMapsLink = document.getElementById('savedMapsLink');
+
+        // 更新儲存的地圖連結按鈕
+        if (appData.info.savedMapsUrl && appData.info.savedMapsUrl.trim() !== "") {
+            savedMapsLink.href = appData.info.savedMapsUrl;
+            savedMapsLink.classList.remove('hidden');
+        } else {
+            savedMapsLink.classList.add('hidden');
+        }
+
+        if (isInfoEditing) {
+            linksContainer.classList.add('hidden');
+            linkEditContainer.classList.remove('hidden');
+            settingsContainer.classList.remove('hidden');
+
+            document.getElementById('editSavedMapsUrl').value = appData.info.savedMapsUrl || "";
+
+            container.innerHTML = `
+                <div class="muji-card p-6">
+                    <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-plane mr-2"></i>航班資訊</h3>
+                    <textarea id="editInfoFlight" class="w-full h-40 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 text-[1.1rem] leading-relaxed shadow-inner">${appData.info.flight}</textarea>
+                </div>
+                <div class="muji-card p-6">
+                    <h3 class="font-zen font-bold text-warmbrown mb-3 text-[1.2rem]"><i class="fas fa-hotel mr-2"></i>住宿資訊</h3>
+                    <textarea id="editInfoAcc" class="w-full h-40 p-4 border border-warmbrown/30 rounded-xl bg-beige/30 text-[1.1rem] leading-relaxed shadow-inner">${appData.info.acc}</textarea>
+                </div>
+            `;
+            document.getElementById('infoEditBtn').innerHTML = '<i class="fas fa-save mr-1"></i>儲存修改';
+            document.getElementById('infoEditBtn').classList.replace('bg-warmbrown', 'bg-calmblue');
+        } else {
+            linksContainer.classList.remove('hidden');
+            linkEditContainer.classList.add('hidden');
+            settingsContainer.classList.add('hidden');
+
+            container.innerHTML = `
+                <div class="muji-card p-6">
+                    <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-2 mb-4 text-[1.2rem]"><i class="fas fa-plane mr-2"></i>航班時刻</h3>
+                    <div class="whitespace-pre-wrap text-[1.1rem] leading-loose">${parseText(appData.info.flight)}</div>
+                </div>
+                <div class="muji-card p-6">
+                    <h3 class="font-zen font-bold text-warmbrown border-b border-warmbrown/20 pb-2 mb-4 text-[1.2rem]"><i class="fas fa-hotel mr-2"></i>住宿與地址</h3>
+                    <div class="whitespace-pre-wrap text-[1.1rem] leading-loose">${parseText(appData.info.acc)}</div>
+                </div>
+            `;
+            document.getElementById('infoEditBtn').innerHTML = '<i class="fas fa-pen mr-1"></i>修改資料';
+            document.getElementById('infoEditBtn').classList.replace('bg-calmblue', 'bg-warmbrown');
+        }
+        
+        document.getElementById('headerCoverImg').src = appData.info.coverImg;
+    }
+
+    function toggleInfoEdit() {
+        if (isInfoEditing) {
+            appData.info.flight = document.getElementById('editInfoFlight').value;
+            appData.info.acc = document.getElementById('editInfoAcc').value;
+            appData.info.savedMapsUrl = document.getElementById('editSavedMapsUrl').value.trim();
+            saveData(appData);
+        }
+        isInfoEditing = !isInfoEditing;
+        renderInfo();
+    }
+
+    function handleQrCodeUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            appData.info.qrCodeImg = base64;
+            saveData(appData);
+            renderInfo();
+        });
+    }
+
+    function removeQrCode() {
+        if(confirm('確定要移除入境 QR Code 嗎？')) {
+            appData.info.qrCodeImg = "";
+            saveData(appData);
+            renderInfo();
+        }
+    }
+
+    function updateCoverImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        compressImage(file, (base64) => {
+            appData.info.coverImg = base64;
+            saveData(appData);
+            
+            document.getElementById('headerCoverImg').src = base64;
+            
+            let appleIcon = document.querySelector("link[rel='apple-touch-icon']");
+            if (appleIcon) { appleIcon.href = base64; }
+            
+            let stdIcon = document.querySelector("link[rel='icon']");
+            if (stdIcon) { stdIcon.href = base64; }
+
+            alert('封面已更新成功！\n\n若您是 Android 或 iOS 用戶，請將本網頁【刪除舊捷徑後，重新加入主畫面】，圖示才會更新喔！');
+        });
+    }
+
+    /* ================= 初始化 ================= */
+    window.onload = () => {
+        renderPlan();
+        renderFood();
+        renderWallet(); 
+        renderBaggage();
+        renderMemo();
+        renderShop();
+        renderInfo();
+    };
+</script>
+</body>
+</html>
