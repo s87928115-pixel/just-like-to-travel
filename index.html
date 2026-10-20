@@ -12,7 +12,7 @@
     <script>
         (function() {
             try {
-                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v16'));
+                const data = JSON.parse(localStorage.getItem('travelApp_TaiBaoLe_Final_v18'));
                 const iconUrl = (data && data.info && data.info.coverImg) ? data.info.coverImg : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=192&q=80';
                 const appleLink = document.createElement('link');
                 appleLink.rel = 'apple-touch-icon';
@@ -363,13 +363,13 @@
         coverImg: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
         info: {
             flight: "【去程】\n09:25 班次 JX741 到達BKK時間12:35\n\n【阿姨回程】\n13:45 班次 JX742 到達TPE時間18:25\n\n【其他人回程】\n17:40 班次 JX746 到達TPE時間22:30",
-            acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/LM8E4JM69iX4pvDf9",
+            acc: "【民宿】House36 Ekkamai\nhttps://maps.app.goo.gl/3WZ1nSZvPJKmALZ96\n\n【飯店】Somerset Ekamai Bangkok\nhttps://maps.app.goo.gl/hEUt3BDSGsNCjuuu9",
             qrCodeImg: "",
             savedMapsUrl: "https://maps.app.goo.gl/" // 預設留空供使用者自填
         },
         plan: [
             {
-                day: "DAY 1", date: "啟程與夜市初體驗",
+                day: "DAY 1", date: "11/19",
                 items: [
                     { id: 101, time: "06:05", text: "搭乘高鐵出發 ➔ 06:47 抵達桃園", img: "" },
                     { id: 102, time: "07:02", text: "轉乘機場捷運 ➔ 第二航廈", img: "" },
@@ -381,36 +381,41 @@
                 ]
             },
             {
-                day: "DAY 2", date: "大象保護區與市區漫步",
+                day: "DAY 2", date: "11/20 (特級廚師之路)",
                 items: [
-                    { id: 201, time: "07:30", text: "Ekkamai Wat That Thong 集合\nhttps://maps.app.goo.gl/qzKWc1KmnyTDrhu39", img: "" },
-                    { id: 202, time: "08:00", text: "搭乘園方專車 ➔ 大象保護區 (體驗約4小時，含午餐)", img: "" },
-                    { id: 203, time: "14:30", text: "從園區出發回程 (車程約 1.5 小時)", img: "" },
-                    { id: 204, time: "16:30", text: "centralwOrld https://maps.app.goo.gl/SDVcTB8YE19sMxZt8 逛街，或前往班嘉奇蒂公園 https://maps.app.goo.gl/Z6hwvV6rANZxqhPr7 走森林天空步道\n*備註：附近按摩推薦 One More Thai Massage https://maps.app.goo.gl/ESigr1CT9JXpuv3J7 或是 Chandee Head Spa & Massage https://maps.app.goo.gl/GtaBSvvYp6KEXqoe8", img: "" },
-                    { id: 205, time: "19:30 - 21:30", text: "Copper Beyond Buffet 豪華晚餐 https://maps.app.goo.gl/t8Z76e9SiTxJTy1B7", img: "" }
+                    { id: 201, time: "08:00", text: "出門吃早餐", img: "" },
+                    { id: 202, time: "09:00", text: "特級廚師修練中", img: "" },
+                    { id: 203, time: "12:00", text: "結束", img: "" },
+                    { id: 204, time: "12:30", text: "各自踏上不同的旅行", img: "" },
+                    { id: 205, time: "18:45", text: "自助餐排隊", img: "" },
+                    { id: 206, time: "19:30", text: "吃飯\n*備註：Copper Beyond Buffet https://maps.app.goo.gl/t8Z76e9SiTxJTy1B7", img: "" }
                 ]
             },
             {
-                day: "DAY 3", date: "水上與鐵道市場 (包車日)",
+                day: "DAY 3", date: "11/21 (包車)",
                 items: [
-                    { id: 301, time: "08:00", text: "包車出發 ➔ 丹嫩莎朵水上市場 + 美功鐵道市場", img: "" },
-                    { id: 302, time: "14:00", text: "回市區吃午餐\n推薦：朱拉大學美食街 或 紅大哥水門雞飯 https://maps.app.goo.gl/AJr8387hziVcroeN8", img: "" },
-                    { id: 303, time: "晚上", text: "河濱夜市與泰式按摩，放鬆一天的疲憊", img: "" }
+                    { id: 301, time: "08:00", text: "出發", img: "" },
+                    { id: 302, time: "09:40", text: "抵達碼頭", img: "" },
+                    { id: 303, time: "10:00", text: "參加活動 (至13:00)", img: "" },
+                    { id: 304, time: "13:30", text: "美功市場小吃 (至14:00)", img: "" },
+                    { id: 305, time: "14:30", text: "火車進站", img: "" },
+                    { id: 306, time: "15:00", text: "集合上車", img: "" },
+                    { id: 307, time: "17:00", text: "朱拉隆功美食街", img: "" }
                 ]
             },
             {
-                day: "DAY 4", date: "市集與老城漫步",
+                day: "DAY 4", date: "11/22",
                 items: [
-                    { id: 401, time: "09:00 - 12:00", text: "恰圖恰市集", img: "" },
-                    { id: 402, time: "12:30 - 13:30", text: "勝利紀念碑吃船麵 https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n*備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
-                    { id: 403, time: "14:30 - 15:30", text: "鄭王廟（Wat Arun）\n*備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
-                    { id: 404, time: "15:45 - 17:30", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n*備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
-                    { id: 405, time: "17:30 - 18:30", text: "慢慢回 Ekkamai 吃晚餐\n*備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
-                    { id: 406, time: "20:30 之後", text: "步行至附近的 Big C 採買", img: "" }
+                    { id: 401, time: "09:00", text: "恰圖恰市集 (至12:00)", img: "" },
+                    { id: 402, time: "12:30", text: "勝利紀念碑吃船麵 https://maps.app.goo.gl/ZegH9NsYQaPZ5YnH7\n*備註：搭乘 BTS 從 Mo Chit 直達 Victory Monument", img: "" },
+                    { id: 403, time: "14:30", text: "鄭王廟（Wat Arun）\n*備註：從勝利紀念碑搭 BTS 到 Saphan Taksin 站，換搭藍旗觀光船直達鄭王廟碼頭。", img: "" },
+                    { id: 404, time: "15:45", text: "Talat Noi 噠叻仔老街漫步 + 老宅咖啡\n*備註：從鄭王廟碼頭搭乘 5 泰銖跨河渡輪到對岸，或搭船直接至 Marine Department Pier (N4 碼頭) 走進老街。", img: "" },
+                    { id: 405, time: "17:30", text: "慢慢回 Ekkamai 吃晚餐\n*備註：從 Talat Noi 散步至 MRT Hua Lamphong 站，搭地鐵至 MRT Sukhumvit 站 轉乘 BTS 到 Ekkamai 站。", img: "" },
+                    { id: 406, time: "20:30", text: "之後步行至附近的 Big C 採買", img: "" }
                 ]
             },
             {
-                day: "DAY 5", date: "回家",
+                day: "DAY 5", date: "11/23",
                 items: [
                     { id: 501, time: "早上", text: "Ekkamai / Thong Lo 周邊自由活動與最後採買", img: "" },
                     { id: 502, time: "11:30", text: "阿姨最晚抵達機場時間，13:45 班機", img: "" },
@@ -487,7 +492,7 @@
         }
     };
 
-    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v16'; 
+    const STORAGE_KEY = 'travelApp_TaiBaoLe_Final_v17'; 
     
     function loadData() {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -1230,7 +1235,7 @@
         }
     }
 
-    /* ================= 5. INFO 資訊 (方案 B：加入星號清單連結功能) ================= */
+    /* ================= 5. INFO 資訊 ================= */
     let isInfoEditing = false;
     function renderInfo() {
         const qrPreview = document.getElementById('infoQrCodePreview');
@@ -1254,7 +1259,6 @@
         const settingsContainer = document.getElementById('infoSettingsContainer');
         const savedMapsLink = document.getElementById('savedMapsLink');
 
-        // 更新儲存的地圖連結按鈕
         if (appData.info.savedMapsUrl && appData.info.savedMapsUrl.trim() !== "") {
             savedMapsLink.href = appData.info.savedMapsUrl;
             savedMapsLink.classList.remove('hidden');
